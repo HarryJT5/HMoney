@@ -1,0 +1,155 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hmoney.local/schema/evidence_pack.schema.json",
+  "title": "HMoney Evidence Pack",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "pack_id",
+    "generated_at_utc",
+    "as_of_utc",
+    "asset",
+    "market",
+    "scores",
+    "classification",
+    "deployment_bias",
+    "explainability"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "pack_id": {
+      "type": "string",
+      "description": "Unique identifier for this pack (UUID recommended)."
+    },
+    "generated_at_utc": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "as_of_utc": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "data_freshness_sec": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "asset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["symbol", "asset_type"],
+      "properties": {
+        "symbol": { "type": "string" },
+        "asset_type": {
+          "type": "string",
+          "enum": ["equity", "etf", "crypto"]
+        },
+        "name": { "type": "string" },
+        "exchange": { "type": "string" },
+        "sector": { "type": "string" },
+        "industry": { "type": "string" }
+      }
+    },
+    "portfolio_context": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "weight_pct": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "tag": { "type": "string" }
+      }
+    },
+    "market": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["last_price"],
+      "properties": {
+  "last_price": { "type": "number" },
+  "currency": { "type": "string" },
+
+  "volume": { "type": ["number", "null"] },
+  "avg_volume_20d": { "type": ["number", "null"] },
+
+  "ma_50": { "type": ["number", "null"] },
+  "ma_200": { "type": ["number", "null"] },
+
+  "rsi_14": { "type": ["number", "null"] },
+  "pct_off_52w_high": { "type": ["number", "null"] },
+  "atr_pct": { "type": ["number", "null"] }
+}
+    },
+    "fundamentals": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "properties": {
+        "market_cap": { "type": "number" },
+        "ttm_revenue": { "type": "number" },
+        "ttm_net_income": { "type": "number" },
+        "free_cash_flow": { "type": "number" },
+        "debt_to_equity": { "type": "number" }
+      }
+    },
+    "scores": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["opportunity_score", "structural_risk_score"],
+      "properties": {
+        "opportunity_score": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "structural_risk_score": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "discount_score": {
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "maximum": 100
+        }
+      }
+    },
+    "classification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "confidence"],
+      "properties": {
+        "label": {
+          "type": "string",
+          "enum": ["🟢", "🟡", "🔵", "🟠", "🔴"]
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "deployment_bias": {
+      "type": "string",
+      "enum": ["deploy", "watch", "hold", "reduce", "avoid"]
+    },
+    "explainability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reason_codes"],
+      "properties": {
+        "reason_codes": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
