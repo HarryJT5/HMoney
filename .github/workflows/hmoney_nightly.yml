@@ -54,12 +54,50 @@ jobs:
         run: |
           python -m src.pipeline
 
-      - name: Commit nightly outputs (public/)
+      - name: Mirror site outputs to docs/ for GitHub Pages
+        run: |
+          mkdir -p docs
+
+          # Copy brief + state
+          cp -f public/state.json docs/state.json
+          cp -f public/daily_brief.html docs/daily_brief.html
+          cp -f public/daily_brief.md docs/daily_brief.md
+
+          # Copy evidence packs (nightly only)
+          rm -rf docs/evidence_packs
+          cp -rf public/evidence_packs docs/evidence_packs
+
+          # Patch docs/state.json so evidence_pack_index.base_path is docs-relative
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          p = Path("docs/state.json")
+          s = json.loads(p.read_text(encoding="utf-8"))
+
+          epi = s.get("evidence_pack_index") or {}
+          bp = (epi.get("base_path") or "").lstrip("/")
+
+          if bp.startswith("public/"):
+              bp = bp[len("public/"):]
+          epi["base_path"] = bp
+
+          s["evidence_pack_index"] = epi
+          p.write_text(json.dumps(s, indent=2), encoding="utf-8")
+          print("docs/state.json base_path =", bp)
+          PY
+
+      - name: Commit nightly outputs (public + docs)
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
 
+          # public (full artifacts)
           git add public/ data/universe_all.csv || true
+
+          # docs (Pages artifacts)
+          git add docs/state.json docs/daily_brief.md docs/daily_brief.html docs/evidence_packs || true
+
           git commit -m "Nightly HMoney update" || echo "No changes"
 
           for i in 1 2 3; do
