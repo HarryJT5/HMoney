@@ -44,6 +44,7 @@
       border-radius:12px;
       font-size:12px;
       cursor:pointer;
+      white-space:nowrap;
     }
     .btn:hover{filter:brightness(1.06)}
     .grid{
@@ -156,23 +157,6 @@
       resize:vertical;
       min-height:60px;
     }
-
-    /* AI debug line */
-    .aiDebugLine{
-      margin-top:10px;
-      padding:10px 12px;
-      border:1px solid rgba(34,48,71,0.7);
-      border-radius:14px;
-      background: rgba(10,14,20,0.28);
-      font-size:11px;
-      color:var(--muted);
-      line-height:1.35;
-      display:none;
-    }
-    .aiDebugLine strong{color:var(--text); font-weight:600}
-    .aiDebugLine .ok{color:var(--good)}
-    .aiDebugLine .bad{color:var(--bad)}
-    .aiDebugLine .warn{color:var(--warn)}
   </style>
 </head>
 
@@ -280,13 +264,23 @@
         <input type="checkbox" id="aiIncludeTicker" checked />
         Auto-fetch ticker packs mentioned (and include last loaded)
       </label>
+
+      <!-- NEW: memory toggle -->
+      <label class="small muted">
+        <input type="checkbox" id="aiRemember" checked />
+        Remember this chat (local)
+      </label>
+
+      <!-- NEW: clear memory -->
+      <button class="btn" id="aiClearMemoryBtn">Clear memory</button>
+
       <div class="small muted" style="margin-left:auto">
         Tip: press <span class="mono">Ctrl+Enter</span> to send
       </div>
     </div>
 
-    <!-- NEW: Visible fetched/missing debug status -->
-    <div class="aiDebugLine" id="aiDebug"></div>
+    <!-- NEW: memory meta line -->
+    <div class="small muted" id="aiMemoryMeta" style="margin-top:6px">Memory: —</div>
 
     <div class="drawer" id="aiAnswer" style="display:none"></div>
   </div>
@@ -312,6 +306,14 @@
   // CONFIG (AI endpoint)
   // ----------------------------
   const HMONEY_AI_ENDPOINT = "https://bearingbullishballs.htgamein.workers.dev";
+
+  // ----------------------------
+  // AI MEMORY CONFIG (client-side)
+  // ----------------------------
+  const AI_HISTORY_STORAGE_KEY = "hmoney_ai_history_v1";
+  const AI_REMEMBER_PREF_KEY = "hmoney_ai_remember_v1";
+  const AI_HISTORY_MAX_MESSAGES = 12;     // user+assistant messages kept
+  const AI_HISTORY_MAX_CHARS = 12000;     // safety cap for payload size
 
   // ----------------------------
   // Helpers
@@ -419,6 +421,88 @@
   }
 
   // ----------------------------
+  // AI memory (client-side)
+  // ----------------------------
+  // chatHistory = [{ role:"user"|"assistant", content:"..." }, ...]
+  let __AI_HISTORY = [];
+
+  function loadRememberPref(){
+    const v = localStorage.getItem(AI_REMEMBER_PREF_KEY);
+    if (v === null) return true; // default ON
+    return v === "true";
+  }
+
+  function saveRememberPref(on){
+    localStorage.setItem(AI_REMEMBER_PREF_KEY, on ? "true" : "false");
+  }
+
+  function loadHistoryFromStorage(){
+    try{
+      const raw = localStorage.getItem(AI_HISTORY_STORAGE_KEY);
+      if (!raw) return [];
+      const arr = JSON.parse(raw);
+      if (!Array.isArray(arr)) return [];
+      return arr
+        .filter(m => m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string")
+        .map(m => ({ role: m.role, content: m.content }));
+    }catch{
+      return [];
+    }
+  }
+
+  function saveHistoryToStorage(history){
+    try{
+      localStorage.setItem(AI_HISTORY_STORAGE_KEY, JSON.stringify(history));
+    }catch{
+      // ignore quota errors
+    }
+  }
+
+  function clearHistory(){
+    __AI_HISTORY = [];
+    try{ localStorage.removeItem(AI_HISTORY_STORAGE_KEY); }catch{}
+    updateMemoryMeta();
+  }
+
+  function trimHistory(history){
+    let h = Array.isArray(history) ? history.slice() : [];
+    // keep last N messages
+    if (h.length > AI_HISTORY_MAX_MESSAGES) h = h.slice(h.length - AI_HISTORY_MAX_MESSAGES);
+
+    // enforce max chars (rough)
+    let s = JSON.stringify(h);
+    while (s.length > AI_HISTORY_MAX_CHARS && h.length > 2){
+      // drop oldest pair-ish
+      h = h.slice(2);
+      s = JSON.stringify(h);
+    }
+    // final fallback
+    if (s.length > AI_HISTORY_MAX_CHARS && h.length > 0){
+      h = h.slice(h.length - 2);
+    }
+    return h;
+  }
+
+  function updateMemoryMeta(){
+    const meta = document.getElementById("aiMemoryMeta");
+    const remember = document.getElementById("aiRemember")?.checked;
+    const count = __AI_HISTORY.length;
+    const shown = trimHistory(__AI_HISTORY).length;
+    meta.textContent = remember
+      ? `Memory: ON • stored turns: ${count} • sending: ${shown} (local only)`
+      : `Memory: OFF (stateless)`;
+  }
+
+  function appendToHistory(role, content){
+    if (!content) return;
+    __AI_HISTORY.push({ role, content: String(content) });
+    __AI_HISTORY = trimHistory(__AI_HISTORY);
+    const remember = document.getElementById("aiRemember")?.checked;
+    if (remember) saveHistoryToStorage(__AI_HISTORY);
+    updateMemoryMeta();
+  }
+
+  // ----------------------------
   // State cache for AI
   // ----------------------------
   let __HMONEY_STATE = null;
@@ -509,9 +593,6 @@
     return s;
   }
 
-  // Slightly loosened detection:
-  // - still prefers known universe tickers
-  // - BUT also allows common equity-like tokens (2–5 chars) so comparisons don’t silently drop.
   function extractTickersFromText(text){
     const raw = (text || "").toUpperCase();
     const tokens = raw.match(/[A-Z^][A-Z0-9^.-]{0,14}/g) || [];
@@ -519,7 +600,7 @@
     const stop = new Set([
       "A","AN","AND","ARE","AS","AT","BE","BUT","BY","CAN","DID","DO","FOR","FROM","HAVE","HOW","I","IN","IS","IT",
       "ME","MY","NO","NOT","OF","ON","OR","PUT","RED","SELL","BUY","HOLD","SHOULD","THE","THIS","THAT","TO","UP",
-      "WHAT","WHEN","WHERE","WHY","WITH","YOU","YOLO","LOL","LMAO","AI","HMONEY","VS","VERSUS","COMPARE"
+      "WHAT","WHEN","WHERE","WHY","WITH","YOU","YOLO","LOL","LMAO","AI","HMONEY"
     ]);
 
     const out = [];
@@ -535,9 +616,8 @@
       const inUniverse = (__TICKER_SET && __TICKER_SET.has(tok));
       const looksLikeCrypto = /-USD$/.test(tok);
       const looksLikeCaret = /^\^[A-Z0-9]{1,8}$/.test(tok);
-      const looksLikeEquity = /^[A-Z][A-Z0-9.-]{1,5}$/.test(tok) && !looksLikeCrypto && !looksLikeCaret;
 
-      if (!(inUniverse || looksLikeCrypto || looksLikeCaret || looksLikeEquity)) continue;
+      if (!(inUniverse || looksLikeCrypto || looksLikeCaret)) continue;
 
       if (!seen.has(tok)){
         seen.add(tok);
@@ -572,64 +652,18 @@
     return await fetchJson(path);
   }
 
-  function renderAIDebug({ basePath, tickers, includeOn, packOk, packErr, rowOk, workerMeta }){
-    const box = document.getElementById("aiDebug");
-    if (!tickers || !tickers.length){
-      box.style.display = "none";
-      box.innerHTML = "";
-      return;
-    }
-
-    const parts = [];
-
-    parts.push(`<div><strong>Detected:</strong> <span class="mono">${tickers.join(", ")}</span></div>`);
-    parts.push(`<div><strong>Auto-fetch:</strong> ${includeOn ? `<span class="ok">ON</span>` : `<span class="warn">OFF</span>`} • <strong>Base path:</strong> <span class="mono">${basePath || "—"}</span></div>`);
-
-    // Packs
-    const packBits = tickers.map(t => {
-      if (!includeOn) return `<span class="mono">${t}</span>: <span class="warn">skipped</span>`;
-      if (packOk[t]) return `<span class="mono">${t}</span>: <span class="ok">✅ fetched</span>`;
-      const err = packErr[t] ? String(packErr[t]) : "missing";
-      return `<span class="mono">${t}</span>: <span class="bad">❌ missing</span> <span class="mono muted">(${err})</span>`;
-    });
-    parts.push(`<div><strong>Packs:</strong> ${packBits.join(" • ")}</div>`);
-
-    // Table rows
-    const rowBits = tickers.map(t => {
-      if (rowOk[t]) return `<span class="mono">${t}</span>: <span class="ok">✅ found</span>`;
-      return `<span class="mono">${t}</span>: <span class="bad">❌ not in highlights tables</span>`;
-    });
-    parts.push(`<div><strong>Table-row fallback:</strong> ${rowBits.join(" • ")}</div>`);
-
-    if (workerMeta){
-      const usedPacks = Array.isArray(workerMeta.used_packs) ? workerMeta.used_packs.join(", ") : "";
-      const usedRows = Array.isArray(workerMeta.used_table_rows) ? workerMeta.used_table_rows.join(", ") : "";
-      const missing = Array.isArray(workerMeta.missing_fast_verify) ? workerMeta.missing_fast_verify.join(", ") : "";
-      const model = workerMeta.model_used || "";
-
-      const metaLine = [
-        usedPacks ? `used packs: ${usedPacks}` : null,
-        usedRows ? `used rows: ${usedRows}` : null,
-        missing ? `fast-verify for: ${missing}` : null,
-        model ? `model: ${model}` : null,
-      ].filter(Boolean).join(" • ");
-
-      if (metaLine) parts.push(`<div><strong>Worker meta:</strong> <span class="mono">${metaLine}</span></div>`);
-    }
-
-    box.innerHTML = parts.join("");
-    box.style.display = "block";
-  }
-
   async function askAI(question, autoInclude){
     const status = document.getElementById("aiStatus");
     const ans = document.getElementById("aiAnswer");
     ans.style.display = "block";
     ans.innerHTML = `<div class="small muted">Thinking…</div>`;
 
+    const remember = document.getElementById("aiRemember")?.checked;
+
     const ctx = {
       state: __HMONEY_STATE ? slimStateForAI(__HMONEY_STATE) : null,
-      // Extra instruction helps even if the Worker prompt is weak
+      // IMPORTANT: memory goes here (history of prior turns)
+      chat_history: remember ? trimHistory(__AI_HISTORY) : [],
       instruction: "Context-first: use ticker_packs (preferred), then ticker_table_rows, then fast-verify links. Avoid generic company descriptions unless asked."
     };
 
@@ -641,9 +675,6 @@
     const tickerPacks = {};
     const tickerPackErrors = {};
     const tickerTableRows = {};
-
-    const packOk = {};
-    const rowOk = {};
 
     // Auto-fetch packs for mentioned tickers (if enabled)
     if (autoInclude && tickers.length && __BASE_PATH){
@@ -658,19 +689,9 @@
       for (const r of results){
         if (r.ok){
           tickerPacks[r.sym] = slimPackForAI(r.pack);
-          packOk[r.sym] = true;
         } else {
           tickerPackErrors[r.sym] = String(r.err);
-          packOk[r.sym] = false;
         }
-      }
-    } else {
-      // mark as skipped/missing
-      for (const sym of tickers){
-        packOk[sym] = false;
-        if (!autoInclude) tickerPackErrors[sym] = "auto-fetch disabled";
-        else if (!__BASE_PATH) tickerPackErrors[sym] = "missing base_path";
-        else tickerPackErrors[sym] = "not fetched";
       }
     }
 
@@ -680,9 +701,6 @@
         const rows = findTickerRowsInTables(__HMONEY_STATE, sym);
         if (rows && rows.length){
           tickerTableRows[sym] = rows;
-          rowOk[sym] = true;
-        } else {
-          rowOk[sym] = false;
         }
       }
     }
@@ -699,19 +717,8 @@
     if (Object.keys(tickerTableRows).length) ctx.ticker_table_rows = tickerTableRows;
     if (Object.keys(tickerPackErrors).length) ctx.ticker_pack_errors = tickerPackErrors;
 
-    // Show debug immediately (before Worker)
-    renderAIDebug({
-      basePath: __BASE_PATH,
-      tickers,
-      includeOn: !!autoInclude,
-      packOk,
-      packErr: tickerPackErrors,
-      rowOk
-    });
-
     status.textContent = "Asking…";
 
-    // Send tickers at top-level too (Worker can use either)
     const payload = { question, tickers, context: ctx };
 
     try{
@@ -723,7 +730,7 @@
 
       const data = await r.json().catch(() => null);
 
-      // Accept both shapes:
+      // Accept both:
       // - { ok:true, answer:"..." }
       // - { answer:"..." }
       const ok = !!(data && (data.ok === true || typeof data.answer === "string"));
@@ -739,16 +746,13 @@
       ans.innerHTML = `<div style="white-space:pre-wrap; line-height:1.35">${text || "(empty response)"}</div>`;
       status.textContent = "Ready";
 
-      // Update debug with Worker meta (if provided)
-      renderAIDebug({
-        basePath: __BASE_PATH,
-        tickers,
-        includeOn: !!autoInclude,
-        packOk,
-        packErr: tickerPackErrors,
-        rowOk,
-        workerMeta: data.meta || null
-      });
+      // UPDATE MEMORY (only on success)
+      if (remember){
+        appendToHistory("user", question);
+        appendToHistory("assistant", text || "(empty response)");
+      } else {
+        updateMemoryMeta();
+      }
 
     }catch(e){
       ans.innerHTML = `<div class="err">AI request error: ${String(e)}</div>`;
@@ -1094,10 +1098,36 @@
       const basePathNorm = normalizeBasePath(basePathRaw);
       document.getElementById("runMeta").textContent = basePathNorm ? `packs: ${basePathNorm}` : "—";
 
-      // AI handlers
+      // AI handlers + memory wiring
       const aiBtn = document.getElementById("aiAskBtn");
       const aiQ = document.getElementById("aiQuestion");
       const aiInclude = document.getElementById("aiIncludeTicker");
+      const aiRemember = document.getElementById("aiRemember");
+      const aiClear = document.getElementById("aiClearMemoryBtn");
+
+      // Init remember pref + load history
+      const rememberOn = loadRememberPref();
+      aiRemember.checked = rememberOn;
+      __AI_HISTORY = rememberOn ? trimHistory(loadHistoryFromStorage()) : [];
+      updateMemoryMeta();
+
+      aiRemember.addEventListener("change", () => {
+        const on = !!aiRemember.checked;
+        saveRememberPref(on);
+        if (on){
+          // load whatever is in storage (if any)
+          __AI_HISTORY = trimHistory(loadHistoryFromStorage());
+        } else {
+          // go truly stateless
+          clearHistory();
+        }
+        updateMemoryMeta();
+      });
+
+      aiClear.addEventListener("click", () => {
+        clearHistory();
+        // also clear UI answer area? keep as-is; memory cleared is the key.
+      });
 
       async function doAsk(){
         const q = (aiQ.value || "").trim();
