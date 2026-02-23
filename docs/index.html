@@ -112,6 +112,7 @@
       padding:12px;
       background: rgba(10,14,20,0.35);
     }
+    .drawer h3{margin:0 0 10px; font-size:13px}
     .cols{display:grid; grid-template-columns: 1fr 1fr; gap:12px}
     @media (max-width: 980px){ .cols{grid-template-columns:1fr} }
     .list{display:flex; flex-direction:column; gap:8px}
@@ -123,9 +124,7 @@
     .muted{color:var(--muted)}
     .footer{margin-top:14px; color:var(--muted); font-size:11px}
 
-    /* ----------------------------
-       MVP+ Highlights layout
-       ---------------------------- */
+    /* Highlights layout */
     .cols3{display:grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap:12px}
     @media (max-width: 980px){ .cols3{grid-template-columns:1fr} }
     .miniCard{
@@ -135,6 +134,28 @@
       background: rgba(10,14,20,0.35);
     }
     .miniCard h3{margin:0 0 10px; font-size:13px}
+
+    /* AI panel */
+    .aiBox{
+      display:flex;
+      gap:8px;
+      align-items:stretch;
+      width:100%;
+      padding:10px;
+      background:rgba(10,14,20,0.35);
+      border:1px solid var(--line);
+      border-radius:14px;
+    }
+    textarea{
+      flex:1;
+      background:transparent;
+      border:0;
+      outline:none;
+      color:var(--text);
+      font-size:13px;
+      resize:vertical;
+      min-height:60px;
+    }
   </style>
 </head>
 
@@ -181,7 +202,7 @@
         <button class="btn" id="loadTickerBtn">Load</button>
       </div>
       <div class="hint">
-        Loads the evidence pack on-demand from the latest run folder listed in <span class="mono">public/state.json</span>.
+        Loads the evidence pack on-demand from the run folder listed in <span class="mono">state.json</span>.
       </div>
 
       <div class="drawer" id="drawer" style="display:none"></div>
@@ -190,16 +211,14 @@
 
   <div style="height:12px"></div>
 
-  <!-- ----------------------------
-       MVP+ Highlights (NEW)
-       ---------------------------- -->
+  <!-- Highlights (wired to state.tables.*.rows) -->
   <div class="card" id="highlightsCard">
     <div class="sectionTitle">
       <h2>Highlights</h2>
       <div class="small" id="hlMeta">—</div>
     </div>
     <div class="small muted" style="margin-bottom:8px">
-      Diagnostic shortlists from the current run. Click tickers to open Yahoo. Click Opp/Risk/Discount/RSI to open methodology.
+      Shortlists are diagnostic samples from the current run. Click tickers or numbers to open sources. Click Opp/Risk to open methodology.
     </div>
 
     <div class="cols3">
@@ -208,7 +227,7 @@
         <div id="hlSetups"></div>
       </div>
       <div class="miniCard">
-        <h3>🔴 Top structural risk</h3>
+        <h3>🔴 Structural risk</h3>
         <div id="hlRisk"></div>
       </div>
       <div class="miniCard">
@@ -218,8 +237,38 @@
     </div>
 
     <div class="hint" style="margin-top:10px">
-      If this section shows “not available”, your <span class="mono">state.json</span> likely doesn’t include per-ticker summary rows yet. Paste <span class="mono">docs/state.json</span> here and I’ll wire it precisely.
+      These lists come directly from <span class="mono">state.tables</span> (fast: no evidence-pack crawling on page load).
     </div>
+  </div>
+
+  <div style="height:12px"></div>
+
+  <!-- AI (NEW) -->
+  <div class="card" id="aiCard">
+    <div class="sectionTitle">
+      <h2>Ask HMoney (AI)</h2>
+      <div class="small" id="aiStatus">Ready</div>
+    </div>
+    <div class="small muted" style="margin-bottom:8px">
+      Diagnostic assistant for this dashboard. No forecasts. No buy/sell instructions. Best for “what does this mean?” questions.
+    </div>
+
+    <div class="aiBox">
+      <textarea id="aiQuestion" placeholder="Ask something like: 'Summarize today’s posture and why.' or 'What does a high risk score mean?'"></textarea>
+      <button class="btn" id="aiAskBtn">Ask</button>
+    </div>
+
+    <div class="row" style="margin-top:8px">
+      <label class="small muted">
+        <input type="checkbox" id="aiIncludeTicker" checked />
+        Include last loaded ticker pack (if any)
+      </label>
+      <div class="small muted" style="margin-left:auto">
+        Tip: press <span class="mono">Ctrl+Enter</span> to send
+      </div>
+    </div>
+
+    <div class="drawer" id="aiAnswer" style="display:none"></div>
   </div>
 
   <div style="height:12px"></div>
@@ -239,6 +288,11 @@
 </div>
 
 <script>
+  // ----------------------------
+  // CONFIG (AI endpoint)
+  // ----------------------------
+  const HMONEY_AI_ENDPOINT = "https://bearingbullishballs.htgamein.workers.dev";
+
   // ----------------------------
   // Helpers
   // ----------------------------
@@ -315,10 +369,8 @@
   function normalizeBasePath(p){
     if (!p) return "";
     let s = String(p).trim();
-    // state.json may store "public/evidence_packs/..." but the site root is already /public
     if (s.startsWith("public/")) s = s.slice("public/".length);
     if (s.startsWith("/")) s = s.slice(1);
-    // remove trailing slash
     s = s.replace(/\/+$/, "");
     return s;
   }
@@ -354,6 +406,112 @@
   }
 
   // ----------------------------
+  // State cache for AI
+  // ----------------------------
+  let __HMONEY_STATE = null;
+  let __LAST_PACK = null;
+  let __LAST_SYMBOL = null;
+
+  function slimStateForAI(state){
+    // Trim huge arrays so AI context stays small
+    return {
+      schema_version: state.schema_version,
+      generated_at_utc: state.generated_at_utc,
+      as_of_utc: state.as_of_utc,
+      run: {
+        mode: state?.run?.mode ?? null,
+        cadence_minutes: state?.run?.cadence_minutes ?? null,
+        time_bucket: state?.run?.time_bucket ?? null,
+        shards: state?.run?.shards ?? null,
+      },
+      market_bias: state.market_bias,
+      opportunity_score: state.opportunity_score,
+      structural_risk_score: state.structural_risk_score,
+      universe_size: state.universe_size,
+      counts_by_label: state.counts_by_label,
+      breadth: {
+        thresholds: state?.breadth?.thresholds ?? null,
+        sample: state?.breadth?.sample ?? null,
+      },
+      posture: {
+        label: state?.posture?.label ?? null,
+        plain_english: state?.posture?.plain_english ?? null,
+        confidence_tag: state?.posture?.confidence_tag ?? null,
+        key: state?.posture?.key ?? null,
+      },
+      tables: state?.tables ?? null,
+      evidence_pack_index: {
+        base_path: state?.evidence_pack_index?.base_path ?? null,
+        n_packs_written: state?.evidence_pack_index?.n_packs_written ?? null,
+      },
+      quality: {
+        data_provider: state?.quality?.data_provider ?? null,
+        success_rate_pct: state?.quality?.success_rate_pct ?? null,
+        skipped_tickers_count: state?.quality?.skipped_tickers_count ?? null,
+      },
+      disclaimer: state?.disclaimer ?? null,
+    };
+  }
+
+  function slimPackForAI(pack){
+    if (!pack) return null;
+    return {
+      run_id: pack.run_id ?? null,
+      schema_version: pack.schema_version ?? null,
+      asset: pack.asset ?? null,
+      market: pack.market ?? null,
+      scores: pack.scores ?? null,
+      classification: pack.classification ?? null,
+      explainability: { reason_codes: pack?.explainability?.reason_codes ?? [] },
+      links: pack.links ?? null,
+      field_links: pack.field_links ?? null,
+      deployment_bias: pack.deployment_bias ?? null,
+    };
+  }
+
+  async function askAI(question, includeTicker){
+    const status = document.getElementById("aiStatus");
+    const ans = document.getElementById("aiAnswer");
+    ans.style.display = "block";
+    ans.innerHTML = `<div class="small muted">Thinking…</div>`;
+    status.textContent = "Asking…";
+
+    const ctx = {
+      state: __HMONEY_STATE ? slimStateForAI(__HMONEY_STATE) : null
+    };
+
+    if (includeTicker && __LAST_PACK && __LAST_SYMBOL){
+      ctx.ticker = __LAST_SYMBOL;
+      ctx.ticker_pack = slimPackForAI(__LAST_PACK);
+    }
+
+    const payload = { question, context: ctx };
+
+    try{
+      const r = await fetch(HMONEY_AI_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await r.json().catch(() => null);
+      if (!r.ok || !data || !data.ok){
+        const detail = data ? JSON.stringify(data, null, 2) : "(no JSON returned)";
+        ans.innerHTML = `<div class="err">AI request failed.</div><pre class="small muted" style="white-space:pre-wrap">${detail}</pre>`;
+        status.textContent = "Error";
+        return;
+      }
+
+      const text = (data.answer || "").toString().trim();
+      ans.innerHTML = `<div style="white-space:pre-wrap; line-height:1.35">${text || "(empty response)"}</div>`;
+      status.textContent = "Ready";
+    }catch(e){
+      ans.innerHTML = `<div class="err">AI request error: ${String(e)}</div>`;
+      status.textContent = "Error";
+    }
+  }
+
+  // ----------------------------
   // Rendering
   // ----------------------------
   function renderPosture(state){
@@ -376,7 +534,6 @@
       el("div", {class:"v"}, [pe || "—"]),
     ]));
 
-    // Bars (setup presence, fragility presence, net tilt)
     const bars = document.getElementById("bars");
     bars.innerHTML = "";
 
@@ -386,12 +543,11 @@
 
     function barLine(name, pct, kind){
       const width = pctToWidth(pct);
-      const fillClass = kind;
       const pctText = (pct === null || pct === undefined) ? "—" : fmtPctAlready(pct);
       return el("div", {class:"barline"}, [
         el("div", {class:"barlabel"}, [name]),
         el("div", {class:"bar"}, [
-          el("div", {class:`fill ${fillClass}`, style:`width:${width}%`}, [])
+          el("div", {class:`fill ${kind}`, style:`width:${width}%`}, [])
         ]),
         el("div", {class:"pct mono"}, [pctText]),
       ]);
@@ -400,7 +556,6 @@
     bars.appendChild(barLine("Pullback/Stabilization presence", pullPct, "good"));
     bars.appendChild(barLine("Breakdown/Fragility presence", fragPct, "bad"));
 
-    // Tilt: map -50..+50 to 0..100
     let tiltMapped = null;
     if (tiltPts !== null && tiltPts !== undefined){
       const x = Math.max(-50, Math.min(50, Number(tiltPts)));
@@ -460,7 +615,7 @@
     const basePathRaw = state?.evidence_pack_index?.base_path || "";
     const basePath = normalizeBasePath(basePathRaw);
 
-    const mode = (state.mode || state.HMONEY_MODE || "").toString();
+    const mode = (state?.run?.mode || state.mode || state.HMONEY_MODE || "").toString();
     document.getElementById("subline").textContent =
       `State loaded • packs: ${basePath || "—"}${mode ? ` • mode: ${mode}` : ""}`;
 
@@ -490,168 +645,87 @@
   }
 
   // ----------------------------
-  // MVP+ Highlights (NEW)
+  // Highlights (FROM state.tables)
   // ----------------------------
-  function pickThresholds(state){
-    // Try common places; default to your calibrated thresholds
-    const t = state.thresholds || state.config || state.params || {};
-    const opp = Number(t.opp_green_threshold ?? t.oppGreenThreshold ?? 60);
-    const risk = Number(t.risk_red_threshold ?? t.riskRedThreshold ?? 70);
-    return {
-      opp_green_threshold: Number.isFinite(opp) ? opp : 60,
-      risk_red_threshold: Number.isFinite(risk) ? risk : 70,
-    };
-  }
-
-  function pickAssetRows(state){
-    // We will lock this to the exact correct key after you paste docs/state.json.
-    const candidates = [
-      state.assets,
-      state.asset_rows,
-      state.asset_summaries,
-      state.rows,
-      state.table,
-      state.universe?.assets,
-      state.universe?.rows,
-      state.summary?.assets,
-      state.data?.assets,
-    ];
-    for (const c of candidates){
-      if (Array.isArray(c) && c.length && typeof c[0] === "object") return c;
-    }
-    return null;
-  }
-
-  function normalizeAssetRow(a){
-    const symbol = (a?.symbol ?? a?.ticker ?? a?.sym ?? a?.SYMBOL ?? a?.asset?.symbol ?? a?.asset?.ticker ?? null);
-    if (!symbol) return null;
-
-    const scoresObj = a?.scores || a?.score || null;
-    const marketObj = a?.market || a?.mkt || null;
-    const linksObj = a?.links || null;
-
-    const opp = Number(scoresObj?.opportunity_score ?? a?.opportunity_score ?? a?.opportunity ?? a?.opp);
-    const risk = Number(scoresObj?.structural_risk_score ?? a?.structural_risk_score ?? a?.structural_risk ?? a?.risk);
-    const discRaw = (scoresObj?.discount_score ?? a?.discount_score ?? a?.discount ?? null);
-    const disc = (discRaw === null || discRaw === undefined) ? null : Number(discRaw);
-
-    const rsiRaw = (marketObj?.rsi_14 ?? a?.rsi_14 ?? a?.rsi ?? null);
-    const rsi = (rsiRaw === null || rsiRaw === undefined) ? null : Number(rsiRaw);
-
-    const chgRaw = (marketObj?.pct_change_1d ?? a?.pct_change_1d ?? a?.pctChange1d ?? null);
-    const chg1d = (chgRaw === null || chgRaw === undefined) ? null : Number(chgRaw);
-
-    if (!Number.isFinite(opp) || !Number.isFinite(risk)) return null;
-
-    const quote = linksObj?.quote || quoteUrl(symbol);
-
-    return {
-      symbol: String(symbol),
-      opp,
-      risk,
-      disc: (Number.isFinite(disc) ? disc : null),
-      rsi: (Number.isFinite(rsi) ? rsi : null),
-      chg1d: (Number.isFinite(chg1d) ? chg1d : null),
-      quote,
-    };
-  }
-
-  function computeHighlights(rows, thresholds, limit=15){
-    const oppTh = thresholds.opp_green_threshold;
-    const riskTh = thresholds.risk_red_threshold;
-
-    function setupRank(r){
-      // higher opp, higher discount, lower risk
-      const disc = (r.disc === null ? 50 : r.disc);
-      return (0.60 * r.opp) + (0.25 * disc) + (0.15 * (100 - r.risk));
-    }
-
-    const setups = rows
-      .filter(r => r.opp >= oppTh && r.risk < riskTh)
-      .sort((a,b) => setupRank(b) - setupRank(a))
-      .slice(0, limit);
-
-    const risk = rows
-      .filter(r => r.risk >= riskTh && r.opp < oppTh)
-      .sort((a,b) => b.risk - a.risk)
-      .slice(0, limit);
-
-    const mixed = rows
-      .filter(r => r.opp >= oppTh && r.risk >= riskTh)
-      .sort((a,b) => ((b.opp + b.risk)/2) - ((a.opp + a.risk)/2))
-      .slice(0, limit);
-
-    return { setups, risk, mixed };
-  }
-
-  function renderHighlightsTable(targetId, rows){
-    const host = document.getElementById(targetId);
-    host.innerHTML = "";
-
-    if (!rows || !rows.length){
-      host.appendChild(el("div", {class:"small muted"}, ["No entries this run."]));
-      return;
-    }
-
-    const tbl = el("table", {}, []);
-    const thead = el("thead", {}, [el("tr", {}, [
-      el("th", {}, ["Ticker"]),
-      el("th", {class:"num"}, [link(methodologyHrefForHeader("opp"), "Opp", {class:"mono"})]),
-      el("th", {class:"num"}, [link(methodologyHrefForHeader("risk"), "Risk", {class:"mono"})]),
-      el("th", {class:"num"}, [link(methodologyHrefForHeader("discount"), "Discount", {class:"mono"})]),
-      el("th", {class:"num"}, [link(methodologyHrefForHeader("rsi"), "RSI", {class:"mono"})]),
-      el("th", {class:"num"}, ["% Chg 1D"]),
-    ])]);
-    const tbody = el("tbody", {}, []);
-
-    for (const r of rows){
-      const tr = el("tr", {}, [
-        el("td", {}, [link(r.quote, r.symbol, {class:"mono"})]),
-        el("td", {class:"num"}, [fmtInt(r.opp)]),
-        el("td", {class:"num"}, [fmtInt(r.risk)]),
-        el("td", {class:"num"}, [r.disc === null ? "—" : fmtInt(r.disc)]),
-        el("td", {class:"num"}, [r.rsi === null ? "—" : fmt(r.rsi, 1)]),
-        el("td", {class:`num ${badgeForDelta((() => {
-          if (r.chg1d === null || r.chg1d === undefined) return null;
-          let v = Number(r.chg1d);
-          if (!Number.isFinite(v)) return null;
-          if (Math.abs(v) <= 0.25) v *= 100;
-          return v;
-        })())}`}, [
-          link(r.quote, (r.chg1d === null ? "—" : fmtPctChange1d(r.chg1d)), {class:"mono"})
-        ]),
-      ]);
-      tbody.appendChild(tr);
-    }
-
-    tbl.appendChild(thead);
-    tbl.appendChild(tbody);
-    host.appendChild(tbl);
-  }
-
   function renderHighlights(state){
-    const rowsRaw = pickAssetRows(state);
-    const meta = document.getElementById("hlMeta");
+    const tables = state.tables || {};
+    const pulled = (tables.pulled_back && Array.isArray(tables.pulled_back.rows)) ? tables.pulled_back.rows : [];
+    const fragile = (tables.fragile && Array.isArray(tables.fragile.rows)) ? tables.fragile.rows : [];
+    const mixed = (tables.mixed && Array.isArray(tables.mixed.rows)) ? tables.mixed.rows : [];
 
-    if (!rowsRaw){
-      meta.textContent = "Not available (state has no per-ticker summary rows)";
-      document.getElementById("hlSetups").innerHTML = `<div class="small muted">Highlights not available: <span class="mono">state.json</span> doesn’t include a per-ticker list yet.</div>`;
-      document.getElementById("hlRisk").innerHTML = `<div class="small muted">Paste <span class="mono">docs/state.json</span> here and I’ll wire this precisely.</div>`;
-      document.getElementById("hlMixed").innerHTML = `<div class="small muted">Once wired, this runs instantly (no evidence pack fetch needed).</div>`;
-      return;
+    const thr = state?.breadth?.thresholds || {};
+    const oppThr = (thr.opportunity_score_green ?? 60);
+    const riskThr = (thr.risk_score_red ?? 70);
+
+    const shardCount = state?.run?.shards?.count ?? null;
+    const shardIndex = state?.run?.shards?.index ?? null;
+    const shardText = (shardCount !== null && shardIndex !== null) ? `shard ${Number(shardIndex)+1}/${shardCount}` : null;
+
+    const uni = state.universe_size ?? state?.universe?.actual_size ?? null;
+    const packsWritten = state?.evidence_pack_index?.n_packs_written ?? null;
+
+    const metaParts = [];
+    metaParts.push(`Opp≥${fmtInt(oppThr)} • Risk≥${fmtInt(riskThr)}`);
+    if (uni !== null) metaParts.push(`universe ${fmtInt(uni)}`);
+    if (packsWritten !== null) metaParts.push(`packs written ${fmtInt(packsWritten)}`);
+    if (shardText) metaParts.push(shardText);
+
+    document.getElementById("hlMeta").textContent = metaParts.join(" • ");
+
+    function renderList(targetId, rows, emptyMsg){
+      const host = document.getElementById(targetId);
+      host.innerHTML = "";
+
+      if (!rows || !rows.length){
+        host.appendChild(el("div", {class:"small muted"}, [emptyMsg]));
+        return;
+      }
+
+      const tbl = el("table", {}, []);
+      const thead = el("thead", {}, [el("tr", {}, [
+        el("th", {}, ["Ticker"]),
+        el("th", {class:"num"}, ["Last"]),
+        el("th", {class:"num"}, ["% Chg 1D"]),
+        el("th", {class:"num"}, [link(methodologyHrefForHeader("opp"), "Opp", {class:"mono"})]),
+        el("th", {class:"num"}, [link(methodologyHrefForHeader("risk"), "Risk", {class:"mono"})]),
+      ])]);
+
+      const tbody = el("tbody", {}, []);
+
+      for (const r of rows.slice(0, 15)){
+        const sym = r.ticker;
+        const quote = quoteUrl(sym);
+
+        const tr = el("tr", {}, [
+          el("td", {}, [link(quote, sym, {class:"mono"})]),
+          el("td", {class:"num"}, [link(quote, (r.last === null || r.last === undefined) ? "—" : fmt(r.last, 2), {class:"mono"})]),
+          el("td", {class:`num ${badgeForDelta((() => {
+            if (r.pct_change_1d === null || r.pct_change_1d === undefined) return null;
+            let v = Number(r.pct_change_1d);
+            if (!Number.isFinite(v)) return null;
+            if (Math.abs(v) <= 0.25) v *= 100;
+            return v;
+          })())}`}, [link(quote, fmtPctChange1d(r.pct_change_1d), {class:"mono"})]),
+          el("td", {class:"num"}, [link(methodologyHrefForHeader("opp"), fmtInt(r.opportunity_score), {class:"mono"})]),
+          el("td", {class:"num"}, [link(methodologyHrefForHeader("risk"), fmtInt(r.risk_score), {class:"mono"})]),
+        ]);
+
+        tbody.appendChild(tr);
+      }
+
+      tbl.appendChild(thead);
+      tbl.appendChild(tbody);
+      host.appendChild(tbl);
     }
 
-    const normalized = rowsRaw.map(normalizeAssetRow).filter(Boolean);
-    const thresholds = pickThresholds(state);
-    const h = computeHighlights(normalized, thresholds, 15);
-
-    meta.textContent = `${fmtInt(normalized.length)} assets • thresholds: Opp≥${fmtInt(thresholds.opp_green_threshold)} • Risk≥${fmtInt(thresholds.risk_red_threshold)}`;
-
-    renderHighlightsTable("hlSetups", h.setups);
-    renderHighlightsTable("hlRisk", h.risk);
-    renderHighlightsTable("hlMixed", h.mixed);
+    renderList("hlSetups", pulled, "No setup shortlist in this run.");
+    renderList("hlRisk", fragile, "No risk shortlist in this run.");
+    renderList("hlMixed", mixed, "No cross-currents shortlist in this run (often empty).");
   }
 
+  // ----------------------------
+  // Drawer + Evidence pack loading
+  // ----------------------------
   function renderDrawer(pack, symbol){
     const drawer = document.getElementById("drawer");
     drawer.style.display = "block";
@@ -683,7 +757,6 @@
 
     const cols = el("div", {class:"cols"}, []);
 
-    // Left: Market
     const left = el("div", {class:"card", style:"padding:12px; border-radius:14px; background:rgba(10,14,20,0.25)"}, [
       el("h3", {style:"margin:0 0 10px; font-size:13px"}, ["Market (context)"]),
     ]);
@@ -706,7 +779,6 @@
       kvRow("ATR %", (market.atr_pct ?? "—").toString(), fieldLinks["market.atr_pct"] || quote),
     ]));
 
-    // Right: Scores & classification
     const right = el("div", {class:"card", style:"padding:12px; border-radius:14px; background:rgba(10,14,20,0.25)"}, [
       el("h3", {style:"margin:0 0 10px; font-size:13px"}, ["Scores & Diagnostics"]),
     ]);
@@ -726,7 +798,6 @@
       kvRow("Deployment bias", (pack.deployment_bias ?? "—").toString(), methBias),
     ]));
 
-    // Reason codes
     const reasons = Array.isArray(expl.reason_codes) ? expl.reason_codes : [];
     right.appendChild(el("div", {style:"height:10px"}, []));
     right.appendChild(el("div", {class:"small muted"}, ["Reason codes:"]));
@@ -736,7 +807,6 @@
     cols.appendChild(right);
     drawer.appendChild(cols);
 
-    // Footer meta
     drawer.appendChild(el("div", {class:"hint"}, [
       `run_id: ${pack.run_id || "—"} • schema: ${pack.schema_version || "—"} • asset_type: ${asset.asset_type || "—"}`
     ]));
@@ -780,7 +850,6 @@
           const pack = await loadPack(basePath, sym);
           const market = pack.market || {};
           const scores = pack.scores || {};
-          const cls = pack.classification || {};
           const links = pack.links || {};
 
           const quote = links.quote || quoteUrl(sym);
@@ -806,7 +875,6 @@
 
           tbody.appendChild(tr);
         }catch(e){
-          // If a benchmark pack isn't present in this run, just skip it.
           continue;
         }
       }
@@ -826,13 +894,14 @@
   async function init(){
     try{
       const state = await fetchJson("./state.json");
+      __HMONEY_STATE = state;
+
       const basePath = setHeaderMeta(state);
 
       renderSnapshot(state);
       renderPosture(state);
-      renderHighlights(state); // NEW
+      renderHighlights(state);
 
-      // Preload benchmarks
       if (basePath){
         await renderBenchmarks(basePath);
       } else {
@@ -851,6 +920,8 @@
 
         try{
           const pack = await loadPack(basePath, sym);
+          __LAST_PACK = pack;
+          __LAST_SYMBOL = sym;
           renderDrawer(pack, sym);
         }catch(e){
           drawer.innerHTML = `<div class="err">Could not load pack for <span class="mono">${sym}</span> from <span class="mono">${basePath}</span>.</div>
@@ -868,6 +939,26 @@
       const basePathRaw = state?.evidence_pack_index?.base_path || "";
       const basePathNorm = normalizeBasePath(basePathRaw);
       document.getElementById("runMeta").textContent = basePathNorm ? `packs: ${basePathNorm}` : "—";
+
+      // AI handlers
+      const aiBtn = document.getElementById("aiAskBtn");
+      const aiQ = document.getElementById("aiQuestion");
+      const aiInclude = document.getElementById("aiIncludeTicker");
+
+      async function doAsk(){
+        const q = (aiQ.value || "").trim();
+        if (!q) return;
+        await askAI(q, !!aiInclude.checked);
+      }
+
+      aiBtn.addEventListener("click", doAsk);
+      aiQ.addEventListener("keydown", (ev) => {
+        if (ev.key === "Enter" && (ev.ctrlKey || ev.metaKey)) {
+          ev.preventDefault();
+          doAsk();
+        }
+      });
+
     }catch(e){
       document.getElementById("subline").textContent = "Failed to load state.json";
       document.getElementById("postureCard").innerHTML = `<div class="err">Error loading state: ${String(e)}</div>`;
