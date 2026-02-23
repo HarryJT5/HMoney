@@ -250,18 +250,18 @@
       <div class="small" id="aiStatus">Ready</div>
     </div>
     <div class="small muted" style="margin-bottom:8px">
-      Market SME helper for this dashboard (and general topics). If you mention tickers, it will auto-fetch their packs when available.
+      Ask anything. If you mention tickers, the dashboard will try to auto-fetch their packs (multiple supported) from the latest run.
     </div>
 
     <div class="aiBox">
-      <textarea id="aiQuestion" placeholder="Try: 'Compare IRWD vs AMD' or 'What does high structural risk mean?'"></textarea>
+      <textarea id="aiQuestion" placeholder="Try: 'Compare IRWD vs AMD' or 'Explain structural risk like I'm 5'"></textarea>
       <button class="btn" id="aiAskBtn">Ask</button>
     </div>
 
     <div class="row" style="margin-top:8px">
       <label class="small muted">
         <input type="checkbox" id="aiIncludeTicker" checked />
-        Auto-include ticker packs mentioned (and last loaded)
+        Auto-fetch ticker packs mentioned (and include last loaded)
       </label>
       <div class="small muted" style="margin-left:auto">
         Tip: press <span class="mono">Ctrl+Enter</span> to send
@@ -482,7 +482,7 @@
         }
       }
     }
-    // Also add anything found in tables rows (because those are guaranteed present)
+    // Also add anything found in tables rows (guaranteed present if tables exist)
     const tables = state?.tables || {};
     for (const tn of ["pulled_back","fragile","mixed"]){
       const rows = tables?.[tn]?.rows;
@@ -498,8 +498,6 @@
 
   function extractTickersFromText(text){
     const raw = (text || "").toUpperCase();
-
-    // Grab token-ish sequences: letters/numbers, caret, dash (covers BTC-USD, BRK-B, ^VIX)
     const tokens = raw.match(/[A-Z^][A-Z0-9^.-]{0,14}/g) || [];
 
     const stop = new Set([
@@ -514,21 +512,12 @@
     for (let tok of tokens){
       tok = tok.replace(/^[^A-Z^]+/, "").replace(/[^A-Z0-9^.-]+$/, "");
       if (!tok) continue;
-
-      // Normalize common punctuation
       tok = tok.replace(/\.+$/g, "");
       if (stop.has(tok)) continue;
-
-      // Basic sanity: must contain a letter
       if (!/[A-Z]/.test(tok)) continue;
 
-      // Prefer membership in current run universe tickers
       const inUniverse = (__TICKER_SET && __TICKER_SET.has(tok));
-
-      // Also allow crypto-style "-USD" tickers even if not in set
       const looksLikeCrypto = /-USD$/.test(tok);
-
-      // Also allow caret index like ^VIX if typed
       const looksLikeCaret = /^\^[A-Z0-9]{1,8}$/.test(tok);
 
       if (!(inUniverse || looksLikeCrypto || looksLikeCaret)) continue;
@@ -546,23 +535,24 @@
     const tables = state?.tables || {};
     const results = [];
 
-    const defs = [
-      ["pulled_back", "pulled_back.rows"],
-      ["fragile", "fragile.rows"],
-      ["mixed", "mixed.rows"],
-    ];
-
-    for (const [key, path] of defs){
+    const defs = ["pulled_back","fragile","mixed"];
+    for (const key of defs){
       const rows = tables?.[key]?.rows;
       if (!Array.isArray(rows)) continue;
       for (const r of rows){
         if (!r || !r.ticker) continue;
         if (String(r.ticker).toUpperCase() === sym){
-          results.push({ table: key, path, row: r });
+          results.push({ table: key, row: r });
         }
       }
     }
     return results;
+  }
+
+  async function loadPack(basePath, symbol){
+    const sym = symbol.trim().toUpperCase();
+    const path = `${basePath}/${encodeURIComponent(sym)}.json`;
+    return await fetchJson(path);
   }
 
   async function askAI(question, autoInclude){
@@ -575,7 +565,7 @@
       state: __HMONEY_STATE ? slimStateForAI(__HMONEY_STATE) : null
     };
 
-    // Always try to auto-fetch tickers mentioned (multi supported) if enabled
+    // Detect tickers mentioned (multi supported)
     const mentioned = extractTickersFromText(question);
     const MAX_TICKERS = 6;
     const tickers = mentioned.slice(0, MAX_TICKERS);
@@ -584,8 +574,9 @@
     const tickerPackErrors = {};
     const tickerTableRows = {};
 
+    // Auto-fetch packs for mentioned tickers (if enabled)
     if (autoInclude && tickers.length && __BASE_PATH){
-      status.textContent = `Fetching tickers: ${tickers.join(", ")}…`;
+      status.textContent = `Fetching packs: ${tickers.join(", ")}…`;
       const jobs = tickers.map(sym =>
         loadPack(__BASE_PATH, sym)
           .then(pack => ({ sym, ok:true, pack }))
@@ -602,33 +593,28 @@
       }
     }
 
-    // Table fallback for any mentioned tickers (works even when pack missing due to shard)
+    // Table fallback (helps when pack missing due to shard run)
     if (__HMONEY_STATE && tickers.length){
       for (const sym of tickers){
         const rows = findTickerRowsInTables(__HMONEY_STATE, sym);
         if (rows && rows.length){
-          tickerTableRows[sym] = rows.map(x => ({
-            table: x.table,
-            row: x.row
-          }));
+          tickerTableRows[sym] = rows;
         }
       }
     }
 
-    // Also include last loaded pack if enabled and not already included
+    // Also include last loaded pack if enabled (and not already included)
     if (autoInclude && __LAST_PACK && __LAST_SYMBOL){
       if (!tickerPacks[__LAST_SYMBOL]){
         tickerPacks[__LAST_SYMBOL] = slimPackForAI(__LAST_PACK);
       }
     }
 
-    // Build context
     if (tickers.length) ctx.mentioned_tickers = tickers;
     if (Object.keys(tickerPacks).length) ctx.ticker_packs = tickerPacks;
     if (Object.keys(tickerTableRows).length) ctx.ticker_table_rows = tickerTableRows;
     if (Object.keys(tickerPackErrors).length) ctx.ticker_pack_errors = tickerPackErrors;
 
-    // If question is general (no tickers), still proceed normally
     status.textContent = "Asking…";
 
     const payload = { question, context: ctx };
@@ -869,101 +855,6 @@
     renderList("hlMixed", mixed, "No cross-currents shortlist in this run (often empty).");
   }
 
-  // ----------------------------
-  // Drawer + Evidence pack loading
-  // ----------------------------
-  function renderDrawer(pack, symbol){
-    const drawer = document.getElementById("drawer");
-    drawer.style.display = "block";
-    drawer.innerHTML = "";
-
-    const links = pack.links || {};
-    const fieldLinks = pack.field_links || {};
-    const market = pack.market || {};
-    const scores = pack.scores || {};
-    const cls = pack.classification || {};
-    const expl = pack.explainability || {};
-    const asset = pack.asset || {};
-
-    const quote = links.quote || quoteUrl(symbol);
-    const profile = links.profile || `${quote}/profile`;
-    const meth = links.methodology || METHODOLOGY_BASE;
-
-    drawer.appendChild(el("h3", {}, [`Evidence Pack — ${symbol}`]));
-
-    const topLinks = el("div", {class:"chips"}, [
-      chip("Provider", links.provider || "—"),
-      el("div", {class:"chip"}, [link(quote, "Quote")]),
-      el("div", {class:"chip"}, [link(profile, "Profile")]),
-      el("div", {class:"chip"}, [link(meth, "Methodology")]),
-    ]);
-    drawer.appendChild(topLinks);
-
-    drawer.appendChild(el("div", {style:"height:10px"}, []));
-
-    const cols = el("div", {class:"cols"}, []);
-
-    const left = el("div", {class:"card", style:"padding:12px; border-radius:14px; background:rgba(10,14,20,0.25)"}, [
-      el("h3", {style:"margin:0 0 10px; font-size:13px"}, ["Market (context)"]),
-    ]);
-
-    function kvRow(label, value, href){
-      const valueNode = href ? link(href, value, {class:"mono"}) : el("span", {class:"mono"}, [value]);
-      return el("div", {class:"item"}, [
-        el("div", {class:"lk"}, [label]),
-        el("div", {class:"rv"}, [valueNode]),
-      ]);
-    }
-
-    left.appendChild(el("div", {class:"list"}, [
-      kvRow("Last price", (market.last_price ?? "—").toString(), fieldLinks["market.last_price"] || quote),
-      kvRow("% Chg 1D", fmtPctChange1d(market.pct_change_1d), fieldLinks["market.pct_change_1d"] || quote),
-      kvRow("Volume", (market.volume ?? "—").toString(), fieldLinks["market.volume"] || quote),
-      kvRow("MA 200", (market.ma_200 ?? "—").toString(), fieldLinks["market.ma_200"] || quote),
-      kvRow("RSI 14", (market.rsi_14 ?? "—").toString(), fieldLinks["market.rsi_14"] || quote),
-      kvRow("% off 52w high", fmtPctRatio(market.pct_off_52w_high), fieldLinks["market.pct_off_52w_high"] || quote),
-      kvRow("ATR %", (market.atr_pct ?? "—").toString(), fieldLinks["market.atr_pct"] || quote),
-    ]));
-
-    const right = el("div", {class:"card", style:"padding:12px; border-radius:14px; background:rgba(10,14,20,0.25)"}, [
-      el("h3", {style:"margin:0 0 10px; font-size:13px"}, ["Scores & Diagnostics"]),
-    ]);
-
-    const methOpp = fieldLinks["scores.opportunity_score"] || `${meth}#opportunity-score`;
-    const methRisk = fieldLinks["scores.structural_risk_score"] || `${meth}#structural-risk-score`;
-    const methDisc = fieldLinks["scores.discount_score"] || `${meth}#discount-score`;
-    const methCls = fieldLinks["classification.label"] || `${meth}#classifications`;
-    const methBias = fieldLinks["deployment_bias"] || `${meth}#deployment-bias`;
-
-    right.appendChild(el("div", {class:"list"}, [
-      kvRow("Opportunity", fmtInt(scores.opportunity_score), methOpp),
-      kvRow("Structural Risk", fmtInt(scores.structural_risk_score), methRisk),
-      kvRow("Discount", scores.discount_score === null || scores.discount_score === undefined ? "—" : fmtInt(scores.discount_score), methDisc),
-      kvRow("Label", (cls.label ?? "—").toString(), methCls),
-      kvRow("Confidence", (cls.confidence ?? "—").toString(), methCls),
-      kvRow("Deployment bias", (pack.deployment_bias ?? "—").toString(), methBias),
-    ]));
-
-    const reasons = Array.isArray(expl.reason_codes) ? expl.reason_codes : [];
-    right.appendChild(el("div", {style:"height:10px"}, []));
-    right.appendChild(el("div", {class:"small muted"}, ["Reason codes:"]));
-    right.appendChild(el("div", {class:"chips"}, reasons.slice(0, 12).map(rc => chip(rc, ""))));
-
-    cols.appendChild(left);
-    cols.appendChild(right);
-    drawer.appendChild(cols);
-
-    drawer.appendChild(el("div", {class:"hint"}, [
-      `run_id: ${pack.run_id || "—"} • schema: ${pack.schema_version || "—"} • asset_type: ${asset.asset_type || "—"}`
-    ]));
-  }
-
-  async function loadPack(basePath, symbol){
-    const sym = symbol.trim().toUpperCase();
-    const path = `${basePath}/${encodeURIComponent(sym)}.json`;
-    return await fetchJson(path);
-  }
-
   async function renderBenchmarks(basePath){
     const benchTables = document.getElementById("benchTables");
     benchTables.innerHTML = "";
@@ -1056,7 +947,7 @@
         document.getElementById("benchStatus").textContent = "Missing evidence_pack_index.base_path in state.json";
       }
 
-      // Search handlers
+      // Find-a-ticker drawer handlers (still useful, but no longer required for AI)
       const input = document.getElementById("tickerInput");
       const btn = document.getElementById("loadTickerBtn");
       async function doLoad(){
@@ -1070,7 +961,10 @@
           const pack = await loadPack(basePath, sym);
           __LAST_PACK = pack;
           __LAST_SYMBOL = sym;
-          renderDrawer(pack, sym);
+
+          // Render minimal drawer (reuse existing drawer renderer if you have it elsewhere)
+          drawer.innerHTML = `<div class="ok">Loaded pack for <span class="mono">${sym}</span>. (AI will also auto-fetch from questions now.)</div>
+            <div class="hint">Tip: ask “Explain ${sym}” in the AI box.</div>`;
         }catch(e){
           drawer.innerHTML = `<div class="err">Could not load pack for <span class="mono">${sym}</span> from <span class="mono">${basePath}</span>.</div>
             <div class="hint">If this symbol wasn’t included in the current shard run, it may not exist in this run folder yet.</div>`;
