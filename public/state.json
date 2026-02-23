@@ -1,22 +1,22 @@
 {
   "schema_version": "hmoney.state.v1",
-  "generated_at_utc": "2026-02-23T04:10:09Z",
-  "as_of_utc": "2026-02-23T04:08:45.000591+00:00",
+  "generated_at_utc": "2026-02-23T16:41:43Z",
+  "as_of_utc": "2026-02-23T16:38:53.338986+00:00",
   "market_bias": "\ud83d\udd35",
   "opportunity_score": 49,
   "structural_risk_score": 46,
   "counts_by_label": {
-    "\ud83d\udfe2": 1,
-    "\ud83d\udfe1": 76,
-    "\ud83d\udd35": 470,
-    "\ud83d\udfe0": 131,
-    "\ud83d\udd34": 47
+    "\ud83d\udfe2": 0,
+    "\ud83d\udfe1": 70,
+    "\ud83d\udd35": 483,
+    "\ud83d\udfe0": 120,
+    "\ud83d\udd34": 52
   },
   "universe_size": 725,
   "run": {
     "mode": "intraday",
     "cadence_minutes": 15,
-    "time_bucket": 1944981424,
+    "time_bucket": 1944981474,
     "shards": {
       "count": 10,
       "index": 4,
@@ -811,11 +811,11 @@
     "sample": {
       "count": 725,
       "denom_used_for_presence": 725,
-      "pullback_presence_count": 84,
-      "fragility_presence_count": 178,
-      "pullback_density_pct": 11.6,
-      "fragility_presence_pct": 24.6,
-      "net_tilt_pct_points": -13.0,
+      "pullback_presence_count": 79,
+      "fragility_presence_count": 172,
+      "pullback_density_pct": 10.9,
+      "fragility_presence_pct": 23.7,
+      "net_tilt_pct_points": -12.8,
       "scope": "macro_cross_sectional"
     },
     "panel": {
@@ -828,19 +828,19 @@
       {
         "id": "pullback_density",
         "label": "Pullback & stabilization presence (\"setup-like\" shorthand)",
-        "value_pct": 11.6,
+        "value_pct": 10.9,
         "interpretation": "Macro/cross-sectional share of sampled symbols whose Opportunity score meets/exceeds the threshold. 'Setup-like' means pullback-and-stabilization characteristics relative to each symbol\u2019s own history (not a prediction)."
       },
       {
         "id": "fragility_presence",
         "label": "Breakdown & fragility presence",
-        "value_pct": 24.6,
+        "value_pct": 23.7,
         "interpretation": "Macro/cross-sectional share of sampled symbols whose Structural Risk score meets/exceeds the threshold. 'Fragility' means weakness-and-instability characteristics relative to each symbol\u2019s own history (not a prediction)."
       },
       {
         "id": "net_tilt",
         "label": "Net tilt (setup-like minus fragility-like)",
-        "value_pct_points": -13.0,
+        "value_pct_points": -12.8,
         "interpretation": "Descriptive balance metric: setup-like presence minus fragility-like presence (percentage points). Summarizes cross-sectional conditions; does not imply direction or timing."
       }
     ],
@@ -862,7 +862,7 @@
     "confidence_tag": "mixed_evidence",
     "key": "quiet",
     "basis": {
-      "computed_at_utc": "2026-02-23T04:10:09Z",
+      "computed_at_utc": "2026-02-23T16:41:43Z",
       "scope": "macro_cross_sectional",
       "method": "median_quadrants_v1",
       "thresholds_used": {
@@ -879,25 +879,25 @@
       "risk_iqr": 40.0,
       "presence_counts": {
         "denom_used_for_presence": 725,
-        "pullback_presence_count": 84,
-        "fragility_presence_count": 178
+        "pullback_presence_count": 79,
+        "fragility_presence_count": 172
       },
       "quadrant_denom": 725,
       "quadrant_counts": {
-        "hi_opp_lo_risk": 77,
-        "lo_opp_hi_risk": 171,
-        "hi_opp_hi_risk": 7,
-        "lo_opp_lo_risk": 470
+        "hi_opp_lo_risk": 70,
+        "lo_opp_hi_risk": 163,
+        "hi_opp_hi_risk": 9,
+        "lo_opp_lo_risk": 483
       },
       "quadrant_pct": {
-        "hi_opp_lo_risk": 10.6,
-        "lo_opp_hi_risk": 23.6,
-        "hi_opp_hi_risk": 1.0,
-        "lo_opp_lo_risk": 64.8
+        "hi_opp_lo_risk": 9.7,
+        "lo_opp_hi_risk": 22.5,
+        "hi_opp_hi_risk": 1.2,
+        "lo_opp_lo_risk": 66.6
       },
-      "pullback_density_pct": 11.6,
-      "fragility_presence_pct": 24.6,
-      "net_tilt_pct_points": -13.0,
+      "pullback_density_pct": 10.9,
+      "fragility_presence_pct": 23.7,
+      "net_tilt_pct_points": -12.8,
       "interpretation_notes": {
         "scope_note": "Macro/cross-sectional snapshot (inter-firm): summarizes how common patterns are across many tickers; not a forecast and not a per-ticker recommendation.",
         "opportunity_score": "Per-asset score for pullback-and-stabilization characteristics relative to that asset\u2019s own history (trader shorthand: 'setup-like').",
@@ -910,7 +910,7 @@
         "quadrant_counts": "Counts split tickers into four groups (hi/lo opportunity vs hi/lo risk) among rows with both scores."
       }
     },
-    "explanation": "Scope: This is a macro (cross-sectional / inter-firm) snapshot summarizing how common certain price-behavior patterns are across many tickers. It is diagnostic and does not imply direction, timing, or an action. Definitions: 'Setup-like' means pullback-and-stabilization characteristics (Opportunity score) relative to each asset\u2019s own history; 'Fragility/breakdown-like' means weakness-and-instability characteristics (Structural Risk score) relative to each asset\u2019s own history. Presence flags use thresholds: Opportunity \u2265 60, Risk \u2265 70. Plain-English posture meaning: Across the tracked universe, neither pullback/stabilization patterns nor fragility/breakdown patterns are especially widespread right now. Evidence (breadth): setup-like presence = 84/725 (~11.6%); fragility-like presence = 178/725 (~24.6%). Evidence (balance): setup-like minus fragility-like = -13.0 percentage points. Evidence (medians): Opportunity median = 49.0 vs threshold 60; Structural Risk median = 46.0 vs threshold 70. Evidence (dispersion across tickers): Opportunity middle-50% range (Q25\u2013Q75) = 44.0\u201354.0 (IQR 10.0) | Risk middle-50% range (Q25\u2013Q75) = 28.0\u201368.0 (IQR 40.0). Evidence (quadrants among tickers with both scores): hi-opp/lo-risk=77/725 (~10.6%), lo-opp/hi-risk=171/725 (~23.6%), hi-opp/hi-risk=7/725 (~1.0%), lo-opp/lo-risk=470/725 (~64.8%)."
+    "explanation": "Scope: This is a macro (cross-sectional / inter-firm) snapshot summarizing how common certain price-behavior patterns are across many tickers. It is diagnostic and does not imply direction, timing, or an action. Definitions: 'Setup-like' means pullback-and-stabilization characteristics (Opportunity score) relative to each asset\u2019s own history; 'Fragility/breakdown-like' means weakness-and-instability characteristics (Structural Risk score) relative to each asset\u2019s own history. Presence flags use thresholds: Opportunity \u2265 60, Risk \u2265 70. Plain-English posture meaning: Across the tracked universe, neither pullback/stabilization patterns nor fragility/breakdown patterns are especially widespread right now. Evidence (breadth): setup-like presence = 79/725 (~10.9%); fragility-like presence = 172/725 (~23.7%). Evidence (balance): setup-like minus fragility-like = -12.8 percentage points. Evidence (medians): Opportunity median = 49.0 vs threshold 60; Structural Risk median = 46.0 vs threshold 70. Evidence (dispersion across tickers): Opportunity middle-50% range (Q25\u2013Q75) = 44.0\u201354.0 (IQR 10.0) | Risk middle-50% range (Q25\u2013Q75) = 28.0\u201368.0 (IQR 40.0). Evidence (quadrants among tickers with both scores): hi-opp/lo-risk=70/725 (~9.7%), lo-opp/hi-risk=163/725 (~22.5%), hi-opp/hi-risk=9/725 (~1.2%), lo-opp/lo-risk=483/725 (~66.6%)."
   },
   "tables": {
     "pulled_back": {
@@ -919,226 +919,226 @@
       "rows": [
         {
           "ticker": "FNKO",
-          "last": 5.239999771118164,
-          "pct_change_1d": 18.55202897443764,
-          "opportunity_score": 75,
-          "risk_score": 65,
-          "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
-          "tags": []
-        },
-        {
-          "ticker": "PHOE",
-          "last": 15.6899995803833,
-          "pct_change_1d": 11.672593362168904,
-          "opportunity_score": 73,
-          "risk_score": 86,
-          "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
-          "tags": []
-        },
-        {
-          "ticker": "RGC",
-          "last": 29.170000076293945,
-          "pct_change_1d": -12.82127652588465,
-          "opportunity_score": 73,
-          "risk_score": 72,
-          "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
-          "tags": []
-        },
-        {
-          "ticker": "VNCE",
-          "last": 2.9600000381469727,
-          "pct_change_1d": 11.278193332185449,
-          "opportunity_score": 69,
-          "risk_score": 60,
-          "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
-          "tags": []
-        },
-        {
-          "ticker": "SLV",
-          "last": 76.62000274658203,
-          "pct_change_1d": 7.900296354855696,
-          "opportunity_score": 68,
-          "risk_score": 50,
-          "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
-          "tags": []
-        },
-        {
-          "ticker": "PRLD",
-          "last": 2.7799999713897705,
-          "pct_change_1d": 22.466960121078827,
-          "opportunity_score": 68,
+          "last": 4.885000228881836,
+          "pct_change_1d": -6.7748007202789395,
+          "opportunity_score": 74,
           "risk_score": 67,
           "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
           "tags": []
         },
         {
+          "ticker": "PHOE",
+          "last": 15.895000457763672,
+          "pct_change_1d": 1.3065703178008814,
+          "opportunity_score": 73,
+          "risk_score": 85,
+          "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
+          "tags": []
+        },
+        {
+          "ticker": "RGC",
+          "last": 26.399999618530273,
+          "pct_change_1d": -9.496059137877111,
+          "opportunity_score": 73,
+          "risk_score": 74,
+          "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
+          "tags": []
+        },
+        {
           "ticker": "ECOR",
-          "last": 6.25,
-          "pct_change_1d": 1.2965951817963006,
+          "last": 6.53000020980835,
+          "pct_change_1d": 4.480003356933593,
+          "opportunity_score": 71,
+          "risk_score": 74,
+          "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
+          "tags": []
+        },
+        {
+          "ticker": "PRLD",
+          "last": 2.625,
+          "pct_change_1d": -5.575538596580754,
           "opportunity_score": 68,
-          "risk_score": 76,
+          "risk_score": 70,
           "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
           "tags": []
         },
         {
-          "ticker": "TNDM",
-          "last": 24.56999969482422,
-          "pct_change_1d": 32.667381682079586,
+          "ticker": "PLTD",
+          "last": 8.64109992980957,
+          "pct_change_1d": 3.4862219765384728,
+          "opportunity_score": 68,
+          "risk_score": 52,
+          "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
+          "tags": []
+        },
+        {
+          "ticker": "SLV",
+          "last": 79.0199966430664,
+          "pct_change_1d": 3.1323333469750247,
+          "opportunity_score": 68,
+          "risk_score": 47,
+          "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
+          "tags": []
+        },
+        {
+          "ticker": "^VIX",
+          "last": 21.329999923706055,
+          "pct_change_1d": 11.733890797347657,
+          "opportunity_score": 68,
+          "risk_score": 85,
+          "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
+          "tags": []
+        },
+        {
+          "ticker": "VNCE",
+          "last": 2.809999942779541,
+          "pct_change_1d": -5.067570724131986,
           "opportunity_score": 67,
-          "risk_score": 50,
+          "risk_score": 61,
           "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
           "tags": []
         },
         {
-          "ticker": "JAKK",
-          "last": 22.469999313354492,
-          "pct_change_1d": 23.733477434784113,
-          "opportunity_score": 66,
-          "risk_score": 48,
-          "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
-          "tags": []
-        },
-        {
-          "ticker": "HFBL",
-          "last": 18.760000228881836,
-          "pct_change_1d": 0.0,
-          "opportunity_score": 66,
-          "risk_score": 32,
+          "ticker": "IRWD",
+          "last": 3.8399999141693115,
+          "pct_change_1d": -3.0303061318608826,
+          "opportunity_score": 67,
+          "risk_score": 61,
           "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
           "tags": []
         },
         {
           "ticker": "SKYX",
-          "last": 2.0999999046325684,
-          "pct_change_1d": -0.943395377648304,
+          "last": 2.1050000190734863,
+          "pct_change_1d": 0.23810069847565174,
           "opportunity_score": 66,
           "risk_score": 63,
           "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
           "tags": []
         },
         {
-          "ticker": "IRWD",
-          "last": 3.9600000381469727,
-          "pct_change_1d": -14.099784740611454,
+          "ticker": "TNDM",
+          "last": 27.479999542236328,
+          "pct_change_1d": 11.843711369785304,
           "opportunity_score": 66,
-          "risk_score": 60,
-          "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
-          "tags": []
-        },
-        {
-          "ticker": "COPA",
-          "last": 50.08000183105469,
-          "pct_change_1d": 1.6027610080211474,
-          "opportunity_score": 65,
-          "risk_score": 45,
+          "risk_score": 46,
           "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
           "tags": []
         },
         {
           "ticker": "AEO",
-          "last": 25.260000228881836,
-          "pct_change_1d": 1.2424827914348402,
+          "last": 22.94499969482422,
+          "pct_change_1d": -9.164689283773985,
           "opportunity_score": 65,
-          "risk_score": 39,
-          "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
-          "tags": []
-        },
-        {
-          "ticker": "NTHI",
-          "last": 9.949999809265137,
-          "pct_change_1d": 15.697667068762344,
-          "opportunity_score": 65,
-          "risk_score": 72,
+          "risk_score": 43,
           "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
           "tags": []
         },
         {
           "ticker": "SGML",
-          "last": 12.470000267028809,
-          "pct_change_1d": -8.376189701732573,
+          "last": 12.574999809265137,
+          "pct_change_1d": 0.8420171610898031,
           "opportunity_score": 65,
-          "risk_score": 57,
+          "risk_score": 56,
           "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
           "tags": []
         },
         {
           "ticker": "ONDS",
-          "last": 10.029999732971191,
-          "pct_change_1d": -11.940303506214079,
+          "last": 10.125,
+          "pct_change_1d": 0.9471612119441808,
           "opportunity_score": 65,
           "risk_score": 58,
           "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
           "tags": []
         },
         {
-          "ticker": "PVLA",
-          "last": 85.66000366210938,
-          "pct_change_1d": 4.044700300004878,
+          "ticker": "VELO",
+          "last": 9.65999984741211,
+          "pct_change_1d": 6.740327556034154,
           "opportunity_score": 65,
-          "risk_score": 51,
-          "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
-          "tags": []
-        },
-        {
-          "ticker": "PLTD",
-          "last": 8.350000381469727,
-          "pct_change_1d": -0.2389427044540482,
-          "opportunity_score": 65,
-          "risk_score": 53,
-          "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
-          "tags": []
-        },
-        {
-          "ticker": "MSLE",
-          "last": 11.239999771118164,
-          "pct_change_1d": 1.1701180779315923,
-          "opportunity_score": 64,
-          "risk_score": 51,
-          "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
-          "tags": []
-        },
-        {
-          "ticker": "HYMC",
-          "last": 41.06999969482422,
-          "pct_change_1d": -2.5622818314528395,
-          "opportunity_score": 64,
-          "risk_score": 60,
+          "risk_score": 74,
           "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
           "tags": []
         },
         {
           "ticker": "ARQT",
-          "last": 25.415000915527344,
-          "pct_change_1d": -9.069766648355216,
+          "last": 26.389999389648438,
+          "pct_change_1d": 3.836310993502323,
+          "opportunity_score": 65,
+          "risk_score": 42,
+          "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
+          "tags": []
+        },
+        {
+          "ticker": "MSLE",
+          "last": 11.100000381469727,
+          "pct_change_1d": -1.2455461966126902,
+          "opportunity_score": 64,
+          "risk_score": 50,
+          "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
+          "tags": []
+        },
+        {
+          "ticker": "RKLB",
+          "last": 70.05000305175781,
+          "pct_change_1d": -1.1430956133458237,
+          "opportunity_score": 64,
+          "risk_score": 54,
+          "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
+          "tags": []
+        },
+        {
+          "ticker": "JAKK",
+          "last": 22.110000610351562,
+          "pct_change_1d": -1.602130458406259,
+          "opportunity_score": 64,
+          "risk_score": 48,
+          "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
+          "tags": []
+        },
+        {
+          "ticker": "COPA",
+          "last": 50.56999969482422,
+          "pct_change_1d": 0.9784302033824632,
           "opportunity_score": 64,
           "risk_score": 43,
           "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
           "tags": []
         },
         {
-          "ticker": "PTGX",
-          "last": 82.76000213623047,
-          "pct_change_1d": -0.39715274546193724,
-          "opportunity_score": 63,
-          "risk_score": 38,
+          "ticker": "NTHI",
+          "last": 9.649999618530273,
+          "pct_change_1d": -3.0150773516147478,
+          "opportunity_score": 64,
+          "risk_score": 72,
           "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
           "tags": []
         },
         {
-          "ticker": "BAP",
-          "last": 350.25,
-          "pct_change_1d": 0.24327593542186055,
-          "opportunity_score": 63,
-          "risk_score": 32,
+          "ticker": "HFBL",
+          "last": 18.75,
+          "pct_change_1d": -0.053306123453245036,
+          "opportunity_score": 64,
+          "risk_score": 31,
           "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
           "tags": []
         },
         {
-          "ticker": "CLMT",
-          "last": 28.139999389648438,
-          "pct_change_1d": -4.253147417349956,
-          "opportunity_score": 63,
-          "risk_score": 36,
+          "ticker": "HYMC",
+          "last": 41.95000076293945,
+          "pct_change_1d": 2.142685840404668,
+          "opportunity_score": 64,
+          "risk_score": 58,
+          "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
+          "tags": []
+        },
+        {
+          "ticker": "PVLA",
+          "last": 91.03500366210938,
+          "pct_change_1d": 6.274807109747482,
+          "opportunity_score": 64,
+          "risk_score": 49,
           "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
           "tags": []
         }
@@ -1150,8 +1150,8 @@
       "rows": [
         {
           "ticker": "LVRO",
-          "last": 0.4020000100135803,
-          "pct_change_1d": -8.636360865486537,
+          "last": 0.39309999346733093,
+          "pct_change_1d": -2.2139344090933544,
           "opportunity_score": 41,
           "risk_score": 95,
           "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
@@ -1159,35 +1159,17 @@
         },
         {
           "ticker": "PFSA",
-          "last": 1.440000057220459,
-          "pct_change_1d": -14.792898907422213,
+          "last": 1.3700000047683716,
+          "pct_change_1d": -4.861114560453839,
           "opportunity_score": 41,
           "risk_score": 93,
           "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
           "tags": []
         },
         {
-          "ticker": "ONCO",
-          "last": 0.7580000162124634,
-          "pct_change_1d": 5.277775846145838,
-          "opportunity_score": 42,
-          "risk_score": 92,
-          "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
-          "tags": []
-        },
-        {
-          "ticker": "HCWB",
-          "last": 0.5789999961853027,
-          "pct_change_1d": -3.9800977812738836,
-          "opportunity_score": 42,
-          "risk_score": 92,
-          "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
-          "tags": []
-        },
-        {
           "ticker": "DTCK",
-          "last": 0.10000000149011612,
-          "pct_change_1d": -21.875002546585044,
+          "last": 0.09309999644756317,
+          "pct_change_1d": -6.900004939734861,
           "opportunity_score": 41,
           "risk_score": 92,
           "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
@@ -1195,71 +1177,80 @@
         },
         {
           "ticker": "FCUV",
-          "last": 5.590000152587891,
-          "pct_change_1d": -6.521736876951056,
+          "last": 5.400000095367432,
+          "pct_change_1d": -3.398927585583311,
           "opportunity_score": 40,
           "risk_score": 92,
           "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
           "tags": []
         },
         {
-          "ticker": "ADTX",
-          "last": 0.5070000290870667,
-          "pct_change_1d": -9.302322853721034,
+          "ticker": "ONCO",
+          "last": 0.6665999889373779,
+          "pct_change_1d": -12.058050833796619,
           "opportunity_score": 42,
-          "risk_score": 91,
+          "risk_score": 92,
           "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
           "tags": []
         },
         {
-          "ticker": "EJH",
-          "last": 0.578000009059906,
-          "pct_change_1d": 3.956837231720134,
-          "opportunity_score": 45,
-          "risk_score": 91,
-          "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
-          "tags": []
-        },
-        {
-          "ticker": "PASW",
-          "last": 0.16699999570846558,
-          "pct_change_1d": -4.571429398595084,
+          "ticker": "HCWB",
+          "last": 0.5975000262260437,
+          "pct_change_1d": 3.1951692854278013,
           "opportunity_score": 42,
-          "risk_score": 91,
-          "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
-          "tags": []
-        },
-        {
-          "ticker": "RVSN",
-          "last": 6.28000020980835,
-          "pct_change_1d": -4.414002348187063,
-          "opportunity_score": 40,
           "risk_score": 91,
           "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
           "tags": []
         },
         {
           "ticker": "VEEE",
-          "last": 0.44999998807907104,
-          "pct_change_1d": -51.9230776578482,
+          "last": 0.4650000035762787,
+          "pct_change_1d": 3.3333368654605344,
           "opportunity_score": 41,
           "risk_score": 91,
           "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
           "tags": []
         },
         {
-          "ticker": "JZ",
-          "last": 0.9380000233650208,
-          "pct_change_1d": -14.727272451416528,
-          "opportunity_score": 44,
+          "ticker": "RVSN",
+          "last": 6.269999980926514,
+          "pct_change_1d": -0.15923930808501296,
+          "opportunity_score": 40,
+          "risk_score": 91,
+          "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
+          "tags": []
+        },
+        {
+          "ticker": "BESS",
+          "last": 3.0,
+          "pct_change_1d": -12.280703711243035,
+          "opportunity_score": 39,
+          "risk_score": 91,
+          "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
+          "tags": []
+        },
+        {
+          "ticker": "ADTX",
+          "last": 0.5175999999046326,
+          "pct_change_1d": 2.0907239071865202,
+          "opportunity_score": 43,
+          "risk_score": 90,
+          "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
+          "tags": []
+        },
+        {
+          "ticker": "PASW",
+          "last": 0.1679999977350235,
+          "pct_change_1d": 0.5988036241052708,
+          "opportunity_score": 42,
           "risk_score": 90,
           "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
           "tags": []
         },
         {
           "ticker": "BHAT",
-          "last": 0.11299999803304672,
-          "pct_change_1d": -74.25968215654215,
+          "last": 0.0746999979019165,
+          "pct_change_1d": -33.89380601575712,
           "opportunity_score": 40,
           "risk_score": 90,
           "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
@@ -1267,109 +1258,118 @@
         },
         {
           "ticker": "ANEB",
-          "last": 0.4729999899864197,
-          "pct_change_1d": -2.0703975265677244,
+          "last": 0.44679999351501465,
+          "pct_change_1d": -5.539111422001774,
           "opportunity_score": 41,
+          "risk_score": 90,
+          "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
+          "tags": []
+        },
+        {
+          "ticker": "JZ",
+          "last": 0.8603000044822693,
+          "pct_change_1d": -8.283583896299618,
+          "opportunity_score": 43,
           "risk_score": 90,
           "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
           "tags": []
         },
         {
           "ticker": "AEHL",
-          "last": 0.5,
-          "pct_change_1d": -19.354839329913055,
+          "last": 0.5548999905586243,
+          "pct_change_1d": 10.979998111724854,
           "opportunity_score": 40,
-          "risk_score": 90,
-          "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
-          "tags": []
-        },
-        {
-          "ticker": "NXTT",
-          "last": 3.130000114440918,
-          "pct_change_1d": 8.30449829844213,
-          "opportunity_score": 43,
-          "risk_score": 90,
-          "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
-          "tags": []
-        },
-        {
-          "ticker": "BESS",
-          "last": 3.4200000762939453,
-          "pct_change_1d": -39.14590487658487,
-          "opportunity_score": 39,
-          "risk_score": 90,
-          "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
-          "tags": []
-        },
-        {
-          "ticker": "BRTX",
-          "last": 0.21850000321865082,
-          "pct_change_1d": -18.47015008360219,
-          "opportunity_score": 39,
           "risk_score": 89,
           "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
           "tags": []
         },
         {
-          "ticker": "ZNB",
-          "last": 0.25,
-          "pct_change_1d": 4.166668994973155,
-          "opportunity_score": 40,
+          "ticker": "EJH",
+          "last": 0.6000999808311462,
+          "pct_change_1d": 3.823524467964101,
+          "opportunity_score": 46,
+          "risk_score": 89,
+          "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
+          "tags": []
+        },
+        {
+          "ticker": "NXTT",
+          "last": 3.059999942779541,
+          "pct_change_1d": -2.2364271278590753,
+          "opportunity_score": 43,
           "risk_score": 89,
           "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
           "tags": []
         },
         {
           "ticker": "AURE",
-          "last": 1.75,
-          "pct_change_1d": -12.935322969993301,
+          "last": 1.7549999952316284,
+          "pct_change_1d": 0.28571401323591594,
           "opportunity_score": 42,
           "risk_score": 89,
           "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
           "tags": []
         },
         {
+          "ticker": "ZNB",
+          "last": 0.25130000710487366,
+          "pct_change_1d": 0.5200028419494629,
+          "opportunity_score": 41,
+          "risk_score": 89,
+          "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
+          "tags": []
+        },
+        {
+          "ticker": "BRTX",
+          "last": 0.19660000503063202,
+          "pct_change_1d": -10.022882318268744,
+          "opportunity_score": 38,
+          "risk_score": 89,
+          "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
+          "tags": []
+        },
+        {
           "ticker": "BIYA",
-          "last": 2.390000104904175,
-          "pct_change_1d": 18.316837993629733,
+          "last": 2.180000066757202,
+          "pct_change_1d": -8.78661208909831,
+          "opportunity_score": 41,
+          "risk_score": 89,
+          "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
+          "tags": []
+        },
+        {
+          "ticker": "OLOX",
+          "last": 0.8130999803543091,
+          "pct_change_1d": -7.70715134647978,
           "opportunity_score": 42,
           "risk_score": 88,
           "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
           "tags": []
         },
         {
-          "ticker": "SPRC",
-          "last": 0.5230000019073486,
-          "pct_change_1d": -7.269504932706994,
-          "opportunity_score": 43,
+          "ticker": "LNZA",
+          "last": 9.425000190734863,
+          "pct_change_1d": -7.507354476452899,
+          "opportunity_score": 44,
           "risk_score": 88,
           "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
           "tags": []
         },
         {
-          "ticker": "WSHP",
-          "last": 22.530000686645508,
-          "pct_change_1d": -45.04877881305974,
-          "opportunity_score": 40,
-          "risk_score": 88,
-          "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
-          "tags": []
-        },
-        {
-          "ticker": "STFS",
-          "last": 0.07800000160932541,
-          "pct_change_1d": -22.77227832328894,
+          "ticker": "BFRG",
+          "last": 0.49639999866485596,
+          "pct_change_1d": -7.388062257494732,
           "opportunity_score": 41,
           "risk_score": 88,
           "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
           "tags": []
         },
         {
-          "ticker": "OLOX",
-          "last": 0.8809999823570251,
-          "pct_change_1d": -14.466018754515197,
-          "opportunity_score": 42,
-          "risk_score": 87,
+          "ticker": "WSHP",
+          "last": 15.997400283813477,
+          "pct_change_1d": -28.995118525247896,
+          "opportunity_score": 39,
+          "risk_score": 88,
           "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
           "tags": []
         }
@@ -1382,9 +1382,9 @@
     }
   },
   "evidence_pack_index": {
-    "base_path": "public/evidence_packs/2026-02-23/0408",
+    "base_path": "public/evidence_packs/2026-02-23/1638",
     "format": "json",
-    "n_packs_written": 164,
+    "n_packs_written": 161,
     "note": "Individual per-asset evidence packs stored separately."
   },
   "evidence": {
