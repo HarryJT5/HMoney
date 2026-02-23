@@ -12,17 +12,19 @@ on:
     # Last run at 21:00 UTC
     - cron: "0 21 * * 1-5"
 
+concurrency:
+  group: hmoney-intraday
+  cancel-in-progress: true
+
 jobs:
   run:
     runs-on: ubuntu-latest
-    concurrency:
-      group: hmoney-main
-      cancel-in-progress: true
 
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: true
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
@@ -54,54 +56,46 @@ jobs:
           HMONEY_LOCAL_TZ: "America/Los_Angeles"
           UNIVERSE_SHARDS: "10"
           UNIVERSE_SHARD_INDEX: ${{ steps.shard.outputs.index }}
+
+          # ✅ Publish targets (GitHub Pages serves from docs/)
+          HMONEY_EVIDENCE_PACK_BASE: "docs/evidence_packs"
+          HMONEY_STATE_JSON: "docs/state.json"
+          HMONEY_DAILY_BRIEF_MD: "docs/daily_brief.md"
+          HMONEY_DAILY_BRIEF_HTML: "docs/daily_brief.html"
         run: |
           python -m src.pipeline
 
-      - name: Mirror lightweight outputs to docs/ for GitHub Pages (preserve docs/index.html)
+      - name: Commit intraday outputs (docs only)
         run: |
-          mkdir -p docs
+          set -euo pipefail
 
-          # Copy only the lightweight artifacts that are meant to be served on Pages.
-          # IMPORTANT: do NOT touch docs/index.html (dashboard is hand-maintained).
-          cp -f public/state.json docs/state.json
-          cp -f public/daily_brief.html docs/daily_brief.html
-          cp -f public/daily_brief.md docs/daily_brief.md
-
-          # Patch docs/state.json so evidence_pack_index.base_path is docs-relative (no "public/" prefix)
-          python - <<'PY'
-          import json
-          from pathlib import Path
-
-          p = Path("docs/state.json")
-          if not p.exists():
-              print("docs/state.json missing; nothing to patch")
-              raise SystemExit(0)
-
-          s = json.loads(p.read_text(encoding="utf-8"))
-          epi = s.get("evidence_pack_index") or {}
-          bp = (epi.get("base_path") or "").lstrip("/")
-
-          if bp.startswith("public/"):
-              bp = bp[len("public/"):]
-          epi["base_path"] = bp
-
-          s["evidence_pack_index"] = epi
-          p.write_text(json.dumps(s, indent=2), encoding="utf-8")
-          print("docs/state.json base_path =", bp)
-          PY
-
-      - name: Commit intraday outputs (public + docs lightweight)
-        run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
 
-          # public (repo artifacts)
-          git add public/state.json public/daily_brief.md public/daily_brief.html || true
+          # Stage publish artifacts
+          git add -A docs
+          git add data/forced_movers.json || true
 
-          # docs (Pages artifacts) -- intentionally NOT adding docs/index.html
-          git add docs/state.json docs/daily_brief.md docs/daily_brief.html || true
+          # Preserve hand-maintained dashboard file
+          git reset docs/index.html || true
 
-          git commit -m "Intraday HMoney update" || echo "No changes"
+          # Nothing to commit? exit cleanly
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
 
-          git pull --rebase origin main || true
-          git push
+          git commit -m "Intraday HMoney update"
+
+          # Sync + push (avoid dirty-tree rebase failure)
+          for i in 1 2 3; do
+            git pull --rebase --autostash origin main || true
+            if git push origin main; then
+              exit 0
+            fi
+            echo "Push failed, retrying..."
+            sleep $((i*5))
+          done
+
+          echo "Push failed after retries"
+          exit 1
