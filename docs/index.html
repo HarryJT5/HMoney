@@ -156,6 +156,23 @@
       resize:vertical;
       min-height:60px;
     }
+
+    /* AI debug line */
+    .aiDebugLine{
+      margin-top:10px;
+      padding:10px 12px;
+      border:1px solid rgba(34,48,71,0.7);
+      border-radius:14px;
+      background: rgba(10,14,20,0.28);
+      font-size:11px;
+      color:var(--muted);
+      line-height:1.35;
+      display:none;
+    }
+    .aiDebugLine strong{color:var(--text); font-weight:600}
+    .aiDebugLine .ok{color:var(--good)}
+    .aiDebugLine .bad{color:var(--bad)}
+    .aiDebugLine .warn{color:var(--warn)}
   </style>
 </head>
 
@@ -267,6 +284,9 @@
         Tip: press <span class="mono">Ctrl+Enter</span> to send
       </div>
     </div>
+
+    <!-- NEW: Visible fetched/missing debug status -->
+    <div class="aiDebugLine" id="aiDebug"></div>
 
     <div class="drawer" id="aiAnswer" style="display:none"></div>
   </div>
@@ -398,13 +418,6 @@
     return el("a", {href, target:"_blank", rel:"noopener noreferrer", ...extraAttrs}, [text]);
   }
 
-  function chip(k, v){
-    return el("div", {class:"chip"}, [
-      el("span", {class:"m"}, [k + ": "]),
-      el("span", {}, [v]),
-    ]);
-  }
-
   // ----------------------------
   // State cache for AI
   // ----------------------------
@@ -496,6 +509,9 @@
     return s;
   }
 
+  // Slightly loosened detection:
+  // - still prefers known universe tickers
+  // - BUT also allows common equity-like tokens (2–5 chars) so comparisons don’t silently drop.
   function extractTickersFromText(text){
     const raw = (text || "").toUpperCase();
     const tokens = raw.match(/[A-Z^][A-Z0-9^.-]{0,14}/g) || [];
@@ -503,7 +519,7 @@
     const stop = new Set([
       "A","AN","AND","ARE","AS","AT","BE","BUT","BY","CAN","DID","DO","FOR","FROM","HAVE","HOW","I","IN","IS","IT",
       "ME","MY","NO","NOT","OF","ON","OR","PUT","RED","SELL","BUY","HOLD","SHOULD","THE","THIS","THAT","TO","UP",
-      "WHAT","WHEN","WHERE","WHY","WITH","YOU","YOLO","LOL","LMAO","AI","HMONEY"
+      "WHAT","WHEN","WHERE","WHY","WITH","YOU","YOLO","LOL","LMAO","AI","HMONEY","VS","VERSUS","COMPARE"
     ]);
 
     const out = [];
@@ -519,8 +535,9 @@
       const inUniverse = (__TICKER_SET && __TICKER_SET.has(tok));
       const looksLikeCrypto = /-USD$/.test(tok);
       const looksLikeCaret = /^\^[A-Z0-9]{1,8}$/.test(tok);
+      const looksLikeEquity = /^[A-Z][A-Z0-9.-]{1,5}$/.test(tok) && !looksLikeCrypto && !looksLikeCaret;
 
-      if (!(inUniverse || looksLikeCrypto || looksLikeCaret)) continue;
+      if (!(inUniverse || looksLikeCrypto || looksLikeCaret || looksLikeEquity)) continue;
 
       if (!seen.has(tok)){
         seen.add(tok);
@@ -555,6 +572,55 @@
     return await fetchJson(path);
   }
 
+  function renderAIDebug({ basePath, tickers, includeOn, packOk, packErr, rowOk, workerMeta }){
+    const box = document.getElementById("aiDebug");
+    if (!tickers || !tickers.length){
+      box.style.display = "none";
+      box.innerHTML = "";
+      return;
+    }
+
+    const parts = [];
+
+    parts.push(`<div><strong>Detected:</strong> <span class="mono">${tickers.join(", ")}</span></div>`);
+    parts.push(`<div><strong>Auto-fetch:</strong> ${includeOn ? `<span class="ok">ON</span>` : `<span class="warn">OFF</span>`} • <strong>Base path:</strong> <span class="mono">${basePath || "—"}</span></div>`);
+
+    // Packs
+    const packBits = tickers.map(t => {
+      if (!includeOn) return `<span class="mono">${t}</span>: <span class="warn">skipped</span>`;
+      if (packOk[t]) return `<span class="mono">${t}</span>: <span class="ok">✅ fetched</span>`;
+      const err = packErr[t] ? String(packErr[t]) : "missing";
+      return `<span class="mono">${t}</span>: <span class="bad">❌ missing</span> <span class="mono muted">(${err})</span>`;
+    });
+    parts.push(`<div><strong>Packs:</strong> ${packBits.join(" • ")}</div>`);
+
+    // Table rows
+    const rowBits = tickers.map(t => {
+      if (rowOk[t]) return `<span class="mono">${t}</span>: <span class="ok">✅ found</span>`;
+      return `<span class="mono">${t}</span>: <span class="bad">❌ not in highlights tables</span>`;
+    });
+    parts.push(`<div><strong>Table-row fallback:</strong> ${rowBits.join(" • ")}</div>`);
+
+    if (workerMeta){
+      const usedPacks = Array.isArray(workerMeta.used_packs) ? workerMeta.used_packs.join(", ") : "";
+      const usedRows = Array.isArray(workerMeta.used_table_rows) ? workerMeta.used_table_rows.join(", ") : "";
+      const missing = Array.isArray(workerMeta.missing_fast_verify) ? workerMeta.missing_fast_verify.join(", ") : "";
+      const model = workerMeta.model_used || "";
+
+      const metaLine = [
+        usedPacks ? `used packs: ${usedPacks}` : null,
+        usedRows ? `used rows: ${usedRows}` : null,
+        missing ? `fast-verify for: ${missing}` : null,
+        model ? `model: ${model}` : null,
+      ].filter(Boolean).join(" • ");
+
+      if (metaLine) parts.push(`<div><strong>Worker meta:</strong> <span class="mono">${metaLine}</span></div>`);
+    }
+
+    box.innerHTML = parts.join("");
+    box.style.display = "block";
+  }
+
   async function askAI(question, autoInclude){
     const status = document.getElementById("aiStatus");
     const ans = document.getElementById("aiAnswer");
@@ -562,7 +628,9 @@
     ans.innerHTML = `<div class="small muted">Thinking…</div>`;
 
     const ctx = {
-      state: __HMONEY_STATE ? slimStateForAI(__HMONEY_STATE) : null
+      state: __HMONEY_STATE ? slimStateForAI(__HMONEY_STATE) : null,
+      // Extra instruction helps even if the Worker prompt is weak
+      instruction: "Context-first: use ticker_packs (preferred), then ticker_table_rows, then fast-verify links. Avoid generic company descriptions unless asked."
     };
 
     // Detect tickers mentioned (multi supported)
@@ -573,6 +641,9 @@
     const tickerPacks = {};
     const tickerPackErrors = {};
     const tickerTableRows = {};
+
+    const packOk = {};
+    const rowOk = {};
 
     // Auto-fetch packs for mentioned tickers (if enabled)
     if (autoInclude && tickers.length && __BASE_PATH){
@@ -587,9 +658,19 @@
       for (const r of results){
         if (r.ok){
           tickerPacks[r.sym] = slimPackForAI(r.pack);
+          packOk[r.sym] = true;
         } else {
           tickerPackErrors[r.sym] = String(r.err);
+          packOk[r.sym] = false;
         }
+      }
+    } else {
+      // mark as skipped/missing
+      for (const sym of tickers){
+        packOk[sym] = false;
+        if (!autoInclude) tickerPackErrors[sym] = "auto-fetch disabled";
+        else if (!__BASE_PATH) tickerPackErrors[sym] = "missing base_path";
+        else tickerPackErrors[sym] = "not fetched";
       }
     }
 
@@ -599,6 +680,9 @@
         const rows = findTickerRowsInTables(__HMONEY_STATE, sym);
         if (rows && rows.length){
           tickerTableRows[sym] = rows;
+          rowOk[sym] = true;
+        } else {
+          rowOk[sym] = false;
         }
       }
     }
@@ -615,9 +699,20 @@
     if (Object.keys(tickerTableRows).length) ctx.ticker_table_rows = tickerTableRows;
     if (Object.keys(tickerPackErrors).length) ctx.ticker_pack_errors = tickerPackErrors;
 
+    // Show debug immediately (before Worker)
+    renderAIDebug({
+      basePath: __BASE_PATH,
+      tickers,
+      includeOn: !!autoInclude,
+      packOk,
+      packErr: tickerPackErrors,
+      rowOk
+    });
+
     status.textContent = "Asking…";
 
-    const payload = { question, context: ctx };
+    // Send tickers at top-level too (Worker can use either)
+    const payload = { question, tickers, context: ctx };
 
     try{
       const r = await fetch(HMONEY_AI_ENDPOINT, {
@@ -627,7 +722,13 @@
       });
 
       const data = await r.json().catch(() => null);
-      if (!r.ok || !data || !data.ok){
+
+      // Accept both shapes:
+      // - { ok:true, answer:"..." }
+      // - { answer:"..." }
+      const ok = !!(data && (data.ok === true || typeof data.answer === "string"));
+
+      if (!r.ok || !data || !ok){
         const detail = data ? JSON.stringify(data, null, 2) : "(no JSON returned)";
         ans.innerHTML = `<div class="err">AI request failed.</div><pre class="small muted" style="white-space:pre-wrap">${detail}</pre>`;
         status.textContent = "Error";
@@ -637,6 +738,18 @@
       const text = (data.answer || "").toString().trim();
       ans.innerHTML = `<div style="white-space:pre-wrap; line-height:1.35">${text || "(empty response)"}</div>`;
       status.textContent = "Ready";
+
+      // Update debug with Worker meta (if provided)
+      renderAIDebug({
+        basePath: __BASE_PATH,
+        tickers,
+        includeOn: !!autoInclude,
+        packOk,
+        packErr: tickerPackErrors,
+        rowOk,
+        workerMeta: data.meta || null
+      });
+
     }catch(e){
       ans.innerHTML = `<div class="err">AI request error: ${String(e)}</div>`;
       status.textContent = "Error";
@@ -947,7 +1060,7 @@
         document.getElementById("benchStatus").textContent = "Missing evidence_pack_index.base_path in state.json";
       }
 
-      // Find-a-ticker drawer handlers (still useful, but no longer required for AI)
+      // Find-a-ticker drawer handlers
       const input = document.getElementById("tickerInput");
       const btn = document.getElementById("loadTickerBtn");
       async function doLoad(){
@@ -962,7 +1075,6 @@
           __LAST_PACK = pack;
           __LAST_SYMBOL = sym;
 
-          // Render minimal drawer (reuse existing drawer renderer if you have it elsewhere)
           drawer.innerHTML = `<div class="ok">Loaded pack for <span class="mono">${sym}</span>. (AI will also auto-fetch from questions now.)</div>
             <div class="hint">Tip: ask “Explain ${sym}” in the AI box.</div>`;
         }catch(e){
