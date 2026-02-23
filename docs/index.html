@@ -112,7 +112,6 @@
       padding:12px;
       background: rgba(10,14,20,0.35);
     }
-    .drawer h3{margin:0 0 10px; font-size:13px}
     .cols{display:grid; grid-template-columns: 1fr 1fr; gap:12px}
     @media (max-width: 980px){ .cols{grid-template-columns:1fr} }
     .list{display:flex; flex-direction:column; gap:8px}
@@ -123,6 +122,19 @@
     .ok{color:var(--good); font-size:12px}
     .muted{color:var(--muted)}
     .footer{margin-top:14px; color:var(--muted); font-size:11px}
+
+    /* ----------------------------
+       MVP+ Highlights layout
+       ---------------------------- */
+    .cols3{display:grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap:12px}
+    @media (max-width: 980px){ .cols3{grid-template-columns:1fr} }
+    .miniCard{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:12px;
+      background: rgba(10,14,20,0.35);
+    }
+    .miniCard h3{margin:0 0 10px; font-size:13px}
   </style>
 </head>
 
@@ -173,6 +185,40 @@
       </div>
 
       <div class="drawer" id="drawer" style="display:none"></div>
+    </div>
+  </div>
+
+  <div style="height:12px"></div>
+
+  <!-- ----------------------------
+       MVP+ Highlights (NEW)
+       ---------------------------- -->
+  <div class="card" id="highlightsCard">
+    <div class="sectionTitle">
+      <h2>Highlights</h2>
+      <div class="small" id="hlMeta">—</div>
+    </div>
+    <div class="small muted" style="margin-bottom:8px">
+      Diagnostic shortlists from the current run. Click tickers to open Yahoo. Click Opp/Risk/Discount/RSI to open methodology.
+    </div>
+
+    <div class="cols3">
+      <div class="miniCard">
+        <h3>🟢 Top setups</h3>
+        <div id="hlSetups"></div>
+      </div>
+      <div class="miniCard">
+        <h3>🔴 Top structural risk</h3>
+        <div id="hlRisk"></div>
+      </div>
+      <div class="miniCard">
+        <h3>🟡 Cross-currents</h3>
+        <div id="hlMixed"></div>
+      </div>
+    </div>
+
+    <div class="hint" style="margin-top:10px">
+      If this section shows “not available”, your <span class="mono">state.json</span> likely doesn’t include per-ticker summary rows yet. Paste <span class="mono">docs/state.json</span> here and I’ll wire it precisely.
     </div>
   </div>
 
@@ -443,6 +489,169 @@
     return null;
   }
 
+  // ----------------------------
+  // MVP+ Highlights (NEW)
+  // ----------------------------
+  function pickThresholds(state){
+    // Try common places; default to your calibrated thresholds
+    const t = state.thresholds || state.config || state.params || {};
+    const opp = Number(t.opp_green_threshold ?? t.oppGreenThreshold ?? 60);
+    const risk = Number(t.risk_red_threshold ?? t.riskRedThreshold ?? 70);
+    return {
+      opp_green_threshold: Number.isFinite(opp) ? opp : 60,
+      risk_red_threshold: Number.isFinite(risk) ? risk : 70,
+    };
+  }
+
+  function pickAssetRows(state){
+    // We will lock this to the exact correct key after you paste docs/state.json.
+    const candidates = [
+      state.assets,
+      state.asset_rows,
+      state.asset_summaries,
+      state.rows,
+      state.table,
+      state.universe?.assets,
+      state.universe?.rows,
+      state.summary?.assets,
+      state.data?.assets,
+    ];
+    for (const c of candidates){
+      if (Array.isArray(c) && c.length && typeof c[0] === "object") return c;
+    }
+    return null;
+  }
+
+  function normalizeAssetRow(a){
+    const symbol = (a?.symbol ?? a?.ticker ?? a?.sym ?? a?.SYMBOL ?? a?.asset?.symbol ?? a?.asset?.ticker ?? null);
+    if (!symbol) return null;
+
+    const scoresObj = a?.scores || a?.score || null;
+    const marketObj = a?.market || a?.mkt || null;
+    const linksObj = a?.links || null;
+
+    const opp = Number(scoresObj?.opportunity_score ?? a?.opportunity_score ?? a?.opportunity ?? a?.opp);
+    const risk = Number(scoresObj?.structural_risk_score ?? a?.structural_risk_score ?? a?.structural_risk ?? a?.risk);
+    const discRaw = (scoresObj?.discount_score ?? a?.discount_score ?? a?.discount ?? null);
+    const disc = (discRaw === null || discRaw === undefined) ? null : Number(discRaw);
+
+    const rsiRaw = (marketObj?.rsi_14 ?? a?.rsi_14 ?? a?.rsi ?? null);
+    const rsi = (rsiRaw === null || rsiRaw === undefined) ? null : Number(rsiRaw);
+
+    const chgRaw = (marketObj?.pct_change_1d ?? a?.pct_change_1d ?? a?.pctChange1d ?? null);
+    const chg1d = (chgRaw === null || chgRaw === undefined) ? null : Number(chgRaw);
+
+    if (!Number.isFinite(opp) || !Number.isFinite(risk)) return null;
+
+    const quote = linksObj?.quote || quoteUrl(symbol);
+
+    return {
+      symbol: String(symbol),
+      opp,
+      risk,
+      disc: (Number.isFinite(disc) ? disc : null),
+      rsi: (Number.isFinite(rsi) ? rsi : null),
+      chg1d: (Number.isFinite(chg1d) ? chg1d : null),
+      quote,
+    };
+  }
+
+  function computeHighlights(rows, thresholds, limit=15){
+    const oppTh = thresholds.opp_green_threshold;
+    const riskTh = thresholds.risk_red_threshold;
+
+    function setupRank(r){
+      // higher opp, higher discount, lower risk
+      const disc = (r.disc === null ? 50 : r.disc);
+      return (0.60 * r.opp) + (0.25 * disc) + (0.15 * (100 - r.risk));
+    }
+
+    const setups = rows
+      .filter(r => r.opp >= oppTh && r.risk < riskTh)
+      .sort((a,b) => setupRank(b) - setupRank(a))
+      .slice(0, limit);
+
+    const risk = rows
+      .filter(r => r.risk >= riskTh && r.opp < oppTh)
+      .sort((a,b) => b.risk - a.risk)
+      .slice(0, limit);
+
+    const mixed = rows
+      .filter(r => r.opp >= oppTh && r.risk >= riskTh)
+      .sort((a,b) => ((b.opp + b.risk)/2) - ((a.opp + a.risk)/2))
+      .slice(0, limit);
+
+    return { setups, risk, mixed };
+  }
+
+  function renderHighlightsTable(targetId, rows){
+    const host = document.getElementById(targetId);
+    host.innerHTML = "";
+
+    if (!rows || !rows.length){
+      host.appendChild(el("div", {class:"small muted"}, ["No entries this run."]));
+      return;
+    }
+
+    const tbl = el("table", {}, []);
+    const thead = el("thead", {}, [el("tr", {}, [
+      el("th", {}, ["Ticker"]),
+      el("th", {class:"num"}, [link(methodologyHrefForHeader("opp"), "Opp", {class:"mono"})]),
+      el("th", {class:"num"}, [link(methodologyHrefForHeader("risk"), "Risk", {class:"mono"})]),
+      el("th", {class:"num"}, [link(methodologyHrefForHeader("discount"), "Discount", {class:"mono"})]),
+      el("th", {class:"num"}, [link(methodologyHrefForHeader("rsi"), "RSI", {class:"mono"})]),
+      el("th", {class:"num"}, ["% Chg 1D"]),
+    ])]);
+    const tbody = el("tbody", {}, []);
+
+    for (const r of rows){
+      const tr = el("tr", {}, [
+        el("td", {}, [link(r.quote, r.symbol, {class:"mono"})]),
+        el("td", {class:"num"}, [fmtInt(r.opp)]),
+        el("td", {class:"num"}, [fmtInt(r.risk)]),
+        el("td", {class:"num"}, [r.disc === null ? "—" : fmtInt(r.disc)]),
+        el("td", {class:"num"}, [r.rsi === null ? "—" : fmt(r.rsi, 1)]),
+        el("td", {class:`num ${badgeForDelta((() => {
+          if (r.chg1d === null || r.chg1d === undefined) return null;
+          let v = Number(r.chg1d);
+          if (!Number.isFinite(v)) return null;
+          if (Math.abs(v) <= 0.25) v *= 100;
+          return v;
+        })())}`}, [
+          link(r.quote, (r.chg1d === null ? "—" : fmtPctChange1d(r.chg1d)), {class:"mono"})
+        ]),
+      ]);
+      tbody.appendChild(tr);
+    }
+
+    tbl.appendChild(thead);
+    tbl.appendChild(tbody);
+    host.appendChild(tbl);
+  }
+
+  function renderHighlights(state){
+    const rowsRaw = pickAssetRows(state);
+    const meta = document.getElementById("hlMeta");
+
+    if (!rowsRaw){
+      meta.textContent = "Not available (state has no per-ticker summary rows)";
+      document.getElementById("hlSetups").innerHTML = `<div class="small muted">Highlights not available: <span class="mono">state.json</span> doesn’t include a per-ticker list yet.</div>`;
+      document.getElementById("hlRisk").innerHTML = `<div class="small muted">Paste <span class="mono">docs/state.json</span> here and I’ll wire this precisely.</div>`;
+      document.getElementById("hlMixed").innerHTML = `<div class="small muted">Once wired, this runs instantly (no evidence pack fetch needed).</div>`;
+      return;
+    }
+
+    const normalized = rowsRaw.map(normalizeAssetRow).filter(Boolean);
+    const thresholds = pickThresholds(state);
+    const h = computeHighlights(normalized, thresholds, 15);
+
+    meta.textContent = `${fmtInt(normalized.length)} assets • thresholds: Opp≥${fmtInt(thresholds.opp_green_threshold)} • Risk≥${fmtInt(thresholds.risk_red_threshold)}`;
+
+    renderHighlightsTable("hlSetups", h.setups);
+    renderHighlightsTable("hlRisk", h.risk);
+    renderHighlightsTable("hlMixed", h.mixed);
+  }
+
   function renderDrawer(pack, symbol){
     const drawer = document.getElementById("drawer");
     drawer.style.display = "block";
@@ -621,6 +830,7 @@
 
       renderSnapshot(state);
       renderPosture(state);
+      renderHighlights(state); // NEW
 
       // Preload benchmarks
       if (basePath){
