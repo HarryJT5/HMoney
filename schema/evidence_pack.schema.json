@@ -7,6 +7,7 @@
   "required": [
     "schema_version",
     "pack_id",
+    "run_id",
     "generated_at_utc",
     "as_of_utc",
     "asset",
@@ -25,6 +26,10 @@
       "type": "string",
       "description": "Unique identifier for this pack (UUID recommended)."
     },
+    "run_id": {
+      "type": "string",
+      "description": "Identifier for the pipeline run (e.g., YYYY-MM-DD/HHMM)."
+    },
     "generated_at_utc": {
       "type": "string",
       "format": "date-time"
@@ -34,7 +39,7 @@
       "format": "date-time"
     },
     "data_freshness_sec": {
-      "type": "integer",
+      "type": ["integer", "null"],
       "minimum": 0
     },
     "asset": {
@@ -47,14 +52,14 @@
           "type": "string",
           "enum": ["equity", "etf", "crypto"]
         },
-        "name": { "type": "string" },
-        "exchange": { "type": "string" },
-        "sector": { "type": "string" },
-        "industry": { "type": "string" }
+        "name": { "type": ["string", "null"] },
+        "exchange": { "type": ["string", "null"] },
+        "sector": { "type": ["string", "null"] },
+        "industry": { "type": ["string", "null"] }
       }
     },
     "portfolio_context": {
-      "type": "object",
+      "type": ["object", "null"],
       "additionalProperties": false,
       "properties": {
         "weight_pct": {
@@ -70,29 +75,31 @@
       "additionalProperties": false,
       "required": ["last_price"],
       "properties": {
-  "last_price": { "type": "number" },
-  "currency": { "type": "string" },
+        "last_price": { "type": "number" },
+        "currency": { "type": ["string", "null"] },
 
-  "volume": { "type": ["number", "null"] },
-  "avg_volume_20d": { "type": ["number", "null"] },
+        "pct_change_1d": { "type": ["number", "null"] },
 
-  "ma_50": { "type": ["number", "null"] },
-  "ma_200": { "type": ["number", "null"] },
+        "volume": { "type": ["number", "null"] },
+        "avg_volume_20d": { "type": ["number", "null"] },
 
-  "rsi_14": { "type": ["number", "null"] },
-  "pct_off_52w_high": { "type": ["number", "null"] },
-  "atr_pct": { "type": ["number", "null"] }
-}
+        "ma_50": { "type": ["number", "null"] },
+        "ma_200": { "type": ["number", "null"] },
+
+        "rsi_14": { "type": ["number", "null"] },
+        "pct_off_52w_high": { "type": ["number", "null"] },
+        "atr_pct": { "type": ["number", "null"] }
+      }
     },
     "fundamentals": {
       "type": ["object", "null"],
       "additionalProperties": false,
       "properties": {
-        "market_cap": { "type": "number" },
-        "ttm_revenue": { "type": "number" },
-        "ttm_net_income": { "type": "number" },
-        "free_cash_flow": { "type": "number" },
-        "debt_to_equity": { "type": "number" }
+        "market_cap": { "type": ["number", "null"] },
+        "ttm_revenue": { "type": ["number", "null"] },
+        "ttm_net_income": { "type": ["number", "null"] },
+        "free_cash_flow": { "type": ["number", "null"] },
+        "debt_to_equity": { "type": ["number", "null"] }
       }
     },
     "scores": {
@@ -146,9 +153,7 @@
           "type": "array",
           "items": { "type": "string" }
         },
-        "notes": {
-          "type": "string"
-        }
+        "notes": { "type": ["string", "null"] }
       }
     }
   }

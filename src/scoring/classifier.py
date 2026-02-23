@@ -33,12 +33,13 @@ class ScoredRow:
 def _pct_rank(series: pd.Series, higher_is_better: bool = True) -> pd.Series:
     """
     Percentile rank in [0,1]. NaNs remain NaN.
-    If higher_is_better=False, we rank the negative so "lower" becomes "better".
+    Forces numeric conversion so None -> NaN safely.
     """
-    s = series.copy()
+    s = pd.to_numeric(series, errors="coerce")
+
     if not higher_is_better:
         s = -s
-    # rank(pct=True) gives 0..1, but ties may compress; that's fine.
+
     return s.rank(pct=True, na_option="keep")
 
 
@@ -55,61 +56,49 @@ def _to_0_100(x) -> int:
 
 
 def score_universe(features: pd.DataFrame) -> pd.DataFrame:
-    """
-    Input: DataFrame indexed by symbol, with numeric feature columns:
-    - pct_off_52w_high (0..1, higher = more discounted)
-    - trend_200 (price/ma200 - 1, higher = better)
-    - atr_pct (higher = more volatile/risky)
-    - dollar_volume_20d (higher = more liquid/safer)
-
-    Returns features + percentiles + final scores.
-    """
     df = features.copy()
 
-    # Percentiles
-    df["p_discount"] = _pct_rank(df["pct_off_52w_high"], higher_is_better=True)
-    df["p_trend"] = _pct_rank(df["trend_200"], higher_is_better=True)
-    df["p_vol"] = _pct_rank(df["atr_pct"], higher_is_better=False)  # lower vol is better for "opportunity"
-    # For risk we want high vol => high risk, so also keep:
-    df["p_vol_risk"] = _pct_rank(df["atr_pct"], higher_is_better=True)
+    # Percentiles (0..1)
+    df["p_discount"] = _pct_rank(df["pct_off_52w_high"], higher_is_better=True)   # higher = more off highs
+    df["p_trend"] = _pct_rank(df["trend_200"], higher_is_better=True)            # higher = better trend
+    df["p_low_vol"] = _pct_rank(df["atr_pct"], higher_is_better=False)           # lower vol => higher percentile
+    df["p_vol_risk"] = _pct_rank(df["atr_pct"], higher_is_better=True)           # higher vol => higher risk
 
-    # Illiquidity: lower dollar volume = worse (more risk)
-    if "dollar_volume_20d" in df.columns and df["dollar_volume_20d"].notna().any():
+    has_liq = "dollar_volume_20d" in df.columns and df["dollar_volume_20d"].notna().any()
+    if has_liq:
         df["p_liquidity_good"] = _pct_rank(df["dollar_volume_20d"], higher_is_better=True)
         df["p_illiquidity_risk"] = 1.0 - df["p_liquidity_good"]
-        has_liq = True
     else:
         df["p_liquidity_good"] = np.nan
         df["p_illiquidity_risk"] = np.nan
-        has_liq = False
 
-    # Opportunity: discount + trend + low vol
+    # Opportunity components
     opp_components = {
         "discount": (df["p_discount"], CONFIG.opp_w_discount),
         "trend": (df["p_trend"], CONFIG.opp_w_trend),
-        "low_vol": (df["p_vol"], CONFIG.opp_w_low_vol),
+        "low_vol": (df["p_low_vol"], CONFIG.opp_w_low_vol),
     }
 
-    # Structural risk: high vol + drawdown + illiquidity
+    # Structural risk components
     risk_components = {
         "vol": (df["p_vol_risk"], CONFIG.risk_w_vol),
-        "drawdown": (df["p_discount"], CONFIG.risk_w_drawdown),  # discount proxy doubles as drawdown proxy
-        "illiquidity": (df["p_illiquidity_risk"], CONFIG.risk_w_illiquidity),
+        "drawdown_proxy": (df["p_discount"], CONFIG.risk_w_drawdown),
     }
+    if has_liq:
+        risk_components["illiquidity"] = (df["p_illiquidity_risk"], CONFIG.risk_w_illiquidity)
 
     def weighted_mean(components: dict) -> pd.Series:
         num = None
         den = None
         for _, (s, w) in components.items():
+            s = s.astype(float)
             if num is None:
                 num = s * w
                 den = s.notna().astype(float) * w
             else:
                 num = num + s * w
                 den = den + s.notna().astype(float) * w
-        # Avoid division by zero
-        out = num / den.replace(0, np.nan)
-        return out
+        return num / den.replace(0, np.nan)
 
     df["opportunity_raw"] = weighted_mean(opp_components)
     df["structural_risk_raw"] = weighted_mean(risk_components)
@@ -117,43 +106,41 @@ def score_universe(features: pd.DataFrame) -> pd.DataFrame:
     df["opportunity_score"] = df["opportunity_raw"].apply(_to_0_100)
     df["structural_risk_score"] = df["structural_risk_raw"].apply(_to_0_100)
 
-    # Discount score (optional but useful): basically p_discount
     df["discount_score"] = df["p_discount"].apply(lambda x: None if pd.isna(x) else _to_0_100(x))
+
+    # For later: keep a component-coverage measure for confidence
+    df["_opp_components_present"] = (
+        df["p_discount"].notna().astype(int)
+        + df["p_trend"].notna().astype(int)
+        + df["p_low_vol"].notna().astype(int)
+    )
+    df["_risk_components_present"] = (
+        df["p_vol_risk"].notna().astype(int)
+        + df["p_discount"].notna().astype(int)
+        + (df["p_illiquidity_risk"].notna().astype(int) if has_liq else 0)
+    )
 
     return df
 
 
 def classify_row(row: pd.Series) -> Tuple[str, float, str, list[str]]:
-    """
-    Maps scores -> 🟢🟡🔵🟠🔴 plus confidence and deployment_bias.
-    """
     opp = int(row.get("opportunity_score", 0))
     risk = int(row.get("structural_risk_score", 0))
 
-    # Data quality proxy for confidence: based on missing key features
-    missing = 0
-    for k in ["pct_off_52w_high", "trend_200", "atr_pct"]:
-        if pd.isna(row.get(k, np.nan)):
-            missing += 1
-    conf = 0.85 - 0.20 * missing
+    # Confidence = data completeness proxy (diagnostic)
+    opp_present = int(row.get("_opp_components_present", 0))
+    risk_present = int(row.get("_risk_components_present", 0))
+    # 3 opp comps, 2–3 risk comps
+    max_present = 6
+    present = min(max_present, opp_present + risk_present)
+    conf = 0.25 + (present / max_present) * 0.65  # 0.25..0.90
     conf = float(np.clip(conf, 0.25, 0.90))
 
     reasons: list[str] = []
-    if opp >= 75:
-        reasons.append("OPP_HIGH")
-    elif opp >= 60:
-        reasons.append("OPP_MID")
-    else:
-        reasons.append("OPP_LOW")
+    reasons.append("OPP_HIGH" if opp >= 75 else "OPP_MID" if opp >= 60 else "OPP_LOW")
+    reasons.append("RISK_VERY_HIGH" if risk >= 85 else "RISK_HIGH" if risk >= 70 else "RISK_OK")
 
-    if risk >= 85:
-        reasons.append("RISK_VERY_HIGH")
-    elif risk >= 70:
-        reasons.append("RISK_HIGH")
-    else:
-        reasons.append("RISK_OK")
-
-    # Classification logic: risk can override opportunity
+    # Risk overrides
     if risk >= CONFIG.red_min_risk:
         label = "🔴"
         bias = "avoid"

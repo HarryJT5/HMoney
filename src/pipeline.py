@@ -1,289 +1,381 @@
-"""
-src/pipeline.py
-
-Main entry point:
-- Load portfolio
-- Build universe (portfolio + curated + optional sp500 file)
-- Fetch OHLCV
-- Compute technical snapshots
-- Cross-sectional scoring (percentiles)
-- Build Evidence Packs (schema-constrained)
-- Validate each pack against schema
-- Write public outputs
-"""
-
+# src/pipeline.py
 from __future__ import annotations
 
-import json
-import uuid
+import os
 from datetime import datetime, timezone
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List
 
 import numpy as np
 import pandas as pd
-from jsonschema import Draft202012Validator
 
-from src.config import CONFIG
-from src.providers.yfinance_provider import fetch_history_batch
-from src.scoring.technicals import compute_snapshot
-from src.scoring.classifier import score_universe, classify_row
-from src.render.state_builder import build_state
+from src.universe.selector import load_universe_all, load_forced_movers, select_universe
+from src.universe.forced_movers import compute_forced_movers_from_prices, write_forced_movers_json
+from src.render.state_builder import build_state_json
+from src.render.evidence_packs import write_evidence_pack
 from src.render.newsletter import write_newsletter
+from src.providers.yfinance_provider import fetch_market_snapshot, fetch_history_features
+from src.scoring.classifier import score_universe, classify_row
 
 
-# -----------------------------------------------------------
-# Helpers
-# -----------------------------------------------------------
-
-def utc_now_iso() -> str:
-    return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
+def _utc_now() -> datetime:
+    return datetime.now(timezone.utc)
 
 
-def ensure_dirs() -> None:
-    Path(CONFIG.public_dir).mkdir(parents=True, exist_ok=True)
-    Path(CONFIG.evidence_dir).mkdir(parents=True, exist_ok=True)
-
-
-def load_portfolio() -> pd.DataFrame:
-    for fname in CONFIG.portfolio_candidates:
-        if Path(fname).exists():
-            df = pd.read_csv(fname)
-            df.columns = [c.strip().lower() for c in df.columns]
-
-            if "ticker" not in df.columns:
-                raise ValueError(f"{fname} must include column 'ticker'")
-            if "weight_pct" not in df.columns:
-                raise ValueError(f"{fname} must include column 'weight_pct'")
-
-            df["ticker"] = df["ticker"].astype(str).str.strip().str.upper()
-            df["tag"] = df["tag"].astype(str).str.strip() if "tag" in df.columns else ""
-
-            return df[["ticker", "weight_pct", "tag"]]
-
-    return pd.DataFrame(columns=["ticker", "weight_pct", "tag"])
-
-
-def load_sp500_symbols(path: str) -> List[str]:
-    p = Path(path)
-    if not p.exists():
+def _top(df: pd.DataFrame, col: str, n: int = 25, ascending: bool = False) -> List[Dict[str, Any]]:
+    if df.empty or col not in df.columns:
         return []
 
-    df = pd.read_csv(p)
-    df.columns = [c.strip().lower() for c in df.columns]
-
-    col = None
-    for candidate in ["symbol", "ticker"]:
-        if candidate in df.columns:
-            col = candidate
-            break
-
-    if col is None:
-        return []
-
-    return df[col].astype(str).str.strip().str.upper().tolist()
-
-
-def build_universe(portfolio_df: pd.DataFrame) -> Tuple[List[str], Dict[str, Dict[str, Any]]]:
-    portfolio_map: Dict[str, Dict[str, Any]] = {}
-
-    if not portfolio_df.empty:
-        for _, r in portfolio_df.iterrows():
-            sym = str(r["ticker"]).upper()
-            portfolio_map[sym] = {
-                "weight_pct": float(r["weight_pct"]) if not pd.isna(r["weight_pct"]) else 0.0,
-                "tag": str(r.get("tag", "") or ""),
+    d = df.sort_values(col, ascending=ascending).head(n).copy()
+    rows: List[Dict[str, Any]] = []
+    for _, r in d.iterrows():
+        rows.append(
+            {
+                "ticker": str(r.get("ticker", "")).upper(),
+                "last": float(r["last_price"]) if pd.notna(r.get("last_price", np.nan)) else None,
+                "pct_change_1d": float(r["pct_change_1d"]) if pd.notna(r.get("pct_change_1d", np.nan)) else None,
+                "opportunity_score": int(r.get("opportunity_score", 0)) if pd.notna(r.get("opportunity_score", 0)) else 0,
+                "risk_score": int(r.get("structural_risk_score", 0)) if pd.notna(r.get("structural_risk_score", 0)) else 0,
+                "summary": "Diagnostic snapshot based on recent price behavior relative to its own history.",
+                "tags": [],
             }
+        )
+    return rows
 
-    curated = [s.upper() for s in CONFIG.curated_tickers]
-    sp500 = load_sp500_symbols(CONFIG.sp500_csv_path) if CONFIG.include_sp500_file else []
-
-    universe = sorted(set(curated + sp500 + list(portfolio_map.keys())))
-    return universe, portfolio_map
-
-
-def load_schema_validator(schema_path: str) -> Draft202012Validator:
-    with open(schema_path, "r", encoding="utf-8") as f:
-        schema = json.load(f)
-
-    validator = Draft202012Validator(schema)
-    validator.check_schema(schema)
-    return validator
-
-
-# -----------------------------------------------------------
-# Evidence Pack Builder
-# -----------------------------------------------------------
-
-def build_evidence_pack(
-    symbol: str,
-    snap,
-    scored_row: pd.Series,
-    portfolio_ctx: Optional[Dict[str, Any]],
-    as_of_utc: str,
-    generated_at_utc: str,
-) -> Dict[str, Any]:
-
-    opp = int(scored_row.get("opportunity_score", 0))
-    risk = int(scored_row.get("structural_risk_score", 0))
-
-    disc_raw = scored_row.get("discount_score", None)
-    disc = None if pd.isna(disc_raw) else int(disc_raw)
-
-    label = str(scored_row.get("label", "🔵"))
-    conf = float(scored_row.get("confidence", 0.5))
-    bias = str(scored_row.get("deployment_bias", "hold"))
-    reasons = list(scored_row.get("reason_codes", []))
-
-    pack: Dict[str, Any] = {
-        "schema_version": "1.0.0",
-        "pack_id": str(uuid.uuid4()),
-        "generated_at_utc": generated_at_utc,
-        "as_of_utc": as_of_utc,
-        "data_freshness_sec": 0,
-        "asset": {
-            "symbol": symbol,
-            "asset_type": "crypto" if "-USD" in symbol else "equity",
-        },
-        "market": {
-            "last_price": snap.last_price if snap.last_price is not None else 0.0,
-            "currency": "USD",
-            "volume": snap.volume,
-            "avg_volume_20d": snap.avg_volume_20d,
-            "ma_50": snap.ma_50,
-            "ma_200": snap.ma_200,
-            "rsi_14": snap.rsi_14,
-            "pct_off_52w_high": snap.pct_off_52w_high,
-            "atr_pct": snap.atr_pct,
-        },
-        "fundamentals": None,
-        "scores": {
-            "opportunity_score": opp,
-            "structural_risk_score": risk,
-            "discount_score": disc,
-        },
-        "classification": {"label": label, "confidence": conf},
-        "deployment_bias": bias,
-        "explainability": {"reason_codes": reasons, "notes": ""},
-    }
-
-    if portfolio_ctx is not None:
-        pack["portfolio_context"] = {
-            "weight_pct": float(portfolio_ctx.get("weight_pct", 0.0)),
-            "tag": str(portfolio_ctx.get("tag", "")),
-        }
-
-    return pack
-
-
-# -----------------------------------------------------------
-# Main Pipeline
-# -----------------------------------------------------------
 
 def main() -> None:
-    ensure_dirs()
+    mode = os.getenv("HMONEY_MODE", "intraday")
+    cadence = int(os.getenv("HMONEY_CADENCE_MIN", "15"))
+    shard_count = int(os.getenv("UNIVERSE_SHARDS", "10"))
+    target_size = int(os.getenv("HMONEY_TARGET_SIZE", "1100"))
 
-    generated_at = utc_now_iso()
-    as_of = utc_now_iso()
+    # Breadth thresholds (dashboard bars only)
+    opp_green_threshold = int(os.getenv("HMONEY_OPP_GREEN_THRESHOLD", "60"))
+    risk_red_threshold = int(os.getenv("HMONEY_RISK_RED_THRESHOLD", "70"))
 
-    portfolio_df = load_portfolio()
-    universe, portfolio_map = build_universe(portfolio_df)
+    universe_csv = os.getenv("HMONEY_UNIVERSE_CSV", "data/universe_all.csv")
+    forced_movers_path = os.getenv("HMONEY_FORCED_MOVERS_JSON", "data/forced_movers.json")
+    evidence_base = os.getenv("HMONEY_EVIDENCE_PACK_BASE", "public/evidence_packs")
 
-    if not universe:
-        raise RuntimeError("Universe is empty.")
+    # Daily brief outputs
+    brief_md = os.getenv("HMONEY_DAILY_BRIEF_MD", "public/daily_brief.md")
+    brief_html = os.getenv("HMONEY_DAILY_BRIEF_HTML", "public/daily_brief.html")
+    state_path = os.getenv("HMONEY_STATE_JSON", "public/state.json")
 
-    fetch = fetch_history_batch(
-        universe,
-        period=CONFIG.yf_period,
-        interval=CONFIG.yf_interval,
-        batch_size=CONFIG.max_batch_size,
-        throttle_sleep_sec=CONFIG.throttle_sleep_sec,
+    now = _utc_now()
+
+    # --- Macro panel (always included) ---
+    sentinels = [
+        "SPY", "QQQ", "DIA", "IWM", "VTI",
+        "VT", "VXUS", "VEA", "VWO",
+        "BND", "TLT",
+        "UUP", "^VIX",
+        "GLD", "SLV", "USO",
+        "BTC-USD",
+    ]
+    panel = sentinels[:]
+
+    universe_all = load_universe_all(universe_csv)
+    forced_movers = load_forced_movers(forced_movers_path, max_n=150)
+
+    selection = select_universe(
+        universe_all=universe_all,
+        target_size=target_size,
+        shard_count=shard_count,
+        cadence_minutes=cadence,
+        panel_tickers=panel,
+        sentinel_tickers=sentinels,
+        forced_movers=forced_movers,
+        now_utc=now,
     )
 
-    rows = []
-    snapshots: Dict[str, Any] = {}
+    # --- Snapshot fetch ---
+    df_market, quality = fetch_market_snapshot(selection.final)
 
-    for sym in universe:
-        hist = fetch.history_by_symbol.get(sym)
-        snap = compute_snapshot(hist) if hist is not None else compute_snapshot(pd.DataFrame())
-        snapshots[sym] = snap
+    # --- History feature fetch ---
+    df_hist_feats, hist_q = fetch_history_features(
+        selection.final,
+        period="1y",
+        interval="1d",
+        chunk_size=150,
+    )
 
-        feat = {
-            "symbol": sym,
-            "pct_off_52w_high": snap.pct_off_52w_high,
-            "trend_200": None if snap.ma_200 in (None, 0) else (snap.last_price / snap.ma_200 - 1) if snap.last_price else None,
-            "atr_pct": snap.atr_pct,
-            "dollar_volume_20d": None if snap.avg_volume_20d is None or snap.last_price is None else snap.avg_volume_20d * snap.last_price,
-        }
+    # Merge history features into df_market safely (avoid _x/_y collisions)
+    if df_market is not None and not df_market.empty and df_hist_feats is not None and not df_hist_feats.empty:
+        df_market = df_market.copy()
+        df_market["ticker"] = df_market["ticker"].astype(str).str.upper()
 
-        rows.append(feat)
-
-    feats = pd.DataFrame(rows).set_index("symbol")
-
-    scored = score_universe(feats)
-
-    labels, confs, biases, reasons_list = [], [], [], []
-
-    for sym, row in scored.iterrows():
-        label, conf, bias, reasons = classify_row(row)
-        labels.append(label)
-        confs.append(conf)
-        biases.append(bias)
-        reasons_list.append(reasons)
-
-    scored["label"] = labels
-    scored["confidence"] = confs
-    scored["deployment_bias"] = biases
-    scored["reason_codes"] = reasons_list
-
-    state = build_state(scored, as_of)
-    with open(CONFIG.state_path, "w", encoding="utf-8") as f:
-        json.dump(state, f, indent=2, allow_nan=False)
-
-    validator = load_schema_validator(CONFIG.schema_path)
-
-    errors = 0
-
-    for sym in universe:
-        snap = snapshots[sym]
-        row = scored.loc[sym]
-        portfolio_ctx = portfolio_map.get(sym)
-
-        pack = build_evidence_pack(
-            sym,
-            snap,
-            row,
-            portfolio_ctx,
-            as_of,
-            generated_at,
+        df_market = df_market.merge(
+            df_hist_feats.reset_index(),
+            on="ticker",
+            how="left",
+            suffixes=("", "_hist"),
         )
 
-        validation_errors = sorted(validator.iter_errors(pack), key=lambda e: e.path)
+        for c in ["ma_200", "pct_off_52w_high", "atr_pct", "dollar_volume_20d"]:
+            hist_c = f"{c}_hist"
+            if hist_c in df_market.columns:
+                if c in df_market.columns:
+                    df_market[c] = df_market[hist_c].combine_first(df_market[c])
+                else:
+                    df_market[c] = df_market[hist_c]
+                df_market = df_market.drop(columns=[hist_c])
 
-        if validation_errors:
-            errors += 1
-            msgs = "; ".join(
-                f"{'/'.join(str(p) for p in ve.path)}: {ve.message}"
-                for ve in validation_errors[:3]
-            )
-            pack["explainability"]["notes"] = f"Schema validation errors: {msgs}"
+    # Attach history notes to quality
+    if hist_q and "notes" in hist_q:
+        quality = quality or {}
+        quality.setdefault("notes", [])
+        quality["notes"].extend(hist_q.get("notes", []))
 
-        out_path = Path(CONFIG.evidence_dir) / f"{sym}.json"
-        with open(out_path, "w", encoding="utf-8") as f:
-            json.dump(pack, f, indent=2, allow_nan=False)
+    # If still no data, write minimal state and exit
+    if df_market is None or df_market.empty:
+        build_state_json(
+            as_of_utc=now,
+            legacy_market_bias="🔵",
+            legacy_opportunity_score=0,
+            legacy_structural_risk_score=0,
+            legacy_counts_by_label={"🟢": 0, "🟡": 0, "🔵": 0, "🟠": 0, "🔴": 0},
+            selection_meta={
+                "mode": mode,
+                "cadence_minutes": cadence,
+                "rotation": "per_run",
+                "target_size": target_size,
+                "actual_size": 0,
+                "panel_count": len(selection.panel),
+                "sentinels_count": len(selection.sentinels),
+                "forced_movers_count": len(selection.forced_movers),
+                "rolling_shard_count": len(selection.rolling_shard),
+                "panel_tickers": selection.panel,
+                "sentinel_tickers": selection.sentinels,
+                "forced_movers_tickers": selection.forced_movers,
+                "rolling_shard_tickers": selection.rolling_shard,
+                "shard_count": selection.shard_count,
+                "shard_index": selection.shard_index,
+                "time_bucket": selection.time_bucket,
+                "coverage_note": "No market data returned in this run.",
+                "opp_green_threshold": opp_green_threshold,
+                "risk_red_threshold": risk_red_threshold,
+                "data_provider": (quality or {}).get("data_provider", "yfinance"),
+                "success_rate_pct": (quality or {}).get("success_rate_pct"),
+                "missing_bars_count": (quality or {}).get("missing_bars_count"),
+                "skipped_tickers_count": (quality or {}).get("skipped_tickers_count"),
+                "errors_sample": (quality or {}).get("errors_sample", []),
+                "quality_notes": (quality or {}).get("notes", []),
+            },
+            df_scores=pd.DataFrame(),
+            tables={"pulled_back": [], "fragile": [], "mixed": []},
+            evidence_pack_base_path="public/evidence_packs/",
+            n_packs_written=0,
+            out_path=state_path,
+        )
 
-    # Newsletter generation
-    write_newsletter(
-        state_path=CONFIG.state_path,
-        evidence_dir=CONFIG.evidence_dir,
-        md_out=str(Path(CONFIG.public_dir) / "daily_brief.md"),
-        html_out=str(Path(CONFIG.public_dir) / "daily_brief.html"),
+        # Still render a brief (will be mostly empty but consistent)
+        try:
+            write_newsletter(state_path, "public/evidence_packs", brief_md, brief_html)
+        except Exception:
+            pass
+        return
+
+    # Normalize ticker casing
+    df_market["ticker"] = df_market["ticker"].astype(str).str.upper()
+
+    # --- Build features for classifier ---
+    df_features = pd.DataFrame({"ticker": df_market["ticker"]})
+    df_features["pct_off_52w_high"] = df_market["pct_off_52w_high"] if "pct_off_52w_high" in df_market.columns else np.nan
+
+    if "ma_200" in df_market.columns and "last_price" in df_market.columns:
+        ma200 = pd.to_numeric(df_market["ma_200"], errors="coerce")
+        lastp = pd.to_numeric(df_market["last_price"], errors="coerce")
+        df_features["trend_200"] = (lastp / ma200) - 1.0
+    else:
+        df_features["trend_200"] = np.nan
+
+    df_features["atr_pct"] = df_market["atr_pct"] if "atr_pct" in df_market.columns else np.nan
+
+    if "dollar_volume_20d" in df_market.columns:
+        df_features["dollar_volume_20d"] = df_market["dollar_volume_20d"]
+    elif "volume" in df_market.columns and "last_price" in df_market.columns:
+        vol = pd.to_numeric(df_market["volume"], errors="coerce")
+        lastp = pd.to_numeric(df_market["last_price"], errors="coerce")
+        df_features["dollar_volume_20d"] = vol * lastp
+    else:
+        df_features["dollar_volume_20d"] = np.nan
+
+    df_features = df_features.set_index("ticker")
+
+    # --- Score & classify ---
+    df_scored = score_universe(df_features)
+
+    labels: List[str] = []
+    confs: List[float] = []
+    biases: List[str] = []
+    reasons: List[list[str]] = []
+
+    for _, row in df_scored.iterrows():
+        lab, conf, bias, reason_codes = classify_row(row)
+        labels.append(lab)
+        confs.append(conf)
+        biases.append(bias)
+        reasons.append(reason_codes)
+
+    df_scored["label"] = labels
+    df_scored["confidence"] = confs
+    df_scored["deployment_bias"] = biases
+    df_scored["reason_codes"] = reasons
+
+    df_scores = df_scored.reset_index()[
+        [
+            "ticker",
+            "opportunity_score",
+            "structural_risk_score",
+            "discount_score",
+            "label",
+            "confidence",
+            "deployment_bias",
+            "reason_codes",
+        ]
+    ].copy()
+
+    # Merge scores into market rows
+    df_out = df_market.merge(df_scores, on="ticker", how="left")
+    df_out["opportunity_score"] = df_out["opportunity_score"].fillna(0).astype(int)
+    df_out["structural_risk_score"] = df_out["structural_risk_score"].fillna(0).astype(int)
+
+    # Tables
+    tables = {
+        "pulled_back": _top(df_out, "opportunity_score", n=25, ascending=False),
+        "fragile": _top(df_out, "structural_risk_score", n=25, ascending=False),
+        "mixed": [],
+    }
+
+    # Evidence packs for surfaced tickers
+    surfaced: set[str] = set()
+    for k in ("pulled_back", "fragile", "mixed"):
+        for row in tables.get(k, []):
+            surfaced.add(row["ticker"])
+    for t in selection.panel:
+        surfaced.add(t)
+    for t in selection.forced_movers:
+        surfaced.add(t)
+
+    pack_dir = f"{evidence_base}/{now.strftime('%Y-%m-%d')}/{now.strftime('%H%M')}"
+    n_packs_written = 0
+
+    by_ticker: Dict[str, pd.Series] = {str(r["ticker"]).upper(): r for _, r in df_out.iterrows()}
+
+    for t in sorted(surfaced):
+        r = by_ticker.get(t)
+        if r is None:
+            continue
+
+        market = {
+            "last_price": float(r["last_price"]) if pd.notna(r.get("last_price", np.nan)) else 0.0,
+            "pct_change_1d": float(r["pct_change_1d"]) if pd.notna(r.get("pct_change_1d", np.nan)) else None,  # ✅ NEW
+            "currency": "USD",
+            "volume": float(r["volume"]) if pd.notna(r.get("volume", np.nan)) else None,
+            "avg_volume_20d": None,
+            "ma_50": float(r["ma_50"]) if pd.notna(r.get("ma_50", np.nan)) else None,
+            "ma_200": float(r["ma_200"]) if pd.notna(r.get("ma_200", np.nan)) else None,
+            "rsi_14": float(r["rsi_14"]) if pd.notna(r.get("rsi_14", np.nan)) else None,
+            "pct_off_52w_high": float(r["pct_off_52w_high"]) if pd.notna(r.get("pct_off_52w_high", np.nan)) else None,
+            "atr_pct": float(r["atr_pct"]) if pd.notna(r.get("atr_pct", np.nan)) else None,
+        }
+
+        scores = {
+            "opportunity_score": int(r.get("opportunity_score", 0)),
+            "structural_risk_score": int(r.get("structural_risk_score", 0)),
+            "discount_score": int(r.get("discount_score")) if pd.notna(r.get("discount_score", np.nan)) else None,
+        }
+
+        classification = {
+            "label": str(r.get("label", "🔵")),
+            "confidence": float(r.get("confidence", 0.5)) if pd.notna(r.get("confidence", 0.5)) else 0.5,
+        }
+
+        deployment_bias = str(r.get("deployment_bias", "hold"))
+
+        reason_codes = r.get("reason_codes", [])
+        if not isinstance(reason_codes, list):
+            reason_codes = []
+
+        write_evidence_pack(
+            out_dir=pack_dir,
+            as_of_utc=now,
+            symbol=t,
+            asset_type="equity",
+            market=market,
+            scores=scores,
+            classification=classification,
+            deployment_bias=deployment_bias,
+            reason_codes=reason_codes,
+            notes="",
+        )
+        n_packs_written += 1
+
+    # Update forced movers
+    movers = compute_forced_movers_from_prices(df_market, max_n=120)
+    write_forced_movers_json(forced_movers_path, movers)
+
+    # State meta
+    selection_meta = {
+        "mode": mode,
+        "cadence_minutes": cadence,
+        "rotation": "per_run",
+        "target_size": target_size,
+        "actual_size": len(selection.final),
+        "panel_count": len(selection.panel),
+        "sentinels_count": len(selection.sentinels),
+        "forced_movers_count": len(selection.forced_movers),
+        "rolling_shard_count": len(selection.rolling_shard),
+        "panel_tickers": selection.panel,
+        "sentinel_tickers": selection.sentinels,
+        "forced_movers_tickers": selection.forced_movers,
+        "rolling_shard_tickers": selection.rolling_shard,
+        "shard_count": selection.shard_count,
+        "shard_index": selection.shard_index,
+        "time_bucket": selection.time_bucket,
+        "coverage_note": "Sample includes a fixed panel plus a rolling shard and forced movers.",
+        "opp_green_threshold": opp_green_threshold,
+        "risk_red_threshold": risk_red_threshold,
+        "data_provider": (quality or {}).get("data_provider", "yfinance"),
+        "success_rate_pct": (quality or {}).get("success_rate_pct"),
+        "missing_bars_count": (quality or {}).get("missing_bars_count"),
+        "skipped_tickers_count": (quality or {}).get("skipped_tickers_count"),
+        "errors_sample": (quality or {}).get("errors_sample", []),
+        "quality_notes": (quality or {}).get("notes", []),
+    }
+
+    legacy_market_bias = "🔵"
+    legacy_opportunity_score = int(df_scores["opportunity_score"].median()) if not df_scores.empty else 0
+    legacy_structural_risk_score = int(df_scores["structural_risk_score"].median()) if not df_scores.empty else 0
+
+    vc = df_scores["label"].value_counts().to_dict() if "label" in df_scores.columns else {}
+    counts = {
+        "🟢": int(vc.get("🟢", 0)),
+        "🟡": int(vc.get("🟡", 0)),
+        "🔵": int(vc.get("🔵", 0)),
+        "🟠": int(vc.get("🟠", 0)),
+        "🔴": int(vc.get("🔴", 0)),
+    }
+
+    build_state_json(
+        as_of_utc=now,
+        legacy_market_bias=legacy_market_bias,
+        legacy_opportunity_score=legacy_opportunity_score,
+        legacy_structural_risk_score=legacy_structural_risk_score,
+        legacy_counts_by_label=counts,
+        selection_meta=selection_meta,
+        df_scores=df_scores,
+        tables=tables,
+        evidence_pack_base_path=pack_dir,
+        n_packs_written=n_packs_written,
+        out_path=state_path,
     )
 
-    if errors:
-        print(f"[WARN] {errors} packs had schema validation issues.")
-    else:
-        print("[OK] All packs validated against schema.")
+    # Render daily brief from state + this run’s packs
+    try:
+        write_newsletter(state_path, pack_dir, brief_md, brief_html)
+    except Exception as e:
+        print(f"[warn] daily brief render failed: {e}")
 
 
 if __name__ == "__main__":

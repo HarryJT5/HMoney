@@ -2,59 +2,164 @@
 <html><head><meta charset='utf-8'/>
 <meta name='viewport' content='width=device-width, initial-scale=1'/>
 <title>HMoney Daily Brief</title>
-<style>body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;max-width:980px;margin:24px auto;padding:0 16px;}h1{font-size:22px} h2{font-size:18px;margin-top:18px}table{border-collapse:collapse;width:100%;margin:10px 0 18px}th,td{border:1px solid #ddd;padding:8px;font-size:13px}th{background:#f6f6f6;text-align:left}code{background:#f2f2f2;padding:2px 4px;border-radius:4px}.muted{color:#666}</style></head><body>
-<h1>Daily Brief — 2026-02-22T09:23:51+00:00</h1>
+<style>body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;max-width:980px;margin:24px auto;padding:0 16px;line-height:1.35}h1{font-size:22px;margin:0 0 8px} h2{font-size:18px;margin:18px 0 8px} h3{font-size:15px;margin:14px 0 6px}table{border-collapse:collapse;width:100%;margin:10px 0 18px}th,td{border:1px solid #ddd;padding:8px;font-size:13px;vertical-align:top}th{background:#f6f6f6;text-align:left}td.num, th.num{text-align:right;font-variant-numeric:tabular-nums}td.pos{background:#e8f5e9}td.mildneg{background:#fff3e0}td.neg{background:#ffebee}code{background:#f2f2f2;padding:2px 4px;border-radius:4px}blockquote{border-left:3px solid #ddd;margin:10px 0;padding:6px 10px;color:#333;background:#fafafa}.muted{color:#666}</style></head><body>
+<h1>Daily Brief — UTC 2026-02-23 02:48:31Z | Local 2026-02-22 18:48:31 America/Los_Angeles</h1>
 <div style='height:6px'></div>
-<h2>🟦 Market Posture: Quiet (diagnostic)</h2>
+<h2>Run Snapshot (diagnostic)</h2>
+<ul>
+<li>Universe: <b>724</b> tracked (target 1100)</li>
+<li>Coverage: <b>100.0%</b> success | missing bars: 0 | skipped: 0</li>
+<li>Presence denominator (for %): <b>724</b> (rows with ≥1 score available)</li>
+</ul>
 <div style='height:6px'></div>
-<p>### Signal bars (descriptive, not advice)</p>
-<p>- Pullback/Stabilization density: ⚪⚪⚪⚪⚪  <b>4/100</b></p>
-<p>- Breakdown/Fragility presence: ⚪⚪⚪⚪⚪  <b>5/100</b></p>
-<p>- Net tilt (setup minus fragility): 🟨🟨⚪⚪⚪  <b>Neutral</b></p>
+<h2>Benchmarks (context)</h2>
 <div style='height:6px'></div>
-<p>- Universe: <b>30</b> tracked assets</p>
+<p>These are widely-used market indicators shown for context alongside the cross-sectional posture.</p>
+<p><em>Coloring in the HTML version is directional (sign/magnitude), not advice.</em></p>
+<p><em>% Chg 1D updates during the session and can be noisy.</em></p>
 <div style='height:6px'></div>
-<h2>Market Overview (descriptive)</h2>
-<div style='height:6px'></div>
-<p>Across the tracked universe, most assets appear to be trading in relatively stable ranges. Very few names look meaningfully compressed relative to recent highs, and persistent breakdown conditions are not widespread. The model reads this as a calm but low-dislocation environment.</p>
-<div style='height:6px'></div>
-<p>In short: price behavior appears relatively stable, but broad discount-type conditions look limited.</p>
-<div style='height:6px'></div>
-<h2>Pullback &amp; Stabilization Characteristics</h2>
-<div style='height:6px'></div>
-<p>- Pullback/Stabilization bar: ⚪⚪⚪⚪⚪</p>
-<p>- Opportunity score: <b>4/100</b> (describes how many assets appear pulled back relative to recent highs without extreme breakdown traits).</p>
-<p>- On this scale, readings below ~20 typically align with sparse compression across the universe.</p>
-<p>- 1 of 30 tracked assets currently show pullback-with-stability characteristics.</p>
-<p>- Pullback-with-stability behavior appears isolated rather than broad.</p>
-<div style='height:6px'></div>
-<h2>Breakdown &amp; Fragility Characteristics</h2>
-<div style='height:6px'></div>
-<p>- Breakdown/Fragility bar: ⚪⚪⚪⚪⚪</p>
-<p>- Structural risk score: <b>5/100</b> (describes how many assets exhibit persistent downtrends, elevated volatility, or extended drawdowns).</p>
-<p>- On this scale, readings below ~20 typically align with broad technical stability rather than systemic stress.</p>
-<p>- 1 of 30 tracked assets currently show downtrend + elevated volatility characteristics.</p>
-<p>- Breakdown behavior appears isolated rather than systemic.</p>
-<div style='height:6px'></div>
-<p>_These signals describe observable price characteristics across the tracked universe. They are not forecasts, predictions, or investment recommendations._</p>
-<div style='height:6px'></div>
-<h2>🟢 Pulled Back Without Breakdown (Top)</h2>
-<p>_None currently._</p>
-<div style='height:6px'></div>
-<h2>🟡 Watchlist (Partial Pullback / Mixed Signals)</h2>
+<h3>US Equity</h3>
 <table>
-<thead><tr><th>Ticker</th><th>State</th><th>Opp</th><th>Risk</th><th>Discount</th><th>% off High</th><th>RSI</th><th>Δ200DMA</th></tr></thead>
+<thead><tr><th>Ticker</th><th>What it represents</th><th>Opp</th><th>Risk</th><th>% Chg 1D</th><th>% off High (drawdown)</th><th>Δ200DMA (trend)</th></tr></thead>
 <tbody>
-<tr><td>**BTC-USD**</td><td>🟡 Opportunistic</td><td>62</td><td>62</td><td>50</td><td>45.5%</td><td>37.5</td><td>-31.2%</td></tr>
+<tr><td class=''><b>SPY</b></td><td class=''>S&amp;P 500 (US large-cap)</td><td class='num'>50</td><td class='num'>16</td><td class='num pos'>0.7%</td><td class='num pos'>0.9%</td><td class='num pos'>5.9%</td></tr>
+<tr><td class=''><b>QQQ</b></td><td class=''>Nasdaq 100 (US growth/tech tilt)</td><td class='num'>52</td><td class='num'>22</td><td class='num pos'>0.9%</td><td class='num pos'>4.2%</td><td class='num pos'>4.3%</td></tr>
+<tr><td class=''><b>DIA</b></td><td class=''>Dow 30 (US large-cap)</td><td class='num'>52</td><td class='num'>17</td><td class='num pos'>0.3%</td><td class='num pos'>1.2%</td><td class='num pos'>7.8%</td></tr>
+<tr><td class=''><b>IWM</b></td><td class=''>US small-cap (Russell 2000)</td><td class='num'>54</td><td class='num'>22</td><td class='num pos'>0.4%</td><td class='num pos'>1.9%</td><td class='num pos'>12.0%</td></tr>
+<tr><td class=''><b>VTI</b></td><td class=''>US total market</td><td class='num'>50</td><td class='num'>17</td><td class='num pos'>0.6%</td><td class='num pos'>0.9%</td><td class='num pos'>6.1%</td></tr>
 </tbody></table>
 <div style='height:6px'></div>
-<h2>🟠 / 🔴 Persistent Downtrend or Elevated Volatility</h2>
+<h3>Global Equity</h3>
 <table>
-<thead><tr><th>Ticker</th><th>State</th><th>Opp</th><th>Risk</th><th>Discount</th><th>% off High</th><th>RSI</th><th>Δ200DMA</th></tr></thead>
+<thead><tr><th>Ticker</th><th>What it represents</th><th>Opp</th><th>Risk</th><th>% Chg 1D</th><th>% off High (drawdown)</th><th>Δ200DMA (trend)</th></tr></thead>
 <tbody>
-<tr><td>**ETH-USD**</td><td>🔴 Structural Risk</td><td>61</td><td>88</td><td>100</td><td>59.2%</td><td>35.1</td><td>-43.4%</td></tr>
+<tr><td class=''><b>VT</b></td><td class=''>Total world (US + Intl)</td><td class='num'>48</td><td class='num'>13</td><td class='num pos'>0.9%</td><td class='num pos'>0.0%</td><td class='num pos'>9.2%</td></tr>
+<tr><td class=''><b>VXUS</b></td><td class=''>International ex-US</td><td class='num'>49</td><td class='num'>11</td><td class='num pos'>1.2%</td><td class='num pos'>0.0%</td><td class='num pos'>14.3%</td></tr>
+<tr><td class=''><b>VEA</b></td><td class=''>Developed markets ex-US</td><td class='num'>50</td><td class='num'>11</td><td class='num pos'>1.1%</td><td class='num pos'>0.0%</td><td class='num pos'>15.8%</td></tr>
+<tr><td class=''><b>VWO</b></td><td class=''>Emerging markets</td><td class='num'>47</td><td class='num'>12</td><td class='num pos'>1.6%</td><td class='num pos'>0.0%</td><td class='num pos'>11.2%</td></tr>
+</tbody></table>
+<div style='height:6px'></div>
+<h3>Rates / USD / Vol</h3>
+<table>
+<thead><tr><th>Ticker</th><th>What it represents</th><th>Opp</th><th>Risk</th><th>% Chg 1D</th><th>% off High (drawdown)</th><th>Δ200DMA (trend)</th></tr></thead>
+<tbody>
+<tr><td class=''><b>BND</b></td><td class=''>US total bond market</td><td class='num'>47</td><td class='num'>8</td><td class='num mildneg'>-1.3%</td><td class='num pos'>0.4%</td><td class='num pos'>1.4%</td></tr>
+<tr><td class=''><b>TLT</b></td><td class=''>Long-duration US Treasuries</td><td class='num'>53</td><td class='num'>14</td><td class='num neg'>-23.4%</td><td class='num pos'>3.7%</td><td class='num pos'>1.7%</td></tr>
+<tr><td class=''><b>UUP</b></td><td class=''>US dollar strength proxy</td><td class='num'>52</td><td class='num'>19</td><td class='num neg'>-11.1%</td><td class='num pos'>7.8%</td><td class='num mildneg'>-1.5%</td></tr>
+<tr><td class=''><b>^VIX</b></td><td class=''>Volatility index (VIX)</td><td class='num'>62</td><td class='num'>87</td><td class='num mildneg'>-5.6%</td><td class='num pos'>63.5%</td><td class='num pos'>10.0%</td></tr>
+</tbody></table>
+<div style='height:6px'></div>
+<h3>Real Assets</h3>
+<table>
+<thead><tr><th>Ticker</th><th>What it represents</th><th>Opp</th><th>Risk</th><th>% Chg 1D</th><th>% off High (drawdown)</th><th>Δ200DMA (trend)</th></tr></thead>
+<tbody>
+<tr><td class=''><b>GLD</b></td><td class=''>Gold</td><td class='num'>63</td><td class='num'>29</td><td class='num pos'>2.0%</td><td class='num pos'>5.5%</td><td class='num pos'>30.9%</td></tr>
+<tr><td class=''><b>SLV</b></td><td class=''>Silver</td><td class='num'>67</td><td class='num'>49</td><td class='num pos'>7.9%</td><td class='num pos'>27.4%</td><td class='num pos'>63.5%</td></tr>
+<tr><td class=''><b>USO</b></td><td class=''>Oil (WTI proxy)</td><td class='num'>54</td><td class='num'>26</td><td class='num mildneg'>-0.4%</td><td class='num pos'>2.7%</td><td class='num pos'>11.0%</td></tr>
+</tbody></table>
+<div style='height:6px'></div>
+<h3>Crypto (context)</h3>
+<table>
+<thead><tr><th>Ticker</th><th>What it represents</th><th>Opp</th><th>Risk</th><th>% Chg 1D</th><th>% off High (drawdown)</th><th>Δ200DMA (trend)</th></tr></thead>
+<tbody>
+<tr><td class=''><b>BTC-USD</b></td><td class=''>Bitcoin (risk appetite proxy)</td><td class='num'>47</td><td class='num'>42</td><td class='num mildneg'>-4.8%</td><td class='num pos'>48.0%</td><td class='num neg'>-34.6%</td></tr>
+</tbody></table>
+<div style='height:6px'></div>
+<h2>Market Posture (macro / cross-sectional, not advice)</h2>
+<p><b>Posture:</b> Quiet</p>
+<p><b>Plain English:</b> Across the tracked universe, neither pullback/stabilization patterns nor fragility/breakdown patterns are especially widespread right now.</p>
+<div style='height:6px'></div>
+<h3>Evidence (why this posture)</h3>
+<ul>
+<li>Setup-like presence (pullback + stabilization): <b>72/724</b> (≈9.9%)</li>
+<li>Fragility-like presence (weakness + instability): <b>181/724</b> (≈25.0%)</li>
+<li>Net balance: <b>-15.1</b> pct-pts (setup-like minus fragility-like)</li>
+<li>Medians vs thresholds: Opportunity <b>49.0</b> (≥60) | Risk <b>47.0</b> (≥70)</li>
+<li>Quadrants (both scores available: <b>724</b>):</li>
+</ul>
+<p>  - hi-opp/lo-risk: 8.4%</p>
+<p>  - lo-opp/hi-risk: 23.5%</p>
+<p>  - hi-opp/hi-risk: 1.5%</p>
+<p>  - lo-opp/lo-risk: 66.6%</p>
+<ul>
+<li>Dispersion (middle 50% of tickers):</li>
+</ul>
+<p>  - Opportunity Q25–Q75: 45.0–54.0 (IQR 9.0)</p>
+<p>  - Risk Q25–Q75: 29.0–69.2 (IQR 40.2)</p>
+<div style='height:6px'></div>
+<p><b>Auto explanation (short):</b></p>
+<ul>
+<li>Macro/inter-firm summary of how common setup-like vs fragility-like patterns are (not a forecast).</li>
+<li>Presence: setup-like 72/724 (~9.9%); fragility-like 181/724 (~25.0%); net balance -15.1 pct-pts.</li>
+<li>Medians vs thresholds: Opportunity 49.0 (≥60); Risk 47.0 (≥70).</li>
+<li>Quadrants (both scores present, n=724): hi-opp/lo-risk 8.4%, lo-opp/hi-risk 23.5%, hi-opp/hi-risk 1.5%, lo-opp/lo-risk 66.6%.</li>
+</ul>
+<div style='height:6px'></div>
+<p><em>Full explanation is available in public/state.json (posture.explanation).</em></p>
+<div style='height:6px'></div>
+<h3>Signal bars (descriptive)</h3>
+<ul>
+<li>Pullback/Stabilization presence: ⚪⚪⚪⚪⚪  <b>9.9%</b></li>
+<li>Breakdown/Fragility presence: 🟥⚪⚪⚪⚪  <b>25.0%</b></li>
+<li>Net tilt: 🟨⚪⚪⚪⚪  <b>-15.1</b> pct-pts</li>
+</ul>
+<div style='height:6px'></div>
+<blockquote><b>How to read:</b> This is macro (inter-firm) breadth. “Setup-like” and “fragility-like” describe price behavior relative to each asset’s own history. Not forecasts.</blockquote>
+<div style='height:6px'></div>
+<h2>Tables (sample highlights)</h2>
+<div style='height:6px'></div>
+<p><b>Column definitions (quick):</b></p>
+<ul>
+<li><b>Opp</b> = pullback + stabilization score (setup-like) relative to the asset’s own history</li>
+<li><b>Risk</b> = weakness + instability score (fragility-like) relative to the asset’s own history</li>
+<li><b>% Chg 1D</b> = short-horizon context (updates during session; can be noisy)</li>
+<li><b>% off High</b> = distance from a recent high (drawdown-style)</li>
+<li><b>Δ200DMA</b> = distance from 200-day moving average</li>
+<li><b>RSI</b> = momentum oscillator (context only)</li>
+</ul>
+<p><em>HTML coloring is directional (sign/magnitude), not advice.</em></p>
+<div style='height:6px'></div>
+<h3>🟢 Pulled Back / Stabilizing (Top)</h3>
+<table>
+<thead><tr><th>Ticker</th><th>State</th><th>Opp</th><th>Risk</th><th>% Chg 1D</th><th>Discount</th><th>% off High</th><th>RSI</th><th>Δ200DMA</th></tr></thead>
+<tbody>
+<tr><td class=''><b>FNKO</b></td><td class=''>🟢 High-Confidence Discount</td><td class='num'>75</td><td class='num'>65</td><td class='num pos'>18.6%</td><td class='num'>77</td><td class='num pos'>61.2%</td><td class=''>—</td><td class='num pos'>40.8%</td></tr>
+</tbody></table>
+<div style='height:6px'></div>
+<h3>🔴 Breakdown / Fragile (Top)</h3>
+<table>
+<thead><tr><th>Ticker</th><th>State</th><th>Opp</th><th>Risk</th><th>% Chg 1D</th><th>Discount</th><th>% off High</th><th>RSI</th><th>Δ200DMA</th></tr></thead>
+<tbody>
+<tr><td class=''><b>PFSA</b></td><td class=''>🔴 Structural Risk</td><td class='num'>40</td><td class='num'>93</td><td class='num neg'>-14.8%</td><td class='num'>99</td><td class='num pos'>99.2%</td><td class=''>—</td><td class='num neg'>-94.2%</td></tr>
+<tr><td class=''><b>DTCK</b></td><td class=''>🔴 Structural Risk</td><td class='num'>41</td><td class='num'>92</td><td class='num neg'>-21.9%</td><td class='num'>99</td><td class='num pos'>98.4%</td><td class=''>—</td><td class='num neg'>-86.9%</td></tr>
+<tr><td class=''><b>VEEE</b></td><td class=''>🔴 Structural Risk</td><td class='num'>41</td><td class='num'>92</td><td class='num neg'>-51.9%</td><td class='num'>96</td><td class='num pos'>94.0%</td><td class=''>—</td><td class='num neg'>-79.1%</td></tr>
+<tr><td class=''><b>BHAT</b></td><td class=''>🔴 Structural Risk</td><td class='num'>40</td><td class='num'>91</td><td class='num neg'>-74.3%</td><td class='num'>98</td><td class='num pos'>97.9%</td><td class=''>—</td><td class='num neg'>-92.6%</td></tr>
+<tr><td class=''><b>BESS</b></td><td class=''>🔴 Structural Risk</td><td class='num'>39</td><td class='num'>90</td><td class='num neg'>-39.1%</td><td class='num'>85</td><td class='num pos'>74.7%</td><td class=''>—</td><td class='num neg'>-56.3%</td></tr>
+<tr><td class=''><b>AEHL</b></td><td class=''>🔴 Structural Risk</td><td class='num'>40</td><td class='num'>90</td><td class='num neg'>-19.4%</td><td class='num'>93</td><td class='num pos'>91.1%</td><td class=''>—</td><td class='num neg'>-80.2%</td></tr>
+<tr><td class=''><b>ADIL</b></td><td class=''>🔴 Structural Risk</td><td class='num'>41</td><td class='num'>90</td><td class='num mildneg'>-4.3%</td><td class='num'>92</td><td class='num pos'>89.3%</td><td class=''>—</td><td class='num neg'>-73.1%</td></tr>
+<tr><td class=''><b>IMG</b></td><td class=''>🔴 Structural Risk</td><td class='num'>42</td><td class='num'>90</td><td class='num mildneg'>-4.6%</td><td class='num'>97</td><td class='num pos'>95.9%</td><td class=''>—</td><td class='num neg'>-87.8%</td></tr>
+<tr><td class=''><b>JZ</b></td><td class=''>🔴 Structural Risk</td><td class='num'>43</td><td class='num'>90</td><td class='num neg'>-14.7%</td><td class='num'>93</td><td class='num pos'>91.0%</td><td class=''>—</td><td class='num neg'>-49.0%</td></tr>
+<tr><td class=''><b>BRTX</b></td><td class=''>🔴 Structural Risk</td><td class='num'>38</td><td class='num'>89</td><td class='num neg'>-18.5%</td><td class='num'>91</td><td class='num pos'>89.1%</td><td class=''>—</td><td class='num neg'>-84.5%</td></tr>
+<tr><td class=''><b>EDBL</b></td><td class=''>🔴 Structural Risk</td><td class='num'>41</td><td class='num'>89</td><td class='num mildneg'>-6.1%</td><td class='num'>95</td><td class='num pos'>93.8%</td><td class=''>—</td><td class='num neg'>-81.2%</td></tr>
+<tr><td class=''><b>STFS</b></td><td class=''>🔴 Structural Risk</td><td class='num'>41</td><td class='num'>89</td><td class='num neg'>-22.8%</td><td class='num'>97</td><td class='num pos'>96.7%</td><td class=''>—</td><td class='num neg'>-87.5%</td></tr>
+</tbody></table>
+<div style='height:6px'></div>
+<h3>🟡 High Opportunity + High Risk (Cross-currents)</h3>
+<table>
+<thead><tr><th>Ticker</th><th>State</th><th>Opp</th><th>Risk</th><th>% Chg 1D</th><th>Discount</th><th>% off High</th><th>RSI</th><th>Δ200DMA</th></tr></thead>
+<tbody>
+<tr><td class=''><b>PHOE</b></td><td class=''>🔴 Structural Risk</td><td class='num'>73</td><td class='num'>86</td><td class='num pos'>11.7%</td><td class='num'>91</td><td class='num pos'>88.2%</td><td class=''>—</td><td class='num pos'>33.4%</td></tr>
+<tr><td class=''><b>CGTL</b></td><td class=''>🟠 Deterioration</td><td class='num'>69</td><td class='num'>82</td><td class='num mildneg'>-1.5%</td><td class='num'>73</td><td class='num pos'>57.4%</td><td class=''>—</td><td class='num pos'>108.8%</td></tr>
+<tr><td class=''><b>^VIX</b></td><td class=''>🔴 Structural Risk</td><td class='num'>62</td><td class='num'>87</td><td class='num mildneg'>-5.6%</td><td class='num'>78</td><td class='num pos'>63.5%</td><td class=''>—</td><td class='num pos'>10.0%</td></tr>
+<tr><td class=''><b>BNAI</b></td><td class=''>🟠 Deterioration</td><td class='num'>74</td><td class='num'>73</td><td class='num mildneg'>-0.7%</td><td class='num'>83</td><td class='num pos'>69.8%</td><td class=''>—</td><td class='num pos'>213.0%</td></tr>
+<tr><td class=''><b>NWTG</b></td><td class=''>🟠 Deterioration</td><td class='num'>65</td><td class='num'>82</td><td class='num pos'>7.7%</td><td class='num'>94</td><td class='num pos'>92.5%</td><td class=''>—</td><td class='num pos'>0.9%</td></tr>
+<tr><td class=''><b>NCEW</b></td><td class=''>🟠 Deterioration</td><td class='num'>74</td><td class='num'>72</td><td class='num pos'>2.4%</td><td class='num'>76</td><td class='num pos'>59.9%</td><td class=''>—</td><td class='num pos'>27.2%</td></tr>
+<tr><td class=''><b>RGC</b></td><td class=''>🟠 Deterioration</td><td class='num'>73</td><td class='num'>72</td><td class='num neg'>-12.8%</td><td class='num'>78</td><td class='num pos'>62.6%</td><td class=''>—</td><td class='num pos'>55.9%</td></tr>
+<tr><td class=''><b>CURR</b></td><td class=''>🟠 Deterioration</td><td class='num'>66</td><td class='num'>72</td><td class='num pos'>1.0%</td><td class='num'>67</td><td class='num pos'>46.3%</td><td class=''>—</td><td class='num pos'>21.4%</td></tr>
+<tr><td class=''><b>NTHI</b></td><td class=''>🟠 Deterioration</td><td class='num'>65</td><td class='num'>71</td><td class='num pos'>15.7%</td><td class='num'>63</td><td class='num pos'>39.9%</td><td class=''>—</td><td class='num pos'>25.5%</td></tr>
+<tr><td class=''><b>VELO</b></td><td class=''>🟠 Deterioration</td><td class='num'>61</td><td class='num'>74</td><td class='num neg'>-11.8%</td><td class='num'>75</td><td class='num pos'>59.0%</td><td class=''>—</td><td class='num pos'>13.5%</td></tr>
 </tbody></table>
 <div style='height:6px'></div>
 <div style='height:6px'></div>
-<p>_Diagnostic view of current cross-sectional price behavior. Not advice._</p>
+<p><em>Disclaimer: Diagnostic view of cross-sectional price behavior. Not investment advice.</em></p>
 </body></html>
