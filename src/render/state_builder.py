@@ -46,6 +46,31 @@ def _pct(x: Optional[float]) -> Optional[float]:
     return float(round(float(x), 1))
 
 
+def _normalize_site_path(p: str) -> str:
+    """
+    Convert filesystem-ish paths to a site-relative path for the dashboard.
+
+    Examples:
+      - "public/evidence_packs/2026-02-23/1638" -> "evidence_packs/2026-02-23/1638"
+      - "docs/evidence_packs/..."               -> "evidence_packs/..."
+      - "/evidence_packs/..."                  -> "evidence_packs/..."
+    """
+    if not p:
+        return ""
+    s = str(p).replace("\\", "/").strip()
+
+    while s.startswith("./"):
+        s = s[2:]
+    while s.startswith("/"):
+        s = s[1:]
+
+    for prefix in ("public/", "docs/"):
+        if s.startswith(prefix):
+            s = s[len(prefix) :]
+
+    return s.rstrip("/")
+
+
 def _derive_posture(
     opp_med: Optional[float],
     risk_med: Optional[float],
@@ -157,7 +182,7 @@ def _make_posture_explanation(
         "patterns are across many tickers. It is diagnostic and does not imply direction, timing, or an action."
     )
 
-    # 2) Definitions (brief but researchable)
+    # 2) Definitions
     parts.append(
         f"Definitions: 'Setup-like' means pullback-and-stabilization characteristics (Opportunity score) relative to each asset’s own history; "
         f"'Fragility/breakdown-like' means weakness-and-instability characteristics (Structural Risk score) relative to each asset’s own history. "
@@ -427,6 +452,10 @@ def build_state_json(
         },
 
         "market": {
+            # Optional headline field for UI (pipeline may populate)
+            "primary_benchmark": selection_meta.get("market_primary_benchmark"),
+            "pct_change_1d": selection_meta.get("market_pct_change_1d"),
+
             "benchmarks": selection_meta.get("benchmarks", []),
             "volatility_proxies": selection_meta.get("volatility_proxies", []),
         },
@@ -553,7 +582,7 @@ def build_state_json(
         },
 
         "evidence_pack_index": {
-            "base_path": evidence_pack_base_path,
+            "base_path": _normalize_site_path(evidence_pack_base_path),
             "format": "json",
             "n_packs_written": int(n_packs_written),
             "note": "Individual per-asset evidence packs stored separately.",

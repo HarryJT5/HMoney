@@ -54,14 +54,15 @@ def main() -> None:
 
     universe_csv = os.getenv("HMONEY_UNIVERSE_CSV", "data/universe_all.csv")
     forced_movers_path = os.getenv("HMONEY_FORCED_MOVERS_JSON", "data/forced_movers.json")
-    evidence_base = os.getenv("HMONEY_EVIDENCE_PACK_BASE", "public/evidence_packs")
 
-    # Daily brief outputs
-    brief_md = os.getenv("HMONEY_DAILY_BRIEF_MD", "public/daily_brief.md")
-    brief_html = os.getenv("HMONEY_DAILY_BRIEF_HTML", "public/daily_brief.html")
-    state_path = os.getenv("HMONEY_STATE_JSON", "public/state.json")
+    # ✅ IMPORTANT: default publish path = docs/ (GitHub Pages)
+    evidence_base = os.getenv("HMONEY_EVIDENCE_PACK_BASE", "docs/evidence_packs")
+    brief_md = os.getenv("HMONEY_DAILY_BRIEF_MD", "docs/daily_brief.md")
+    brief_html = os.getenv("HMONEY_DAILY_BRIEF_HTML", "docs/daily_brief.html")
+    state_path = os.getenv("HMONEY_STATE_JSON", "docs/state.json")
 
     now = _utc_now()
+    pack_dir = f"{evidence_base}/{now.strftime('%Y-%m-%d')}/{now.strftime('%H%M')}"
 
     # --- Macro panel (always included) ---
     sentinels = [
@@ -163,14 +164,13 @@ def main() -> None:
             },
             df_scores=pd.DataFrame(),
             tables={"pulled_back": [], "fragile": [], "mixed": []},
-            evidence_pack_base_path="public/evidence_packs/",
+            evidence_pack_base_path=pack_dir,
             n_packs_written=0,
             out_path=state_path,
         )
 
-        # Still render a brief (will be mostly empty but consistent)
         try:
-            write_newsletter(state_path, "public/evidence_packs", brief_md, brief_html)
+            write_newsletter(state_path, pack_dir, brief_md, brief_html)
         except Exception:
             pass
         return
@@ -257,9 +257,7 @@ def main() -> None:
     for t in selection.forced_movers:
         surfaced.add(t)
 
-    pack_dir = f"{evidence_base}/{now.strftime('%Y-%m-%d')}/{now.strftime('%H%M')}"
     n_packs_written = 0
-
     by_ticker: Dict[str, pd.Series] = {str(r["ticker"]).upper(): r for _, r in df_out.iterrows()}
 
     for t in sorted(surfaced):
@@ -269,7 +267,7 @@ def main() -> None:
 
         market = {
             "last_price": float(r["last_price"]) if pd.notna(r.get("last_price", np.nan)) else 0.0,
-            "pct_change_1d": float(r["pct_change_1d"]) if pd.notna(r.get("pct_change_1d", np.nan)) else None,  # ✅ NEW
+            "pct_change_1d": float(r["pct_change_1d"]) if pd.notna(r.get("pct_change_1d", np.nan)) else None,
             "currency": "USD",
             "volume": float(r["volume"]) if pd.notna(r.get("volume", np.nan)) else None,
             "avg_volume_20d": None,
@@ -315,6 +313,22 @@ def main() -> None:
     movers = compute_forced_movers_from_prices(df_market, max_n=120)
     write_forced_movers_json(forced_movers_path, movers)
 
+    # ---- Market mini summaries for state.json (benchmarks + vol proxies)
+    by_mkt: Dict[str, pd.Series] = {str(r["ticker"]).upper(): r for _, r in df_market.iterrows()}
+
+    def _mini(t: str) -> Dict[str, Any]:
+        r = by_mkt.get(t)
+        if r is None:
+            return {"ticker": t, "last": None, "pct_change_1d": None}
+        last = float(r["last_price"]) if pd.notna(r.get("last_price", np.nan)) else None
+        chg = float(r["pct_change_1d"]) if pd.notna(r.get("pct_change_1d", np.nan)) else None
+        return {"ticker": t, "last": last, "pct_change_1d": chg}
+
+    benchmarks = [_mini(t) for t in ["SPY", "QQQ", "DIA", "IWM", "VTI", "VT", "VXUS", "VEA", "VWO"]]
+    volatility_proxies = [_mini(t) for t in ["BND", "TLT", "UUP", "^VIX", "GLD", "SLV", "USO", "BTC-USD"]]
+    market_primary_benchmark = "SPY"
+    market_pct_change_1d = next((b["pct_change_1d"] for b in benchmarks if b["ticker"] == market_primary_benchmark), None)
+
     # State meta
     selection_meta = {
         "mode": mode,
@@ -342,6 +356,12 @@ def main() -> None:
         "skipped_tickers_count": (quality or {}).get("skipped_tickers_count"),
         "errors_sample": (quality or {}).get("errors_sample", []),
         "quality_notes": (quality or {}).get("notes", []),
+
+        # NEW optional market section
+        "benchmarks": benchmarks,
+        "volatility_proxies": volatility_proxies,
+        "market_primary_benchmark": market_primary_benchmark,
+        "market_pct_change_1d": market_pct_change_1d,
     }
 
     legacy_market_bias = "🔵"
