@@ -1,0 +1,13 @@
+cat > .gitignore << 'EOF'
+# --- Python ---
+__pycache__/
+*.pyc
+*.pyo
+
+# --- Local build outputs / intermediates ---
+public/
+
+# --- OS noise ---
+.DS_Store
+Thumbs.db
+EOF
