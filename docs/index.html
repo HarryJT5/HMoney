@@ -219,7 +219,7 @@
       <div class="small" id="hlMeta">—</div>
     </div>
     <div class="small muted" style="margin-bottom:8px">
-      Shortlists are diagnostic samples from the current run. Click tickers or numbers to open sources. Click Opp/Risk to open methodology.
+      Shortlists are diagnostic samples from the current run. Click tickers to open quote pages. Click <span class="mono">[pack]</span> to open evidence JSON. Click Opp/Risk to open methodology.
     </div>
 
     <div class="cols3">
@@ -265,13 +265,11 @@
         Auto-fetch ticker packs mentioned (and include last loaded)
       </label>
 
-      <!-- NEW: memory toggle -->
       <label class="small muted">
         <input type="checkbox" id="aiRemember" checked />
         Remember this chat (local)
       </label>
 
-      <!-- NEW: clear memory -->
       <button class="btn" id="aiClearMemoryBtn">Clear memory</button>
 
       <div class="small muted" style="margin-left:auto">
@@ -279,7 +277,6 @@
       </div>
     </div>
 
-    <!-- NEW: memory meta line -->
     <div class="small muted" id="aiMemoryMeta" style="margin-top:6px">Memory: —</div>
 
     <div class="drawer" id="aiAnswer" style="display:none"></div>
@@ -293,7 +290,7 @@
       <div class="small" id="benchStatus">—</div>
     </div>
     <div class="small muted" style="margin-bottom:8px">
-      Click tickers or numbers to open their live quote pages. Click Opp/Risk to open methodology.
+      Click tickers to open quote pages. Click <span class="mono">[pack]</span> to open evidence JSON. Click Opp/Risk to open methodology.
     </div>
     <div id="benchTables"></div>
   </div>
@@ -420,10 +417,26 @@
     return el("a", {href, target:"_blank", rel:"noopener noreferrer", ...extraAttrs}, [text]);
   }
 
+  // Evidence-pack helpers (Pages + GitHub repo)
+  function packUrl(basePath, sym){
+    const bp = normalizeBasePath(basePath);
+    if (!bp) return null;
+    return `./${bp}/${encodeURIComponent(sym)}.json`;
+  }
+  function githubTreeUrl(basePath){
+    const bp = normalizeBasePath(basePath);
+    if (!bp) return null;
+    return `https://github.com/HarryJT5/HMoney/tree/main/docs/${bp}`;
+  }
+  function packLinkEl(basePath, sym, label="pack"){
+    const href = packUrl(basePath, sym);
+    if (!href) return null;
+    return link(href, label, {class:"mono"});
+  }
+
   // ----------------------------
   // AI memory (client-side)
   // ----------------------------
-  // chatHistory = [{ role:"user"|"assistant", content:"..." }, ...]
   let __AI_HISTORY = [];
 
   function loadRememberPref(){
@@ -466,17 +479,13 @@
 
   function trimHistory(history){
     let h = Array.isArray(history) ? history.slice() : [];
-    // keep last N messages
     if (h.length > AI_HISTORY_MAX_MESSAGES) h = h.slice(h.length - AI_HISTORY_MAX_MESSAGES);
 
-    // enforce max chars (rough)
     let s = JSON.stringify(h);
     while (s.length > AI_HISTORY_MAX_CHARS && h.length > 2){
-      // drop oldest pair-ish
       h = h.slice(2);
       s = JSON.stringify(h);
     }
-    // final fallback
     if (s.length > AI_HISTORY_MAX_CHARS && h.length > 0){
       h = h.slice(h.length - 2);
     }
@@ -579,7 +588,6 @@
         }
       }
     }
-    // Also add anything found in tables rows (guaranteed present if tables exist)
     const tables = state?.tables || {};
     for (const tn of ["pulled_back","fragile","mixed"]){
       const rows = tables?.[tn]?.rows;
@@ -648,7 +656,8 @@
 
   async function loadPack(basePath, symbol){
     const sym = symbol.trim().toUpperCase();
-    const path = `${basePath}/${encodeURIComponent(sym)}.json`;
+    const bp = normalizeBasePath(basePath);
+    const path = `${bp}/${encodeURIComponent(sym)}.json`;
     return await fetchJson(path);
   }
 
@@ -662,12 +671,10 @@
 
     const ctx = {
       state: __HMONEY_STATE ? slimStateForAI(__HMONEY_STATE) : null,
-      // IMPORTANT: memory goes here (history of prior turns)
       chat_history: remember ? trimHistory(__AI_HISTORY) : [],
       instruction: "Context-first: use ticker_packs (preferred), then ticker_table_rows, then fast-verify links. Avoid generic company descriptions unless asked."
     };
 
-    // Detect tickers mentioned (multi supported)
     const mentioned = extractTickersFromText(question);
     const MAX_TICKERS = 6;
     const tickers = mentioned.slice(0, MAX_TICKERS);
@@ -676,7 +683,6 @@
     const tickerPackErrors = {};
     const tickerTableRows = {};
 
-    // Auto-fetch packs for mentioned tickers (if enabled)
     if (autoInclude && tickers.length && __BASE_PATH){
       status.textContent = `Fetching packs: ${tickers.join(", ")}…`;
       const jobs = tickers.map(sym =>
@@ -695,7 +701,6 @@
       }
     }
 
-    // Table fallback (helps when pack missing due to shard run)
     if (__HMONEY_STATE && tickers.length){
       for (const sym of tickers){
         const rows = findTickerRowsInTables(__HMONEY_STATE, sym);
@@ -705,7 +710,6 @@
       }
     }
 
-    // Also include last loaded pack if enabled (and not already included)
     if (autoInclude && __LAST_PACK && __LAST_SYMBOL){
       if (!tickerPacks[__LAST_SYMBOL]){
         tickerPacks[__LAST_SYMBOL] = slimPackForAI(__LAST_PACK);
@@ -730,9 +734,6 @@
 
       const data = await r.json().catch(() => null);
 
-      // Accept both:
-      // - { ok:true, answer:"..." }
-      // - { answer:"..." }
       const ok = !!(data && (data.ok === true || typeof data.answer === "string"));
 
       if (!r.ok || !data || !ok){
@@ -746,7 +747,6 @@
       ans.innerHTML = `<div style="white-space:pre-wrap; line-height:1.35">${text || "(empty response)"}</div>`;
       status.textContent = "Ready";
 
-      // UPDATE MEMORY (only on success)
       if (remember){
         appendToHistory("user", question);
         appendToHistory("assistant", text || "(empty response)");
@@ -865,8 +865,14 @@
     const basePath = normalizeBasePath(basePathRaw);
 
     const mode = (state?.run?.mode || state.mode || state.HMONEY_MODE || "").toString();
+    const packsWritten = state?.evidence_pack_index?.n_packs_written ?? null;
+
+    const shardCount = state?.run?.shards?.count ?? null;
+    const shardIndex = state?.run?.shards?.index ?? null;
+    const shardText = (shardCount !== null && shardIndex !== null) ? ` • shard ${Number(shardIndex)+1}/${shardCount}` : "";
+
     document.getElementById("subline").textContent =
-      `State loaded • packs: ${basePath || "—"}${mode ? ` • mode: ${mode}` : ""}`;
+      `State loaded • packs: ${basePath || "—"}${(packsWritten !== null ? ` • packs_written: ${fmtInt(packsWritten)}` : "")}${mode ? ` • mode: ${mode}` : ""}${shardText}`;
 
     document.getElementById("footer").innerHTML =
       `Data currently sourced primarily from Yahoo Finance via yfinance. Links are click-through provenance.`;
@@ -896,7 +902,7 @@
   // ----------------------------
   // Highlights (FROM state.tables)
   // ----------------------------
-  function renderHighlights(state){
+  function renderHighlights(state, basePath){
     const tables = state.tables || {};
     const pulled = (tables.pulled_back && Array.isArray(tables.pulled_back.rows)) ? tables.pulled_back.rows : [];
     const fragile = (tables.fragile && Array.isArray(tables.fragile.rows)) ? tables.fragile.rows : [];
@@ -944,9 +950,15 @@
       for (const r of rows.slice(0, 15)){
         const sym = r.ticker;
         const quote = quoteUrl(sym);
+        const packA = packLinkEl(basePath, sym, "pack");
+
+        const tickerKids = [link(quote, sym, {class:"mono"})];
+        if (packA){
+          tickerKids.push(el("span", {class:"small muted", style:"margin-left:6px"}, ["[", packA, "]"]));
+        }
 
         const tr = el("tr", {}, [
-          el("td", {}, [link(quote, sym, {class:"mono"})]),
+          el("td", {}, tickerKids),
           el("td", {class:"num"}, [link(quote, (r.last === null || r.last === undefined) ? "—" : fmt(r.last, 2), {class:"mono"})]),
           el("td", {class:`num ${badgeForDelta((() => {
             if (r.pct_change_1d === null || r.pct_change_1d === undefined) return null;
@@ -977,11 +989,17 @@
     benchTables.innerHTML = "";
     document.getElementById("benchStatus").textContent = `Loading from ${basePath || "—"}`;
 
+    let totalExpected = 0;
+    let totalFound = 0;
+
     for (const [groupName, symbols] of BENCHMARK_GROUPS){
+      totalExpected += symbols.length;
+
+      const right = el("div", {class:"small muted"}, ["Loading…"]);
       const card = el("div", {class:"card", style:"padding:12px; border-radius:14px; margin-top:10px; background:rgba(10,14,20,0.22)"}, [
         el("div", {class:"sectionTitle"}, [
           el("h2", {style:"margin:0"}, [groupName]),
-          el("div", {class:"small muted"}, ["click to open sources"])
+          right
         ])
       ]);
 
@@ -999,14 +1017,26 @@
       tbl.appendChild(thead);
       tbl.appendChild(tbody);
 
+      let found = 0;
+
       for (const sym of symbols){
+        const quote = quoteUrl(sym);
+        const packA = packLinkEl(basePath, sym, "pack");
+        const tickerKids = [link(quote, sym, {class:"mono"})];
+        if (packA){
+          tickerKids.push(el("span", {class:"small muted", style:"margin-left:6px"}, ["[", packA, "]"]));
+        }
+
         try{
           const pack = await loadPack(basePath, sym);
+          found += 1;
+          totalFound += 1;
+
           const market = pack.market || {};
           const scores = pack.scores || {};
           const links = pack.links || {};
 
-          const quote = links.quote || quoteUrl(sym);
+          const quoteLink = links.quote || quoteUrl(sym);
 
           const last = market.last_price ?? null;
           const ma200 = market.ma_200 ?? null;
@@ -1016,33 +1046,69 @@
           }
 
           const tr = el("tr", {}, [
-            el("td", {}, [link(quote, sym, {class:"mono"})]),
+            el("td", {}, tickerKids),
             el("td", {class:"muted"}, [BENCHMARK_META[sym] || "Benchmark"]),
             el("td", {class:"num"}, [link(methodologyHrefForHeader("opp"), fmtInt(scores.opportunity_score), {class:"mono"})]),
             el("td", {class:"num"}, [link(methodologyHrefForHeader("risk"), fmtInt(scores.structural_risk_score), {class:"mono"})]),
             el("td", {class:`num ${badgeForDelta((() => { let v=market.pct_change_1d; if(v===null||v===undefined) return null; v=Number(v); if(!Number.isFinite(v)) return null; if(Math.abs(v)<=0.25) v*=100; return v; })())}`},
-              [link(quote, fmtPctChange1d(market.pct_change_1d), {class:"mono"})]
+              [link(quoteLink, fmtPctChange1d(market.pct_change_1d), {class:"mono"})]
             ),
-            el("td", {class:"num"}, [link(quote, fmtPctRatio(market.pct_off_52w_high), {class:"mono"})]),
-            el("td", {class:"num"}, [link(quote, fmtPctRatio(dist200), {class:"mono"})]),
+            el("td", {class:"num"}, [link(quoteLink, fmtPctRatio(market.pct_off_52w_high), {class:"mono"})]),
+            el("td", {class:"num"}, [link(quoteLink, fmtPctRatio(dist200), {class:"mono"})]),
           ]);
 
           tbody.appendChild(tr);
         }catch(e){
-          continue;
+          const msg = String(e || "");
+          const tr = el("tr", {}, [
+            el("td", {}, tickerKids),
+            el("td", {class:"muted"}, [`${BENCHMARK_META[sym] || "Benchmark"} • pack missing (${msg})`]),
+            el("td", {class:"num muted"}, ["—"]),
+            el("td", {class:"num muted"}, ["—"]),
+            el("td", {class:"num muted"}, ["—"]),
+            el("td", {class:"num muted"}, ["—"]),
+            el("td", {class:"num muted"}, ["—"]),
+          ]);
+          tbody.appendChild(tr);
         }
       }
 
-      if (!tbody.children.length){
-        card.appendChild(el("div", {class:"small muted"}, ["No benchmark packs found in this run folder. (Likely a partial shard run.)"]));
+      // Right-side header: now a real link
+      right.innerHTML = "";
+      const gh = githubTreeUrl(basePath);
+      if (gh){
+        right.appendChild(link(gh, "click to open sources"));
+        right.appendChild(document.createTextNode(` • packs: ${found}/${symbols.length}`));
       } else {
-        card.appendChild(tbl);
+        right.textContent = `packs: ${found}/${symbols.length}`;
+      }
+
+      card.appendChild(tbl);
+
+      // If none found, add a clear note
+      if (!found){
+        const wrote = __HMONEY_STATE?.evidence_pack_index?.n_packs_written ?? null;
+        const uni = __HMONEY_STATE?.universe_size ?? __HMONEY_STATE?.universe?.actual_size ?? null;
+        const extra = (wrote !== null && uni !== null)
+          ? ` This state says universe=${fmtInt(uni)} but packs_written=${fmtInt(wrote)} — so missing packs may be expected in partial-pack runs.`
+          : "";
+        card.appendChild(el("div", {class:"small muted", style:"margin-top:8px"}, [
+          `No benchmark packs loaded for this group from this run folder.${extra}`
+        ]));
       }
 
       benchTables.appendChild(card);
     }
 
-    document.getElementById("benchStatus").textContent = `Loaded benchmarks from ${basePath}`;
+    const wrote = __HMONEY_STATE?.evidence_pack_index?.n_packs_written ?? null;
+    const uni = __HMONEY_STATE?.universe_size ?? __HMONEY_STATE?.universe?.actual_size ?? null;
+
+    const parts = [];
+    parts.push(`Loaded benchmark table from ${basePath}`);
+    parts.push(`found ${totalFound}/${totalExpected} packs`);
+    if (wrote !== null) parts.push(`packs_written ${fmtInt(wrote)}`);
+    if (uni !== null) parts.push(`universe ${fmtInt(uni)}`);
+    document.getElementById("benchStatus").textContent = parts.join(" • ");
   }
 
   async function init(){
@@ -1056,7 +1122,7 @@
 
       renderSnapshot(state);
       renderPosture(state);
-      renderHighlights(state);
+      renderHighlights(state, basePath);
 
       if (basePath){
         await renderBenchmarks(basePath);
@@ -1079,11 +1145,19 @@
           __LAST_PACK = pack;
           __LAST_SYMBOL = sym;
 
-          drawer.innerHTML = `<div class="ok">Loaded pack for <span class="mono">${sym}</span>. (AI will also auto-fetch from questions now.)</div>
-            <div class="hint">Tip: ask “Explain ${sym}” in the AI box.</div>`;
+          const p = packUrl(basePath, sym);
+          drawer.innerHTML = `<div class="ok">Loaded pack for <span class="mono">${sym}</span>.</div>
+            <div class="hint">
+              ${p ? `Open: <a href="${p}" target="_blank" rel="noopener noreferrer" class="mono">[pack]</a> • ` : ""}
+              Tip: ask “Explain ${sym}” in the AI box.
+            </div>`;
         }catch(e){
+          const p = packUrl(basePath, sym);
           drawer.innerHTML = `<div class="err">Could not load pack for <span class="mono">${sym}</span> from <span class="mono">${basePath}</span>.</div>
-            <div class="hint">If this symbol wasn’t included in the current shard run, it may not exist in this run folder yet.</div>`;
+            <div class="hint">
+              ${p ? `Tried: <a href="${p}" target="_blank" rel="noopener noreferrer" class="mono">${p}</a><br/>` : ""}
+              If this symbol wasn’t included in the current pack-writing set, it may not exist in this run folder yet.
+            </div>`;
         }
       }
       btn.addEventListener("click", doLoad);
@@ -1105,7 +1179,6 @@
       const aiRemember = document.getElementById("aiRemember");
       const aiClear = document.getElementById("aiClearMemoryBtn");
 
-      // Init remember pref + load history
       const rememberOn = loadRememberPref();
       aiRemember.checked = rememberOn;
       __AI_HISTORY = rememberOn ? trimHistory(loadHistoryFromStorage()) : [];
@@ -1115,10 +1188,8 @@
         const on = !!aiRemember.checked;
         saveRememberPref(on);
         if (on){
-          // load whatever is in storage (if any)
           __AI_HISTORY = trimHistory(loadHistoryFromStorage());
         } else {
-          // go truly stateless
           clearHistory();
         }
         updateMemoryMeta();
@@ -1126,7 +1197,6 @@
 
       aiClear.addEventListener("click", () => {
         clearHistory();
-        // also clear UI answer area? keep as-is; memory cleared is the key.
       });
 
       async function doAsk(){
