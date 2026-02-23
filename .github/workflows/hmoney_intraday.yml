@@ -1,6 +1,8 @@
 # .github/workflows/hmoney_intraday.yml
 name: HMoney Intraday
 
+permissions:
+  contents: write
 on:
   workflow_dispatch:
   schedule:
@@ -52,10 +54,13 @@ jobs:
         run: |
           python -m src.pipeline
 
-      - name: Commit outputs (public/)
+      - name: Commit intraday outputs (state + brief only)
         run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git add public/ || true
-          git commit -m "Intraday HMoney update" || echo "No changes"
-          git push
+         git config user.name "github-actions"
+         git config user.email "github-actions@github.com"
+
+         # Add only the lightweight artifacts
+         git add public/state.json public/daily_brief.md public/daily_brief.html || true
+
+         git commit -m "Intraday HMoney update" || echo "No changes"
+         git push
