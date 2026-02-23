@@ -77,15 +77,11 @@
       "properties": {
         "last_price": { "type": "number" },
         "currency": { "type": ["string", "null"] },
-
         "pct_change_1d": { "type": ["number", "null"] },
-
         "volume": { "type": ["number", "null"] },
         "avg_volume_20d": { "type": ["number", "null"] },
-
         "ma_50": { "type": ["number", "null"] },
         "ma_200": { "type": ["number", "null"] },
-
         "rsi_14": { "type": ["number", "null"] },
         "pct_off_52w_high": { "type": ["number", "null"] },
         "atr_pct": { "type": ["number", "null"] }
@@ -152,6 +148,47 @@
         "reason_codes": {
           "type": "array",
           "items": { "type": "string" }
+        },
+        "notes": { "type": ["string", "null"] }
+      }
+    },
+
+    "links": {
+      "type": ["object", "null"],
+      "description": "Human-clickable links (quote pages, methodology, filings, etc.). Open-ended for future providers.",
+      "additionalProperties": {
+        "anyOf": [
+          { "type": "string" },
+          { "type": "null" }
+        ]
+      }
+    },
+    "field_links": {
+      "type": ["object", "null"],
+      "description": "Map from field path (e.g., 'market.last_price') to a URL explaining/sourcing that field.",
+      "additionalProperties": {
+        "type": ["string", "null"],
+        "format": "uri"
+      }
+    },
+    "provenance": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "description": "Optional structured provenance for providers and notes; safe to extend later by bumping schema.",
+      "properties": {
+        "primary_provider": { "type": ["string", "null"] },
+        "providers": {
+          "type": ["object", "null"],
+          "additionalProperties": {
+            "anyOf": [
+              { "type": "string" },
+              { "type": "number" },
+              { "type": "boolean" },
+              { "type": "null" },
+              { "type": "object" },
+              { "type": "array" }
+            ]
+          }
         },
         "notes": { "type": ["string", "null"] }
       }
