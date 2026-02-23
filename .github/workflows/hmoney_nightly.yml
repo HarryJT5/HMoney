@@ -1,3 +1,4 @@
+# .github/workflows/hmoney_nightly.yml
 name: HMoney Nightly Newsletter
 
 permissions:
@@ -12,7 +13,8 @@ jobs:
   run:
     runs-on: ubuntu-latest
     concurrency:
-      group: hmoney-nightly-${{ github.ref }}
+      # Shared group with intraday so they don't fight over pushes
+      group: hmoney-main
       cancel-in-progress: true
 
     steps:
@@ -44,10 +46,23 @@ jobs:
         run: |
           python -m src.pipeline
 
-      - name: Commit outputs (public/)
+      - name: Commit nightly outputs (public/)
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
+
           git add public/ data/universe_all.csv || true
           git commit -m "Nightly HMoney update" || echo "No changes"
-          git push
+
+          # Avoid "fetch first" errors if intraday pushed recently
+          for i in 1 2 3; do
+            git pull --rebase origin main || true
+            if git push; then
+              exit 0
+            fi
+            echo "Push failed (attempt $i). Retrying..."
+            sleep 5
+          done
+
+          echo "Failed to push after retries."
+          exit 1

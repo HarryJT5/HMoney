@@ -3,23 +3,27 @@ name: HMoney Intraday
 
 permissions:
   contents: write
+
 on:
   workflow_dispatch:
   schedule:
-    # Intraday: every 15 min during US market hours (UTC times shown)
-    # 14:30–21:00 UTC roughly covers 9:30–16:00 ET (adjust for DST as needed)
+    # Runs every 15 minutes between 14:00 and 20:59 UTC, Mon–Fri
     - cron: "*/15 14-20 * * 1-5"
-    - cron: "0 21 * * 1-5"   # last run
+    # Runs at 21:00 UTC, Mon–Fri (last run)
+    - cron: "0 21 * * 1-5"
 
 jobs:
   run:
     runs-on: ubuntu-latest
     concurrency:
-      group: hmoney-intraday-${{ github.ref }}
+      # Shared group with nightly so they don't fight over pushes
+      group: hmoney-main
       cancel-in-progress: true
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
 
       - uses: actions/setup-python@v5
         with:
@@ -56,11 +60,13 @@ jobs:
 
       - name: Commit intraday outputs (state + brief only)
         run: |
-         git config user.name "github-actions"
-         git config user.email "github-actions@github.com"
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
 
-         # Add only the lightweight artifacts
-         git add public/state.json public/daily_brief.md public/daily_brief.html || true
+          # Add only the lightweight artifacts
+          git add public/state.json public/daily_brief.md public/daily_brief.html || true
+          git commit -m "Intraday HMoney update" || echo "No changes"
 
-         git commit -m "Intraday HMoney update" || echo "No changes"
-         git push
+          # Pull/rebase then push (handles rare overlap)
+          git pull --rebase origin main || true
+          git push
