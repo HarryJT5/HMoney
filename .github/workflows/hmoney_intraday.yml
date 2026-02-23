@@ -9,13 +9,14 @@ on:
   schedule:
     # Every 15 min during US market hours (UTC)
     - cron: "*/15 14-20 * * 1-5"
-    # Last run at 21:00 UTC (market close-ish)
+    # Last run at 21:00 UTC
     - cron: "0 21 * * 1-5"
 
 jobs:
   run:
     runs-on: ubuntu-latest
     concurrency:
+      # Shared with nightly so they don't overlap
       group: hmoney-main
       cancel-in-progress: true
 
@@ -65,6 +66,5 @@ jobs:
           git add public/state.json public/daily_brief.md public/daily_brief.html || true
           git commit -m "Intraday HMoney update" || echo "No changes"
 
-          # Rebase on latest main then push
           git pull --rebase origin main || true
           git push
