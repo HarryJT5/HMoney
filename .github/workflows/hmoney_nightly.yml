@@ -13,7 +13,6 @@ jobs:
   run:
     runs-on: ubuntu-latest
     concurrency:
-      # Shared with intraday so they don't overlap
       group: hmoney-main
       cancel-in-progress: true
 
@@ -63,7 +62,6 @@ jobs:
           git add public/ data/universe_all.csv || true
           git commit -m "Nightly HMoney update" || echo "No changes"
 
-          # Retry push in case something updated main right before we push
           for i in 1 2 3; do
             git pull --rebase origin main || true
             if git push; then
