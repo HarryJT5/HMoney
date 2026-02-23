@@ -7,16 +7,15 @@ permissions:
 on:
   workflow_dispatch:
   schedule:
-    # Runs every 15 minutes between 14:00 and 20:59 UTC, Mon–Fri
+    # Every 15 min during US market hours (UTC)
     - cron: "*/15 14-20 * * 1-5"
-    # Runs at 21:00 UTC, Mon–Fri (last run)
+    # Last run at 21:00 UTC (market close-ish)
     - cron: "0 21 * * 1-5"
 
 jobs:
   run:
     runs-on: ubuntu-latest
     concurrency:
-      # Shared group with nightly so they don't fight over pushes
       group: hmoney-main
       cancel-in-progress: true
 
@@ -63,10 +62,9 @@ jobs:
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
 
-          # Add only the lightweight artifacts
           git add public/state.json public/daily_brief.md public/daily_brief.html || true
           git commit -m "Intraday HMoney update" || echo "No changes"
 
-          # Pull/rebase then push (handles rare overlap)
+          # Rebase on latest main then push
           git pull --rebase origin main || true
           git push
