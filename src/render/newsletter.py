@@ -3,9 +3,11 @@ src/render/newsletter.py
 
 Renders a daily brief (Markdown + HTML) from public/state.json and evidence packs.
 
-V3 (updated):
-- Adds % Chg 1D (intraday-updating) to Benchmarks + Tables
-- Keeps HTML color coding (directional sign/magnitude) for % columns
+V4 (clickable):
+- Adds clickable links in HTML tables:
+  - Ticker + market-number columns -> Yahoo Finance quote page
+  - Computed/diagnostic columns (Opp/Risk/Discount/State/RSI) -> methodology doc anchors
+- Keeps % Chg 1D and existing color coding behavior
 """
 
 from __future__ import annotations
@@ -62,6 +64,10 @@ BENCHMARK_META = {
 
 DEFAULT_LOCAL_TZ = "America/Los_Angeles"
 NEG_ORANGE_CUTOFF_PCT = -10.0  # mild negative threshold for red vs orange
+
+# Clickable link targets
+YAHOO_QUOTE_BASE = "https://finance.yahoo.com/quote/"
+METHODOLOGY_BASE = "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
 
 
 # ----------------------------
@@ -278,6 +284,11 @@ def _format_dual_time(utc_iso: str, local_tz: str) -> str:
         return utc_iso
 
 
+def _quote_url(symbol: str) -> str:
+    s = (symbol or "").strip()
+    return f"{YAHOO_QUOTE_BASE}{s}"
+
+
 # ----------------------------
 # Loaders
 # ----------------------------
@@ -314,14 +325,18 @@ def _pack_row(p: Dict[str, Any]) -> Dict[str, Any]:
         except Exception:
             dist200 = None
 
+    sym = str(asset.get("symbol", "") or "").upper().strip()
+    links = p.get("links", {}) or {}
+    qurl = links.get("quote") or _quote_url(sym)
+
     return {
-        "symbol": asset.get("symbol", ""),
+        "symbol": sym,
         "label": cls.get("label", "🔵"),
         "confidence": cls.get("confidence", 0.0),
         "opp": scores.get("opportunity_score", 0),
         "risk": scores.get("structural_risk_score", 0),
         "disc": scores.get("discount_score", None),
-        "pct_change_1d": market.get("pct_change_1d", None),  # ✅ NEW
+        "pct_change_1d": market.get("pct_change_1d", None),
         "pct_off_high": market.get("pct_off_52w_high", None),  # ratio
         "rsi": market.get("rsi_14", None),
         "dist200": dist200,  # ratio
@@ -329,6 +344,7 @@ def _pack_row(p: Dict[str, Any]) -> Dict[str, Any]:
         "tag": pc.get("tag", ""),
         "reasons": expl.get("reason_codes", []),
         "bias": p.get("deployment_bias", "hold"),
+        "quote_url": qurl,
     }
 
 
@@ -556,7 +572,7 @@ def render_md(state: Dict[str, Any], rows: List[Dict[str, Any]]) -> str:
 
 
 # ----------------------------
-# HTML rendering (minimal markdown + color coding)
+# HTML rendering (minimal markdown + color coding + clickable tables)
 # ----------------------------
 
 _BOLD_RE = re.compile(r"\*\*(.+?)\*\*")
@@ -612,6 +628,45 @@ def _cell_classes(header: str, cell_text: str) -> str:
     return " ".join(classes)
 
 
+def _extract_symbol_from_cell(cell_text: str) -> str:
+    """
+    Extract ticker symbol from a markdown cell like '**AAPL**' or 'AAPL'.
+    """
+    s = cell_text.strip()
+    s = s.replace("**", "")
+    s = s.replace("<b>", "").replace("</b>", "")
+    # strip any extra text
+    s = s.split()[0] if s else ""
+    return s.upper()
+
+
+def _methodology_link_for_header(header: str) -> Optional[str]:
+    h = header.lower().strip()
+    if h == "state":
+        return f"{METHODOLOGY_BASE}#classifications"
+    if h == "opp":
+        return f"{METHODOLOGY_BASE}#opportunity-score"
+    if h == "risk":
+        return f"{METHODOLOGY_BASE}#structural-risk-score"
+    if h == "discount":
+        return f"{METHODOLOGY_BASE}#discount-score"
+    if h == "rsi":
+        return f"{METHODOLOGY_BASE}#rsi"
+    return None
+
+
+def _is_market_context_header(header: str) -> bool:
+    """
+    Headers where clicking should take you to the live quote page.
+    """
+    h = header.lower().strip()
+    if h in ("ticker",):
+        return True
+    if "chg" in h or "200dma" in h or "off high" in h or "drawdown" in h or "%" in header:
+        return True
+    return False
+
+
 def render_html(md_text: str) -> str:
     lines = md_text.splitlines()
     html_lines: List[str] = []
@@ -630,6 +685,7 @@ def render_html(md_text: str) -> str:
         "td.pos{background:#e8f5e9}"
         "td.mildneg{background:#fff3e0}"
         "td.neg{background:#ffebee}"
+        "a{color:inherit;text-decoration:underline}"
         "code{background:#f2f2f2;padding:2px 4px;border-radius:4px}"
         "blockquote{border-left:3px solid #ddd;margin:10px 0;padding:6px 10px;color:#333;background:#fafafa}"
         ".muted{color:#666}"
@@ -674,13 +730,42 @@ def render_html(md_text: str) -> str:
                 ths = [f"<th>{_md_inline_to_html(h)}</th>" for h in headers]
                 html_lines.append("<thead><tr>" + "".join(ths) + "</tr></thead>")
                 html_lines.append("<tbody>")
+
                 for r in rows:
+                    # Determine symbol for this row (assumes first column is ticker)
+                    row_symbol = ""
+                    if r:
+                        row_symbol = _extract_symbol_from_cell(r[0])
+
+                    quote = _quote_url(row_symbol) if row_symbol else None
+
                     tds = []
                     for j, c in enumerate(r):
                         header = headers[j] if j < len(headers) else ""
                         cls = _cell_classes(header, c)
-                        tds.append(f"<td class='{cls}'>{_md_inline_to_html(c)}</td>")
+
+                        cell_inner = _md_inline_to_html(c)
+
+                        # Click logic:
+                        # - Market/context fields -> quote page
+                        # - Computed/diagnostic fields -> methodology anchors
+                        href: Optional[str] = None
+                        if row_symbol:
+                            meth = _methodology_link_for_header(header)
+                            if meth:
+                                href = meth
+                            elif _is_market_context_header(header) and quote:
+                                href = quote
+
+                        if href:
+                            cell_html = f"<a href='{html.escape(href)}' target='_blank' rel='noopener noreferrer'>{cell_inner}</a>"
+                        else:
+                            cell_html = cell_inner
+
+                        tds.append(f"<td class='{cls}'>{cell_html}</td>")
+
                     html_lines.append("<tr>" + "".join(tds) + "</tr>")
+
                 html_lines.append("</tbody></table>")
             continue
 
