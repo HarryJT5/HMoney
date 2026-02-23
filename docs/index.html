@@ -243,25 +243,25 @@
 
   <div style="height:12px"></div>
 
-  <!-- AI (NEW) -->
+  <!-- AI -->
   <div class="card" id="aiCard">
     <div class="sectionTitle">
       <h2>Ask HMoney (AI)</h2>
       <div class="small" id="aiStatus">Ready</div>
     </div>
     <div class="small muted" style="margin-bottom:8px">
-      Diagnostic assistant for this dashboard. No forecasts. No buy/sell instructions. Best for “what does this mean?” questions.
+      Market SME helper for this dashboard (and general topics). If you mention tickers, it will auto-fetch their packs when available.
     </div>
 
     <div class="aiBox">
-      <textarea id="aiQuestion" placeholder="Ask something like: 'Summarize today’s posture and why.' or 'What does a high risk score mean?'"></textarea>
+      <textarea id="aiQuestion" placeholder="Try: 'Compare IRWD vs AMD' or 'What does high structural risk mean?'"></textarea>
       <button class="btn" id="aiAskBtn">Ask</button>
     </div>
 
     <div class="row" style="margin-top:8px">
       <label class="small muted">
         <input type="checkbox" id="aiIncludeTicker" checked />
-        Include last loaded ticker pack (if any)
+        Auto-include ticker packs mentioned (and last loaded)
       </label>
       <div class="small muted" style="margin-left:auto">
         Tip: press <span class="mono">Ctrl+Enter</span> to send
@@ -411,9 +411,10 @@
   let __HMONEY_STATE = null;
   let __LAST_PACK = null;
   let __LAST_SYMBOL = null;
+  let __BASE_PATH = null;
+  let __TICKER_SET = null;
 
   function slimStateForAI(state){
-    // Trim huge arrays so AI context stays small
     return {
       schema_version: state.schema_version,
       generated_at_utc: state.generated_at_utc,
@@ -469,21 +470,166 @@
     };
   }
 
-  async function askAI(question, includeTicker){
+  function buildTickerSetFromState(state){
+    const s = new Set();
+    const lists = state?.universe?.lists || {};
+    const keys = ["panel_tickers","sentinel_tickers","forced_movers_tickers","rolling_shard_tickers"];
+    for (const k of keys){
+      const arr = lists[k];
+      if (Array.isArray(arr)){
+        for (const t of arr){
+          if (typeof t === "string" && t.trim()) s.add(t.trim().toUpperCase());
+        }
+      }
+    }
+    // Also add anything found in tables rows (because those are guaranteed present)
+    const tables = state?.tables || {};
+    for (const tn of ["pulled_back","fragile","mixed"]){
+      const rows = tables?.[tn]?.rows;
+      if (Array.isArray(rows)){
+        for (const r of rows){
+          const t = (r && r.ticker) ? String(r.ticker).toUpperCase() : null;
+          if (t) s.add(t);
+        }
+      }
+    }
+    return s;
+  }
+
+  function extractTickersFromText(text){
+    const raw = (text || "").toUpperCase();
+
+    // Grab token-ish sequences: letters/numbers, caret, dash (covers BTC-USD, BRK-B, ^VIX)
+    const tokens = raw.match(/[A-Z^][A-Z0-9^.-]{0,14}/g) || [];
+
+    const stop = new Set([
+      "A","AN","AND","ARE","AS","AT","BE","BUT","BY","CAN","DID","DO","FOR","FROM","HAVE","HOW","I","IN","IS","IT",
+      "ME","MY","NO","NOT","OF","ON","OR","PUT","RED","SELL","BUY","HOLD","SHOULD","THE","THIS","THAT","TO","UP",
+      "WHAT","WHEN","WHERE","WHY","WITH","YOU","YOLO","LOL","LMAO","AI","HMONEY"
+    ]);
+
+    const out = [];
+    const seen = new Set();
+
+    for (let tok of tokens){
+      tok = tok.replace(/^[^A-Z^]+/, "").replace(/[^A-Z0-9^.-]+$/, "");
+      if (!tok) continue;
+
+      // Normalize common punctuation
+      tok = tok.replace(/\.+$/g, "");
+      if (stop.has(tok)) continue;
+
+      // Basic sanity: must contain a letter
+      if (!/[A-Z]/.test(tok)) continue;
+
+      // Prefer membership in current run universe tickers
+      const inUniverse = (__TICKER_SET && __TICKER_SET.has(tok));
+
+      // Also allow crypto-style "-USD" tickers even if not in set
+      const looksLikeCrypto = /-USD$/.test(tok);
+
+      // Also allow caret index like ^VIX if typed
+      const looksLikeCaret = /^\^[A-Z0-9]{1,8}$/.test(tok);
+
+      if (!(inUniverse || looksLikeCrypto || looksLikeCaret)) continue;
+
+      if (!seen.has(tok)){
+        seen.add(tok);
+        out.push(tok);
+      }
+    }
+
+    return out;
+  }
+
+  function findTickerRowsInTables(state, sym){
+    const tables = state?.tables || {};
+    const results = [];
+
+    const defs = [
+      ["pulled_back", "pulled_back.rows"],
+      ["fragile", "fragile.rows"],
+      ["mixed", "mixed.rows"],
+    ];
+
+    for (const [key, path] of defs){
+      const rows = tables?.[key]?.rows;
+      if (!Array.isArray(rows)) continue;
+      for (const r of rows){
+        if (!r || !r.ticker) continue;
+        if (String(r.ticker).toUpperCase() === sym){
+          results.push({ table: key, path, row: r });
+        }
+      }
+    }
+    return results;
+  }
+
+  async function askAI(question, autoInclude){
     const status = document.getElementById("aiStatus");
     const ans = document.getElementById("aiAnswer");
     ans.style.display = "block";
     ans.innerHTML = `<div class="small muted">Thinking…</div>`;
-    status.textContent = "Asking…";
 
     const ctx = {
       state: __HMONEY_STATE ? slimStateForAI(__HMONEY_STATE) : null
     };
 
-    if (includeTicker && __LAST_PACK && __LAST_SYMBOL){
-      ctx.ticker = __LAST_SYMBOL;
-      ctx.ticker_pack = slimPackForAI(__LAST_PACK);
+    // Always try to auto-fetch tickers mentioned (multi supported) if enabled
+    const mentioned = extractTickersFromText(question);
+    const MAX_TICKERS = 6;
+    const tickers = mentioned.slice(0, MAX_TICKERS);
+
+    const tickerPacks = {};
+    const tickerPackErrors = {};
+    const tickerTableRows = {};
+
+    if (autoInclude && tickers.length && __BASE_PATH){
+      status.textContent = `Fetching tickers: ${tickers.join(", ")}…`;
+      const jobs = tickers.map(sym =>
+        loadPack(__BASE_PATH, sym)
+          .then(pack => ({ sym, ok:true, pack }))
+          .catch(err => ({ sym, ok:false, err }))
+      );
+      const results = await Promise.all(jobs);
+
+      for (const r of results){
+        if (r.ok){
+          tickerPacks[r.sym] = slimPackForAI(r.pack);
+        } else {
+          tickerPackErrors[r.sym] = String(r.err);
+        }
+      }
     }
+
+    // Table fallback for any mentioned tickers (works even when pack missing due to shard)
+    if (__HMONEY_STATE && tickers.length){
+      for (const sym of tickers){
+        const rows = findTickerRowsInTables(__HMONEY_STATE, sym);
+        if (rows && rows.length){
+          tickerTableRows[sym] = rows.map(x => ({
+            table: x.table,
+            row: x.row
+          }));
+        }
+      }
+    }
+
+    // Also include last loaded pack if enabled and not already included
+    if (autoInclude && __LAST_PACK && __LAST_SYMBOL){
+      if (!tickerPacks[__LAST_SYMBOL]){
+        tickerPacks[__LAST_SYMBOL] = slimPackForAI(__LAST_PACK);
+      }
+    }
+
+    // Build context
+    if (tickers.length) ctx.mentioned_tickers = tickers;
+    if (Object.keys(tickerPacks).length) ctx.ticker_packs = tickerPacks;
+    if (Object.keys(tickerTableRows).length) ctx.ticker_table_rows = tickerTableRows;
+    if (Object.keys(tickerPackErrors).length) ctx.ticker_pack_errors = tickerPackErrors;
+
+    // If question is general (no tickers), still proceed normally
+    status.textContent = "Asking…";
 
     const payload = { question, context: ctx };
 
@@ -895,8 +1041,10 @@
     try{
       const state = await fetchJson("./state.json");
       __HMONEY_STATE = state;
+      __TICKER_SET = buildTickerSetFromState(state);
 
       const basePath = setHeaderMeta(state);
+      __BASE_PATH = basePath;
 
       renderSnapshot(state);
       renderPosture(state);
