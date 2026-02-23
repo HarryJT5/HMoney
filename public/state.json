@@ -1,7 +1,7 @@
 {
   "schema_version": "hmoney.state.v1",
-  "generated_at_utc": "2026-02-23T04:08:02Z",
-  "as_of_utc": "2026-02-23T04:06:30.070331+00:00",
+  "generated_at_utc": "2026-02-23T04:10:09Z",
+  "as_of_utc": "2026-02-23T04:08:45.000591+00:00",
   "market_bias": "\ud83d\udd35",
   "opportunity_score": 49,
   "structural_risk_score": 46,
@@ -14,7 +14,7 @@
   },
   "universe_size": 725,
   "run": {
-    "mode": "daily",
+    "mode": "intraday",
     "cadence_minutes": 15,
     "time_bucket": 1944981424,
     "shards": {
@@ -862,7 +862,7 @@
     "confidence_tag": "mixed_evidence",
     "key": "quiet",
     "basis": {
-      "computed_at_utc": "2026-02-23T04:08:02Z",
+      "computed_at_utc": "2026-02-23T04:10:09Z",
       "scope": "macro_cross_sectional",
       "method": "median_quadrants_v1",
       "thresholds_used": {
@@ -1382,7 +1382,7 @@
     }
   },
   "evidence_pack_index": {
-    "base_path": "public/evidence_packs/2026-02-23/0406",
+    "base_path": "public/evidence_packs/2026-02-23/0408",
     "format": "json",
     "n_packs_written": 164,
     "note": "Individual per-asset evidence packs stored separately."
