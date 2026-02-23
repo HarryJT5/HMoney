@@ -1,0 +1,670 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HMoney Dashboard (MVP)</title>
+  <style>
+    :root{
+      --bg:#0b0f14;
+      --panel:#111826;
+      --panel2:#0f1622;
+      --text:#e7eef9;
+      --muted:#9fb2cc;
+      --line:#223047;
+      --chip:#1a2740;
+      --good:#2bd576;
+      --warn:#ffb020;
+      --bad:#ff5a67;
+      --link:#9ad0ff;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      background: radial-gradient(1200px 800px at 20% -10%, #142238 0%, var(--bg) 55%) fixed;
+      color:var(--text);
+    }
+    a{color:var(--link); text-decoration: none}
+    a:hover{text-decoration: underline}
+    .wrap{max-width:1200px; margin:0 auto; padding:18px}
+    .topbar{
+      display:flex; gap:12px; align-items:center; justify-content:space-between;
+      margin-bottom:14px;
+    }
+    .brand{display:flex; gap:10px; align-items:baseline}
+    .brand h1{font-size:18px; margin:0}
+    .brand .sub{color:var(--muted); font-size:12px}
+    .actions{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+    .btn{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, #17243a 0%, #121b2a 100%);
+      color:var(--text);
+      padding:8px 10px;
+      border-radius:12px;
+      font-size:12px;
+      cursor:pointer;
+    }
+    .btn:hover{filter:brightness(1.06)}
+    .grid{
+      display:grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap:12px;
+    }
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr}
+    }
+    .card{
+      background: linear-gradient(180deg, rgba(17,24,38,0.92) 0%, rgba(15,22,34,0.92) 100%);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+    }
+    .card h2{font-size:14px; margin:0 0 10px}
+    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .kv{display:flex; flex-direction:column; gap:4px; padding:10px 12px; background:rgba(10,14,20,0.35); border:1px solid var(--line); border-radius:14px}
+    .k{color:var(--muted); font-size:11px}
+    .v{font-size:13px}
+    .mono{font-variant-numeric: tabular-nums; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}
+    .chips{display:flex; gap:8px; flex-wrap:wrap}
+    .chip{background:var(--chip); border:1px solid var(--line); padding:6px 8px; border-radius:999px; font-size:12px; color:var(--text)}
+    .chip .m{color:var(--muted)}
+    .barwrap{display:flex; flex-direction:column; gap:8px}
+    .barline{display:flex; gap:10px; align-items:center; justify-content:space-between}
+    .barlabel{font-size:12px; color:var(--muted)}
+    .bar{
+      flex:1;
+      height:10px;
+      border:1px solid var(--line);
+      background:#0b1220;
+      border-radius:999px;
+      overflow:hidden;
+      margin:0 10px;
+    }
+    .fill{height:100%}
+    .fill.good{background: linear-gradient(90deg, rgba(43,213,118,0.2), rgba(43,213,118,0.9))}
+    .fill.bad{background: linear-gradient(90deg, rgba(255,90,103,0.2), rgba(255,90,103,0.9))}
+    .fill.warn{background: linear-gradient(90deg, rgba(255,176,32,0.2), rgba(255,176,32,0.9))}
+    .pct{font-size:12px; color:var(--text); min-width:70px; text-align:right}
+    table{width:100%; border-collapse:collapse; font-size:12px}
+    th,td{border-bottom:1px solid rgba(34,48,71,0.7); padding:8px 6px; vertical-align:top}
+    th{color:var(--muted); font-weight:600; text-align:left}
+    td.num{text-align:right; font-variant-numeric: tabular-nums}
+    .pos{color:var(--good)}
+    .neg{color:var(--bad)}
+    .mildneg{color:var(--warn)}
+    .sectionTitle{display:flex; align-items:center; justify-content:space-between; gap:8px}
+    .small{font-size:11px; color:var(--muted)}
+    .search{
+      display:flex; gap:8px; align-items:center; width:100%;
+      padding:10px; background:rgba(10,14,20,0.35); border:1px solid var(--line); border-radius:14px;
+    }
+    input[type="text"]{
+      flex:1; background:transparent; border:0; outline:none;
+      color:var(--text); font-size:13px;
+    }
+    .hint{color:var(--muted); font-size:11px; margin-top:8px}
+    .drawer{
+      margin-top:12px;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:12px;
+      background: rgba(10,14,20,0.35);
+    }
+    .drawer h3{margin:0 0 10px; font-size:13px}
+    .cols{display:grid; grid-template-columns: 1fr 1fr; gap:12px}
+    @media (max-width: 980px){ .cols{grid-template-columns:1fr} }
+    .list{display:flex; flex-direction:column; gap:8px}
+    .item{display:flex; justify-content:space-between; gap:10px; padding:8px 10px; border:1px solid rgba(34,48,71,0.7); border-radius:12px}
+    .item .lk{color:var(--muted)}
+    .item .rv{font-variant-numeric: tabular-nums}
+    .err{color:var(--bad); font-size:12px}
+    .ok{color:var(--good); font-size:12px}
+    .muted{color:var(--muted)}
+    .footer{margin-top:14px; color:var(--muted); font-size:11px}
+  </style>
+</head>
+
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div class="brand">
+      <h1>HMoney Dashboard</h1>
+      <div class="sub" id="subline">Loading…</div>
+    </div>
+    <div class="actions">
+      <a class="btn" href="./daily_brief.html" target="_blank" rel="noopener noreferrer">Open Daily Brief (HTML)</a>
+      <a class="btn" href="./daily_brief.md" target="_blank" rel="noopener noreferrer">Open Brief (MD)</a>
+      <button class="btn" id="reloadBtn">Reload</button>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card" id="postureCard">
+      <div class="sectionTitle">
+        <h2>Market Posture</h2>
+        <div class="small" id="asOf">—</div>
+      </div>
+      <div class="row" id="postureRow"></div>
+      <div style="height:10px"></div>
+      <div class="barwrap" id="bars"></div>
+      <div class="hint">These summarize cross-sectional breadth and relative-to-self behavior. Not a forecast.</div>
+    </div>
+
+    <div class="card" id="runCard">
+      <div class="sectionTitle">
+        <h2>Run Snapshot</h2>
+        <div class="small" id="runMeta">—</div>
+      </div>
+
+      <div class="row" id="snapshotRow"></div>
+
+      <div style="height:12px"></div>
+
+      <h2 style="margin-top:0">Find a Ticker</h2>
+      <div class="search">
+        <span class="muted mono">⌕</span>
+        <input id="tickerInput" type="text" placeholder="Type a ticker (e.g., AMZN, SPY, BTC-USD) and press Enter" />
+        <button class="btn" id="loadTickerBtn">Load</button>
+      </div>
+      <div class="hint">
+        Loads the evidence pack on-demand from the latest run folder listed in <span class="mono">public/state.json</span>.
+      </div>
+
+      <div class="drawer" id="drawer" style="display:none"></div>
+    </div>
+  </div>
+
+  <div style="height:12px"></div>
+
+  <div class="card" id="benchCard">
+    <div class="sectionTitle">
+      <h2>Benchmarks (Context)</h2>
+      <div class="small" id="benchStatus">—</div>
+    </div>
+    <div class="small muted" style="margin-bottom:8px">
+      Click tickers or numbers to open their live quote pages. Click Opp/Risk to open methodology.
+    </div>
+    <div id="benchTables"></div>
+  </div>
+
+  <div class="footer" id="footer"></div>
+</div>
+
+<script>
+  // ----------------------------
+  // Helpers
+  // ----------------------------
+  const BENCHMARK_GROUPS = [
+    ["US Equity", ["SPY", "QQQ", "DIA", "IWM", "VTI"]],
+    ["Global Equity", ["VT", "VXUS", "VEA", "VWO"]],
+    ["Rates / USD / Vol", ["BND", "TLT", "UUP", "^VIX"]],
+    ["Real Assets", ["GLD", "SLV", "USO"]],
+    ["Crypto (context)", ["BTC-USD"]],
+  ];
+
+  const BENCHMARK_META = {
+    "SPY": "S&P 500 (US large-cap)",
+    "QQQ": "Nasdaq 100 (US growth/tech tilt)",
+    "DIA": "Dow 30 (US large-cap)",
+    "IWM": "US small-cap (Russell 2000)",
+    "VTI": "US total market",
+    "VT": "Total world (US + Intl)",
+    "VXUS": "International ex-US",
+    "VEA": "Developed markets ex-US",
+    "VWO": "Emerging markets",
+    "BND": "US total bond market",
+    "TLT": "Long-duration US Treasuries",
+    "UUP": "US dollar strength proxy",
+    "^VIX": "Volatility index (VIX)",
+    "GLD": "Gold",
+    "SLV": "Silver",
+    "USO": "Oil (WTI proxy)",
+    "BTC-USD": "Bitcoin (risk appetite proxy)",
+  };
+
+  const METHODOLOGY_BASE = "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md";
+
+  function fmt(x, digits=1){
+    if (x === null || x === undefined) return "—";
+    const n = Number(x);
+    if (!Number.isFinite(n)) return "—";
+    return n.toFixed(digits);
+  }
+  function fmtInt(x){
+    if (x === null || x === undefined) return "—";
+    const n = Number(x);
+    if (!Number.isFinite(n)) return "—";
+    return String(Math.trunc(n));
+  }
+  function fmtPctAlready(x){
+    if (x === null || x === undefined) return "—";
+    const n = Number(x);
+    if (!Number.isFinite(n)) return "—";
+    return `${n.toFixed(1)}%`;
+  }
+  function fmtPctRatio(x){
+    if (x === null || x === undefined) return "—";
+    const n = Number(x);
+    if (!Number.isFinite(n)) return "—";
+    return `${(n*100).toFixed(1)}%`;
+  }
+  function fmtPctChange1d(x){
+    if (x === null || x === undefined) return "—";
+    let v = Number(x);
+    if (!Number.isFinite(v)) return "—";
+    if (Math.abs(v) <= 0.25) v = v * 100;
+    return `${v.toFixed(1)}%`;
+  }
+  function pctToWidth(pct){
+    if (pct === null || pct === undefined) return 0;
+    const n = Number(pct);
+    if (!Number.isFinite(n)) return 0;
+    return Math.max(0, Math.min(100, n));
+  }
+  function quoteUrl(sym){
+    return `https://finance.yahoo.com/quote/${encodeURIComponent(sym)}`;
+  }
+  function normalizeBasePath(p){
+    if (!p) return "";
+    let s = String(p).trim();
+    // state.json may store "public/evidence_packs/..." but the site root is already /public
+    if (s.startsWith("public/")) s = s.slice("public/".length);
+    if (s.startsWith("/")) s = s.slice(1);
+    // remove trailing slash
+    s = s.replace(/\/+$/, "");
+    return s;
+  }
+  async function fetchJson(path){
+    const r = await fetch(path, {cache:"no-store"});
+    if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
+    return await r.json();
+  }
+
+  function el(tag, attrs={}, children=[]){
+    const e = document.createElement(tag);
+    for (const [k,v] of Object.entries(attrs)){
+      if (k === "class") e.className = v;
+      else if (k === "html") e.innerHTML = v;
+      else e.setAttribute(k, v);
+    }
+    for (const c of children){
+      if (typeof c === "string") e.appendChild(document.createTextNode(c));
+      else if (c) e.appendChild(c);
+    }
+    return e;
+  }
+
+  function link(href, text, extraAttrs={}){
+    return el("a", {href, target:"_blank", rel:"noopener noreferrer", ...extraAttrs}, [text]);
+  }
+
+  function chip(k, v){
+    return el("div", {class:"chip"}, [
+      el("span", {class:"m"}, [k + ": "]),
+      el("span", {}, [v]),
+    ]);
+  }
+
+  // ----------------------------
+  // Rendering
+  // ----------------------------
+  function renderPosture(state){
+    const posture = state.posture || {};
+    const breadth = state.breadth || {};
+    const sample = (breadth.sample || {});
+    const label = posture.label || "Unknown";
+
+    const postureRow = document.getElementById("postureRow");
+    postureRow.innerHTML = "";
+
+    postureRow.appendChild(el("div", {class:"kv"}, [
+      el("div", {class:"k"}, ["Posture"]),
+      el("div", {class:"v mono"}, [label]),
+    ]));
+
+    const pe = posture.plain_english || "";
+    postureRow.appendChild(el("div", {class:"kv", style:"flex:1"}, [
+      el("div", {class:"k"}, ["Plain English"]),
+      el("div", {class:"v"}, [pe || "—"]),
+    ]));
+
+    // Bars (setup presence, fragility presence, net tilt)
+    const bars = document.getElementById("bars");
+    bars.innerHTML = "";
+
+    const pullPct = sample.pullback_density_pct ?? null;
+    const fragPct = sample.fragility_presence_pct ?? null;
+    const tiltPts = sample.net_tilt_pct_points ?? null;
+
+    function barLine(name, pct, kind){
+      const width = pctToWidth(pct);
+      const fillClass = kind;
+      const pctText = (pct === null || pct === undefined) ? "—" : fmtPctAlready(pct);
+      return el("div", {class:"barline"}, [
+        el("div", {class:"barlabel"}, [name]),
+        el("div", {class:"bar"}, [
+          el("div", {class:`fill ${fillClass}`, style:`width:${width}%`}, [])
+        ]),
+        el("div", {class:"pct mono"}, [pctText]),
+      ]);
+    }
+
+    bars.appendChild(barLine("Pullback/Stabilization presence", pullPct, "good"));
+    bars.appendChild(barLine("Breakdown/Fragility presence", fragPct, "bad"));
+
+    // Tilt: map -50..+50 to 0..100
+    let tiltMapped = null;
+    if (tiltPts !== null && tiltPts !== undefined){
+      const x = Math.max(-50, Math.min(50, Number(tiltPts)));
+      tiltMapped = x + 50;
+    }
+    bars.appendChild(el("div", {class:"barline"}, [
+      el("div", {class:"barlabel"}, ["Net tilt (setup minus fragility)"]),
+      el("div", {class:"bar"}, [
+        el("div", {class:"fill warn", style:`width:${pctToWidth(tiltMapped)}%`}, [])
+      ]),
+      el("div", {class:"pct mono"}, [(tiltPts === null || tiltPts === undefined) ? "—" : `${fmt(tiltPts,1)} pts`]),
+    ]));
+  }
+
+  function renderSnapshot(state){
+    const universe = state.universe || {};
+    const quality = state.quality || {};
+    const breadth = state.breadth || {};
+    const sample = breadth.sample || {};
+
+    const snap = document.getElementById("snapshotRow");
+    snap.innerHTML = "";
+
+    const actual = universe.actual_size ?? state.universe_size ?? null;
+    const target = universe.target_size ?? null;
+
+    snap.appendChild(el("div", {class:"kv"}, [
+      el("div", {class:"k"}, ["Universe"]),
+      el("div", {class:"v mono"}, [
+        actual !== null ? `${fmtInt(actual)}` : "—",
+        target !== null ? ` (target ${fmtInt(target)})` : ""
+      ])
+    ]));
+
+    const success = quality.success_rate_pct ?? null;
+    const skipped = quality.skipped_tickers_count ?? null;
+
+    snap.appendChild(el("div", {class:"kv"}, [
+      el("div", {class:"k"}, ["Coverage"]),
+      el("div", {class:"v mono"}, [
+        (success !== null ? `${fmt(success,1)}% success` : "—"),
+        (skipped !== null ? ` | skipped ${fmtInt(skipped)}` : "")
+      ])
+    ]));
+
+    const denom = sample.denom_used_for_presence ?? null;
+    snap.appendChild(el("div", {class:"kv"}, [
+      el("div", {class:"k"}, ["Presence denom"]),
+      el("div", {class:"v mono"}, [denom !== null ? fmtInt(denom) : "—"])
+    ]));
+  }
+
+  function setHeaderMeta(state){
+    const asOf = state.generated_at_utc || state.as_of_utc || "";
+    document.getElementById("asOf").textContent = asOf ? `as of ${asOf}` : "—";
+
+    const basePathRaw = state?.evidence_pack_index?.base_path || "";
+    const basePath = normalizeBasePath(basePathRaw);
+
+    const mode = (state.mode || state.HMONEY_MODE || "").toString();
+    document.getElementById("subline").textContent =
+      `State loaded • packs: ${basePath || "—"}${mode ? ` • mode: ${mode}` : ""}`;
+
+    document.getElementById("footer").innerHTML =
+      `Data currently sourced primarily from Yahoo Finance via yfinance. Links are click-through provenance.`;
+
+    return basePath;
+  }
+
+  function badgeForDelta(n){
+    if (n === null || n === undefined) return "";
+    const v = Number(n);
+    if (!Number.isFinite(v)) return "";
+    if (v > 0) return "pos";
+    if (v >= -10) return "mildneg";
+    return "neg";
+  }
+
+  function methodologyHrefForHeader(header){
+    const h = header.toLowerCase().trim();
+    if (h === "state") return `${METHODOLOGY_BASE}#classifications`;
+    if (h === "opp") return `${METHODOLOGY_BASE}#opportunity-score`;
+    if (h === "risk") return `${METHODOLOGY_BASE}#structural-risk-score`;
+    if (h === "discount") return `${METHODOLOGY_BASE}#discount-score`;
+    if (h === "rsi") return `${METHODOLOGY_BASE}#rsi`;
+    return null;
+  }
+
+  function renderDrawer(pack, symbol){
+    const drawer = document.getElementById("drawer");
+    drawer.style.display = "block";
+    drawer.innerHTML = "";
+
+    const links = pack.links || {};
+    const fieldLinks = pack.field_links || {};
+    const market = pack.market || {};
+    const scores = pack.scores || {};
+    const cls = pack.classification || {};
+    const expl = pack.explainability || {};
+    const asset = pack.asset || {};
+
+    const quote = links.quote || quoteUrl(symbol);
+    const profile = links.profile || `${quote}/profile`;
+    const meth = links.methodology || METHODOLOGY_BASE;
+
+    drawer.appendChild(el("h3", {}, [`Evidence Pack — ${symbol}`]));
+
+    const topLinks = el("div", {class:"chips"}, [
+      chip("Provider", links.provider || "—"),
+      el("div", {class:"chip"}, [link(quote, "Quote")]),
+      el("div", {class:"chip"}, [link(profile, "Profile")]),
+      el("div", {class:"chip"}, [link(meth, "Methodology")]),
+    ]);
+    drawer.appendChild(topLinks);
+
+    drawer.appendChild(el("div", {style:"height:10px"}, []));
+
+    const cols = el("div", {class:"cols"}, []);
+
+    // Left: Market
+    const left = el("div", {class:"card", style:"padding:12px; border-radius:14px; background:rgba(10,14,20,0.25)"}, [
+      el("h3", {style:"margin:0 0 10px; font-size:13px"}, ["Market (context)"]),
+    ]);
+
+    function kvRow(label, value, href){
+      const valueNode = href ? link(href, value, {class:"mono"}) : el("span", {class:"mono"}, [value]);
+      return el("div", {class:"item"}, [
+        el("div", {class:"lk"}, [label]),
+        el("div", {class:"rv"}, [valueNode]),
+      ]);
+    }
+
+    left.appendChild(el("div", {class:"list"}, [
+      kvRow("Last price", (market.last_price ?? "—").toString(), fieldLinks["market.last_price"] || quote),
+      kvRow("% Chg 1D", fmtPctChange1d(market.pct_change_1d), fieldLinks["market.pct_change_1d"] || quote),
+      kvRow("Volume", (market.volume ?? "—").toString(), fieldLinks["market.volume"] || quote),
+      kvRow("MA 200", (market.ma_200 ?? "—").toString(), fieldLinks["market.ma_200"] || quote),
+      kvRow("RSI 14", (market.rsi_14 ?? "—").toString(), fieldLinks["market.rsi_14"] || quote),
+      kvRow("% off 52w high", fmtPctRatio(market.pct_off_52w_high), fieldLinks["market.pct_off_52w_high"] || quote),
+      kvRow("ATR %", (market.atr_pct ?? "—").toString(), fieldLinks["market.atr_pct"] || quote),
+    ]));
+
+    // Right: Scores & classification
+    const right = el("div", {class:"card", style:"padding:12px; border-radius:14px; background:rgba(10,14,20,0.25)"}, [
+      el("h3", {style:"margin:0 0 10px; font-size:13px"}, ["Scores & Diagnostics"]),
+    ]);
+
+    const methOpp = fieldLinks["scores.opportunity_score"] || `${meth}#opportunity-score`;
+    const methRisk = fieldLinks["scores.structural_risk_score"] || `${meth}#structural-risk-score`;
+    const methDisc = fieldLinks["scores.discount_score"] || `${meth}#discount-score`;
+    const methCls = fieldLinks["classification.label"] || `${meth}#classifications`;
+    const methBias = fieldLinks["deployment_bias"] || `${meth}#deployment-bias`;
+
+    right.appendChild(el("div", {class:"list"}, [
+      kvRow("Opportunity", fmtInt(scores.opportunity_score), methOpp),
+      kvRow("Structural Risk", fmtInt(scores.structural_risk_score), methRisk),
+      kvRow("Discount", scores.discount_score === null || scores.discount_score === undefined ? "—" : fmtInt(scores.discount_score), methDisc),
+      kvRow("Label", (cls.label ?? "—").toString(), methCls),
+      kvRow("Confidence", (cls.confidence ?? "—").toString(), methCls),
+      kvRow("Deployment bias", (pack.deployment_bias ?? "—").toString(), methBias),
+    ]));
+
+    // Reason codes
+    const reasons = Array.isArray(expl.reason_codes) ? expl.reason_codes : [];
+    right.appendChild(el("div", {style:"height:10px"}, []));
+    right.appendChild(el("div", {class:"small muted"}, ["Reason codes:"]));
+    right.appendChild(el("div", {class:"chips"}, reasons.slice(0, 12).map(rc => chip(rc, ""))));
+
+    cols.appendChild(left);
+    cols.appendChild(right);
+    drawer.appendChild(cols);
+
+    // Footer meta
+    drawer.appendChild(el("div", {class:"hint"}, [
+      `run_id: ${pack.run_id || "—"} • schema: ${pack.schema_version || "—"} • asset_type: ${asset.asset_type || "—"}`
+    ]));
+  }
+
+  async function loadPack(basePath, symbol){
+    const sym = symbol.trim().toUpperCase();
+    const path = `${basePath}/${encodeURIComponent(sym)}.json`;
+    return await fetchJson(path);
+  }
+
+  async function renderBenchmarks(basePath){
+    const benchTables = document.getElementById("benchTables");
+    benchTables.innerHTML = "";
+    document.getElementById("benchStatus").textContent = `Loading from ${basePath || "—"}`;
+
+    for (const [groupName, symbols] of BENCHMARK_GROUPS){
+      const card = el("div", {class:"card", style:"padding:12px; border-radius:14px; margin-top:10px; background:rgba(10,14,20,0.22)"}, [
+        el("div", {class:"sectionTitle"}, [
+          el("h2", {style:"margin:0"}, [groupName]),
+          el("div", {class:"small muted"}, ["click to open sources"])
+        ])
+      ]);
+
+      const tbl = el("table", {}, []);
+      const thead = el("thead", {}, [el("tr", {}, [
+        el("th", {}, ["Ticker"]),
+        el("th", {}, ["What it represents"]),
+        el("th", {class:"num"}, ["Opp"]),
+        el("th", {class:"num"}, ["Risk"]),
+        el("th", {class:"num"}, ["% Chg 1D"]),
+        el("th", {class:"num"}, ["% off High"]),
+        el("th", {class:"num"}, ["Δ200DMA"]),
+      ])]);
+      const tbody = el("tbody", {}, []);
+      tbl.appendChild(thead);
+      tbl.appendChild(tbody);
+
+      for (const sym of symbols){
+        try{
+          const pack = await loadPack(basePath, sym);
+          const market = pack.market || {};
+          const scores = pack.scores || {};
+          const cls = pack.classification || {};
+          const links = pack.links || {};
+
+          const quote = links.quote || quoteUrl(sym);
+
+          const last = market.last_price ?? null;
+          const ma200 = market.ma_200 ?? null;
+          let dist200 = null;
+          if (last !== null && ma200 !== null && Number(ma200) !== 0){
+            dist200 = (Number(last) / Number(ma200)) - 1;
+          }
+
+          const tr = el("tr", {}, [
+            el("td", {}, [link(quote, sym, {class:"mono"})]),
+            el("td", {class:"muted"}, [BENCHMARK_META[sym] || "Benchmark"]),
+            el("td", {class:"num"}, [link(methodologyHrefForHeader("opp"), fmtInt(scores.opportunity_score), {class:"mono"})]),
+            el("td", {class:"num"}, [link(methodologyHrefForHeader("risk"), fmtInt(scores.structural_risk_score), {class:"mono"})]),
+            el("td", {class:`num ${badgeForDelta((() => { let v=market.pct_change_1d; if(v===null||v===undefined) return null; v=Number(v); if(!Number.isFinite(v)) return null; if(Math.abs(v)<=0.25) v*=100; return v; })())}`},
+              [link(quote, fmtPctChange1d(market.pct_change_1d), {class:"mono"})]
+            ),
+            el("td", {class:"num"}, [link(quote, fmtPctRatio(market.pct_off_52w_high), {class:"mono"})]),
+            el("td", {class:"num"}, [link(quote, fmtPctRatio(dist200), {class:"mono"})]),
+          ]);
+
+          tbody.appendChild(tr);
+        }catch(e){
+          // If a benchmark pack isn't present in this run, just skip it.
+          continue;
+        }
+      }
+
+      if (!tbody.children.length){
+        card.appendChild(el("div", {class:"small muted"}, ["No benchmark packs found in this run folder. (Likely a partial shard run.)"]));
+      } else {
+        card.appendChild(tbl);
+      }
+
+      benchTables.appendChild(card);
+    }
+
+    document.getElementById("benchStatus").textContent = `Loaded benchmarks from ${basePath}`;
+  }
+
+  async function init(){
+    try{
+      const state = await fetchJson("./state.json");
+      const basePath = setHeaderMeta(state);
+
+      renderSnapshot(state);
+      renderPosture(state);
+
+      // Preload benchmarks
+      if (basePath){
+        await renderBenchmarks(basePath);
+      } else {
+        document.getElementById("benchStatus").textContent = "Missing evidence_pack_index.base_path in state.json";
+      }
+
+      // Search handlers
+      const input = document.getElementById("tickerInput");
+      const btn = document.getElementById("loadTickerBtn");
+      async function doLoad(){
+        const sym = input.value.trim().toUpperCase();
+        if (!sym) return;
+        const drawer = document.getElementById("drawer");
+        drawer.style.display = "block";
+        drawer.innerHTML = "<div class='small muted'>Loading…</div>";
+
+        try{
+          const pack = await loadPack(basePath, sym);
+          renderDrawer(pack, sym);
+        }catch(e){
+          drawer.innerHTML = `<div class="err">Could not load pack for <span class="mono">${sym}</span> from <span class="mono">${basePath}</span>.</div>
+            <div class="hint">If this symbol wasn’t included in the current shard run, it may not exist in this run folder yet.</div>`;
+        }
+      }
+      btn.addEventListener("click", doLoad);
+      input.addEventListener("keydown", (ev) => {
+        if (ev.key === "Enter") doLoad();
+      });
+
+      document.getElementById("reloadBtn").addEventListener("click", () => location.reload());
+
+      // Show where packs live
+      const basePathRaw = state?.evidence_pack_index?.base_path || "";
+      const basePathNorm = normalizeBasePath(basePathRaw);
+      document.getElementById("runMeta").textContent = basePathNorm ? `packs: ${basePathNorm}` : "—";
+    }catch(e){
+      document.getElementById("subline").textContent = "Failed to load state.json";
+      document.getElementById("postureCard").innerHTML = `<div class="err">Error loading state: ${String(e)}</div>`;
+    }
+  }
+
+  init();
+</script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "81f87629-36c2-4ac6-b05c-0044df47a3dd",
+  "run_id": "2026-02-23/0436",
+  "generated_at_utc": "2026-02-23T04:40:22Z",
+  "as_of_utc": "2026-02-23T04:36:35Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "BRTX",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 0.21850000321865082,
+    "pct_change_1d": -18.47015008360219,
+    "currency": "USD",
+    "volume": 6489600.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 1.4089174995571374,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.8907499983906746,
+    "atr_pct": 51.196469211069214
+  },
+  "scores": {
+    "opportunity_score": 38,
+    "structural_risk_score": 89,
+    "discount_score": 92
+  },
+  "classification": {
+    "label": "\ud83d\udd34",
+    "confidence": 0.9
+  },
+  "deployment_bias": "avoid",
+  "explainability": {
+    "reason_codes": [
+      "OPP_LOW",
+      "RISK_VERY_HIGH",
+      "CLASS_RED"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/BRTX",
+    "profile": "https://finance.yahoo.com/quote/BRTX/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/BRTX",
+    "market.last_price": "https://finance.yahoo.com/quote/BRTX",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/BRTX",
+    "market.volume": "https://finance.yahoo.com/quote/BRTX",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/BRTX",
+    "market.ma_50": "https://finance.yahoo.com/quote/BRTX",
+    "market.ma_200": "https://finance.yahoo.com/quote/BRTX",
+    "market.rsi_14": "https://finance.yahoo.com/quote/BRTX",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/BRTX",
+    "market.atr_pct": "https://finance.yahoo.com/quote/BRTX",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}

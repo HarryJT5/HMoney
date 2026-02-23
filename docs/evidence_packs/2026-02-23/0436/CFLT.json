@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "394c6179-021f-4b66-8921-e8d7799c0b83",
+  "run_id": "2026-02-23/0436",
+  "generated_at_utc": "2026-02-23T04:40:22Z",
+  "as_of_utc": "2026-02-23T04:36:35Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "CFLT",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 30.700000762939453,
+    "pct_change_1d": -0.06509944942071355,
+    "currency": "USD",
+    "volume": 16227000.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 24.108650045394896,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.04658384982792991,
+    "atr_pct": 0.4543971769323824
+  },
+  "scores": {
+    "opportunity_score": 68,
+    "structural_risk_score": 15,
+    "discount_score": 34
+  },
+  "classification": {
+    "label": "\ud83d\udfe1",
+    "confidence": 0.9
+  },
+  "deployment_bias": "watch",
+  "explainability": {
+    "reason_codes": [
+      "OPP_MID",
+      "RISK_OK",
+      "CLASS_YELLOW"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/CFLT",
+    "profile": "https://finance.yahoo.com/quote/CFLT/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/CFLT",
+    "market.last_price": "https://finance.yahoo.com/quote/CFLT",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/CFLT",
+    "market.volume": "https://finance.yahoo.com/quote/CFLT",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/CFLT",
+    "market.ma_50": "https://finance.yahoo.com/quote/CFLT",
+    "market.ma_200": "https://finance.yahoo.com/quote/CFLT",
+    "market.rsi_14": "https://finance.yahoo.com/quote/CFLT",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/CFLT",
+    "market.atr_pct": "https://finance.yahoo.com/quote/CFLT",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
