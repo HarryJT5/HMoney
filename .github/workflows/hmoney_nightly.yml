@@ -1,0 +1,49 @@
+# .github/workflows/hmoney_nightly.yml
+name: HMoney Nightly Newsletter
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "15 2 * * 1-5"   # Weekdays 02:15 UTC
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: hmoney-nightly-${{ github.ref }}
+      cancel-in-progress: true
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: pip-${{ runner.os }}-${{ hashFiles('requirements.txt') }}
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run pipeline (nightly)
+        env:
+          HMONEY_MODE: "daily"
+          HMONEY_LOCAL_TZ: "America/Los_Angeles"
+          UNIVERSE_SHARDS: "10"
+          UNIVERSE_SHARD_INDEX: "0"
+        run: |
+          python -m src.pipeline
+
+      - name: Commit outputs (public/)
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add public/ data/universe_all.csv || true
+          git commit -m "Nightly HMoney update" || echo "No changes"
+          git push

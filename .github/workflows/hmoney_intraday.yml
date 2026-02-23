@@ -1,0 +1,61 @@
+# .github/workflows/hmoney_intraday.yml
+name: HMoney Intraday
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Intraday: every 15 min during US market hours (UTC times shown)
+    # 14:30–21:00 UTC roughly covers 9:30–16:00 ET (adjust for DST as needed)
+    - cron: "*/15 14-20 * * 1-5"
+    - cron: "0 21 * * 1-5"   # last run
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: hmoney-intraday-${{ github.ref }}
+      cancel-in-progress: true
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: pip-${{ runner.os }}-${{ hashFiles('requirements.txt') }}
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Compute rolling shard index
+        id: shard
+        run: |
+          SHARDS=10
+          DOY=$(date -u +%j)
+          IDX=$((10#$DOY % SHARDS))
+          echo "index=$IDX" >> $GITHUB_OUTPUT
+          echo "Shard index: $IDX / $SHARDS"
+
+      - name: Run pipeline (intraday)
+        env:
+          HMONEY_MODE: "intraday"
+          HMONEY_LOCAL_TZ: "America/Los_Angeles"
+          UNIVERSE_SHARDS: "10"
+          UNIVERSE_SHARD_INDEX: ${{ steps.shard.outputs.index }}
+        run: |
+          python -m src.pipeline
+
+      - name: Commit outputs (public/)
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add public/ || true
+          git commit -m "Intraday HMoney update" || echo "No changes"
+          git push
