@@ -1,5 +1,7 @@
-# .github/workflows/hmoney_nightly.yml
 name: HMoney Nightly Newsletter
+
+permissions:
+  contents: write
 
 on:
   workflow_dispatch:
@@ -15,6 +17,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
 
       - uses: actions/setup-python@v5
         with:
