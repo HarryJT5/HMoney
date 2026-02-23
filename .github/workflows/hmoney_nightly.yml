@@ -9,17 +9,19 @@ on:
   schedule:
     - cron: "30 22 * * 1-5"   # Soon after US market close (DST-safe)
 
+concurrency:
+  group: hmoney-nightly
+  cancel-in-progress: true
+
 jobs:
   run:
     runs-on: ubuntu-latest
-    concurrency:
-      group: hmoney-main
-      cancel-in-progress: true
 
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: true
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
@@ -51,66 +53,46 @@ jobs:
           HMONEY_LOCAL_TZ: "America/Los_Angeles"
           UNIVERSE_SHARDS: "10"
           UNIVERSE_SHARD_INDEX: ${{ steps.shard.outputs.index }}
+
+          # ✅ Publish targets (GitHub Pages serves from docs/)
+          HMONEY_EVIDENCE_PACK_BASE: "docs/evidence_packs"
+          HMONEY_STATE_JSON: "docs/state.json"
+          HMONEY_DAILY_BRIEF_MD: "docs/daily_brief.md"
+          HMONEY_DAILY_BRIEF_HTML: "docs/daily_brief.html"
         run: |
           python -m src.pipeline
 
-      - name: Mirror site outputs to docs/ for GitHub Pages (preserve docs/index.html)
+      - name: Commit nightly outputs (docs only)
         run: |
-          mkdir -p docs
+          set -euo pipefail
 
-          # Copy brief + state (nightly)
-          # IMPORTANT: do NOT touch docs/index.html (dashboard is hand-maintained).
-          cp -f public/state.json docs/state.json
-          cp -f public/daily_brief.html docs/daily_brief.html
-          cp -f public/daily_brief.md docs/daily_brief.md
-
-          # Copy evidence packs (nightly only)
-          rm -rf docs/evidence_packs
-          cp -rf public/evidence_packs docs/evidence_packs
-
-          # Patch docs/state.json so evidence_pack_index.base_path is docs-relative (no "public/" prefix)
-          python - <<'PY'
-          import json
-          from pathlib import Path
-
-          p = Path("docs/state.json")
-          if not p.exists():
-              print("docs/state.json missing; nothing to patch")
-              raise SystemExit(0)
-
-          s = json.loads(p.read_text(encoding="utf-8"))
-          epi = s.get("evidence_pack_index") or {}
-          bp = (epi.get("base_path") or "").lstrip("/")
-
-          if bp.startswith("public/"):
-              bp = bp[len("public/"):]
-          epi["base_path"] = bp
-
-          s["evidence_pack_index"] = epi
-          p.write_text(json.dumps(s, indent=2), encoding="utf-8")
-          print("docs/state.json base_path =", bp)
-          PY
-
-      - name: Commit nightly outputs (public + docs)
-        run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
 
-          # public (full artifacts)
-          git add public/ data/universe_all.csv || true
+          # Stage publish artifacts
+          git add -A docs
 
-          # docs (Pages artifacts) -- intentionally NOT adding docs/index.html
-          git add docs/state.json docs/daily_brief.md docs/daily_brief.html docs/evidence_packs || true
+          # If you still want the nightly job to version the universe CSV, keep this line.
+          # If not, delete it.
+          git add data/universe_all.csv || true
 
-          git commit -m "Nightly HMoney update" || echo "No changes"
+          # Preserve hand-maintained dashboard file
+          git reset docs/index.html || true
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+
+          git commit -m "Nightly HMoney update"
 
           for i in 1 2 3; do
-            git pull --rebase origin main || true
-            if git push; then
+            git pull --rebase --autostash origin main || true
+            if git push origin main; then
               exit 0
             fi
             echo "Push failed (attempt $i). Retrying..."
-            sleep 5
+            sleep $((i*5))
           done
 
           echo "Failed to push after retries."
