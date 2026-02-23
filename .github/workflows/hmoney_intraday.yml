@@ -57,21 +57,27 @@ jobs:
         run: |
           python -m src.pipeline
 
-      - name: Mirror lightweight outputs to docs/ for GitHub Pages
+      - name: Mirror lightweight outputs to docs/ for GitHub Pages (preserve docs/index.html)
         run: |
           mkdir -p docs
+
+          # Copy only the lightweight artifacts that are meant to be served on Pages.
+          # IMPORTANT: do NOT touch docs/index.html (dashboard is hand-maintained).
           cp -f public/state.json docs/state.json
           cp -f public/daily_brief.html docs/daily_brief.html
           cp -f public/daily_brief.md docs/daily_brief.md
 
-          # Patch docs/state.json so evidence_pack_index.base_path is docs-relative
+          # Patch docs/state.json so evidence_pack_index.base_path is docs-relative (no "public/" prefix)
           python - <<'PY'
           import json
           from pathlib import Path
 
           p = Path("docs/state.json")
-          s = json.loads(p.read_text(encoding="utf-8"))
+          if not p.exists():
+              print("docs/state.json missing; nothing to patch")
+              raise SystemExit(0)
 
+          s = json.loads(p.read_text(encoding="utf-8"))
           epi = s.get("evidence_pack_index") or {}
           bp = (epi.get("base_path") or "").lstrip("/")
 
@@ -92,7 +98,7 @@ jobs:
           # public (repo artifacts)
           git add public/state.json public/daily_brief.md public/daily_brief.html || true
 
-          # docs (Pages artifacts)
+          # docs (Pages artifacts) -- intentionally NOT adding docs/index.html
           git add docs/state.json docs/daily_brief.md docs/daily_brief.html || true
 
           git commit -m "Intraday HMoney update" || echo "No changes"
