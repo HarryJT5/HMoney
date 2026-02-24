@@ -68,9 +68,11 @@
     .k{color:var(--muted); font-size:11px}
     .v{font-size:13px}
     .mono{font-variant-numeric: tabular-nums; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}
-    .chips{display:flex; gap:8px; flex-wrap:wrap}
-    .chip{background:var(--chip); border:1px solid var(--line); padding:6px 8px; border-radius:999px; font-size:12px; color:var(--text)}
+    .chips{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+    .chip{background:var(--chip); border:1px solid var(--line); padding:6px 8px; border-radius:999px; font-size:12px; color:var(--text); display:inline-flex; gap:8px; align-items:baseline}
     .chip .m{color:var(--muted)}
+    .chip .t{color:var(--text)}
+    .chip .s{color:var(--muted); font-size:11px}
     .barwrap{display:flex; flex-direction:column; gap:8px}
     .barline{display:flex; gap:10px; align-items:center; justify-content:space-between}
     .barlabel{font-size:12px; color:var(--muted)}
@@ -157,6 +159,36 @@
       resize:vertical;
       min-height:60px;
     }
+
+    /* Live + badges */
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:4px 8px;
+      border:1px solid var(--line);
+      background: rgba(10,14,20,0.30);
+      border-radius:999px;
+      font-size:11px;
+      color:var(--muted);
+      white-space:nowrap;
+    }
+    .badge b{color:var(--text); font-weight:600}
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      padding:2px 6px;
+      border-radius:999px;
+      font-size:11px;
+      border:1px solid var(--line);
+      background: rgba(10,14,20,0.25);
+      color:var(--muted);
+    }
+    .tag.good{color:var(--good)}
+    .tag.warn{color:var(--warn)}
+    .tag.bad{color:var(--bad)}
+    .newsItemTitle{display:block; margin-bottom:2px}
+    .newsMeta{font-size:11px; color:var(--muted)}
   </style>
 </head>
 
@@ -171,6 +203,18 @@
       <a class="btn" href="./daily_brief.html" target="_blank" rel="noopener noreferrer">Open Daily Brief (HTML)</a>
       <a class="btn" href="./daily_brief.md" target="_blank" rel="noopener noreferrer">Open Brief (MD)</a>
       <button class="btn" id="reloadBtn">Reload</button>
+    </div>
+  </div>
+
+  <!-- Live overlay tape -->
+  <div class="card" id="liveCard" style="padding:12px; margin-bottom:12px;">
+    <div class="sectionTitle">
+      <h2 style="margin:0">Live overlay</h2>
+      <div class="small" id="liveMeta">—</div>
+    </div>
+    <div class="chips" id="liveChips"></div>
+    <div class="hint" style="margin-top:8px">
+      Live overlay is cached briefly via Worker and refreshes more frequently during market hours. Baseline analytics update on pipeline cadence.
     </div>
   </div>
 
@@ -203,7 +247,7 @@
         <button class="btn" id="loadTickerBtn">Load</button>
       </div>
       <div class="hint">
-        Loads the evidence pack on-demand from the run folder listed in <span class="mono">state.json</span>.
+        Loads evidence via Worker (<span class="mono">/pack</span>) with stale fallback when current-run packs are missing.
       </div>
 
       <div class="drawer" id="drawer" style="display:none"></div>
@@ -219,7 +263,7 @@
       <div class="small" id="hlMeta">—</div>
     </div>
     <div class="small muted" style="margin-bottom:8px">
-      Shortlists are diagnostic samples from the current run. Click tickers to open quote pages. Click <span class="mono">[pack]</span> to open evidence JSON. Click Opp/Risk to open methodology.
+      Shortlists are diagnostic samples from the current run. Click tickers to open quote pages. Click <span class="mono">[pack]</span> to open the most recent available evidence JSON (may be stale). Click Opp/Risk to open methodology.
     </div>
 
     <div class="cols3">
@@ -244,6 +288,29 @@
 
   <div style="height:12px"></div>
 
+  <!-- News -->
+  <div class="card" id="newsCard">
+    <div class="sectionTitle">
+      <h2>News (cached)</h2>
+      <div class="small" id="newsMeta">—</div>
+    </div>
+    <div class="cols">
+      <div>
+        <div class="small muted" style="margin-bottom:8px">Market</div>
+        <div id="newsMarket" class="list"></div>
+      </div>
+      <div>
+        <div class="small muted" style="margin-bottom:8px">Selected ticker</div>
+        <div id="newsTicker" class="list"></div>
+      </div>
+    </div>
+    <div class="hint" style="margin-top:10px">
+      Headlines are fetched via Worker (<span class="mono">/news</span>) from RSS/official feeds and deduped best-effort. Click-through only (no full-text rehosting).
+    </div>
+  </div>
+
+  <div style="height:12px"></div>
+
   <!-- AI -->
   <div class="card" id="aiCard">
     <div class="sectionTitle">
@@ -251,18 +318,18 @@
       <div class="small" id="aiStatus">Ready</div>
     </div>
     <div class="small muted" style="margin-bottom:8px">
-      Ask anything. If you mention tickers, the dashboard will try to auto-fetch their packs (multiple supported) from the latest run.
+      Ask anything. If you mention tickers, the Worker will try to auto-fetch their packs (current or stale) and use live/news context when available.
     </div>
 
     <div class="aiBox">
-      <textarea id="aiQuestion" placeholder="Try: 'Compare IRWD vs AMD' or 'Explain structural risk like I'm 5'"></textarea>
+      <textarea id="aiQuestion" placeholder="Try: 'Compare IRWD vs AMD' or 'Summarize today's market + what to watch'"></textarea>
       <button class="btn" id="aiAskBtn">Ask</button>
     </div>
 
     <div class="row" style="margin-top:8px">
       <label class="small muted">
         <input type="checkbox" id="aiIncludeTicker" checked />
-        Auto-fetch ticker packs mentioned (and include last loaded)
+        Include last loaded pack + live quotes for mentioned tickers
       </label>
 
       <label class="small muted">
@@ -290,7 +357,7 @@
       <div class="small" id="benchStatus">—</div>
     </div>
     <div class="small muted" style="margin-bottom:8px">
-      Click tickers to open quote pages. Click <span class="mono">[pack]</span> to open evidence JSON. Click Opp/Risk to open methodology.
+      Click tickers to open quote pages. Click <span class="mono">[pack]</span> to open evidence JSON (best available; may be stale). Click Opp/Risk to open methodology.
     </div>
     <div id="benchTables"></div>
   </div>
@@ -300,18 +367,19 @@
 
 <script>
   // ----------------------------
-  // CONFIG (AI endpoint)
+  // CONFIG (Worker endpoints)
   // ----------------------------
-  const HMONEY_AI_ENDPOINT = "https://bearingbullishballs.htgamein.workers.dev";
+  const HMONEY_WORKER_BASE = "https://bearingbullishballs.htgamein.workers.dev";
+  const HMONEY_AI_ENDPOINT = `${HMONEY_WORKER_BASE}/ai`;
 
-    // Cache-bust token (set after state loads). Falls back to Date.now().
+  // Cache-bust token (set after state loads). Falls back to Date.now().
   window.__HMONEY_V = Date.now();
 
-function withCacheBust(path){
-  const v = encodeURIComponent(window.__HMONEY_V || Date.now());
-  const sep = path.includes("?") ? "&" : "?";
-  return `${path}${sep}v=${v}`;
- }
+  function withCacheBust(path){
+    const v = encodeURIComponent(window.__HMONEY_V || Date.now());
+    const sep = path.includes("?") ? "&" : "?";
+    return `${path}${sep}v=${v}`;
+  }
 
   // ----------------------------
   // AI MEMORY CONFIG (client-side)
@@ -322,8 +390,10 @@ function withCacheBust(path){
   const AI_HISTORY_MAX_CHARS = 12000;     // safety cap for payload size
 
   // ----------------------------
-  // Helpers
+  // Helpers / constants
   // ----------------------------
+  const LIVE_DEFAULT_SYMBOLS = ["SPY","QQQ","DIA","IWM","^VIX","TLT","UUP","BTC-USD"];
+
   const BENCHMARK_GROUPS = [
     ["US Equity", ["SPY", "QQQ", "DIA", "IWM", "VTI"]],
     ["Global Equity", ["VT", "VXUS", "VEA", "VWO"]],
@@ -394,6 +464,7 @@ function withCacheBust(path){
   function quoteUrl(sym){
     return `https://finance.yahoo.com/quote/${encodeURIComponent(sym)}`;
   }
+
   function normalizeBasePath(p){
     if (!p) return "";
     let s = String(p).trim();
@@ -405,6 +476,12 @@ function withCacheBust(path){
 
   async function fetchJson(path){
     const r = await fetch(withCacheBust(path), {cache:"no-store"});
+    if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
+    return await r.json();
+  }
+
+  async function fetchWorkerJson(fullUrl){
+    const r = await fetch(fullUrl, {cache:"no-store"});
     if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
     return await r.json();
   }
@@ -427,21 +504,50 @@ function withCacheBust(path){
     return el("a", {href, target:"_blank", rel:"noopener noreferrer", ...extraAttrs}, [text]);
   }
 
-  // Evidence-pack helpers (Pages + GitHub repo)
-  function packUrl(basePath, sym){
-    const bp = normalizeBasePath(basePath);
-    if (!bp) return null;
-    return withCacheBust(`./${bp}/${encodeURIComponent(sym)}.json`);
+  // ----------------------------
+  // Market hours (PT) – controls polling cadence
+  // ----------------------------
+  function getPTParts(){
+    const parts = new Intl.DateTimeFormat("en-US", {
+      timeZone: "America/Los_Angeles",
+      weekday: "short",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    }).formatToParts(new Date());
+
+    const out = {};
+    for (const p of parts) out[p.type] = p.value;
+    return {
+      weekday: out.weekday || "",
+      hour: Number(out.hour || "0"),
+      minute: Number(out.minute || "0"),
+    };
   }
-  function githubTreeUrl(basePath){
-    const bp = normalizeBasePath(basePath);
-    if (!bp) return null;
-    return `https://github.com/HarryJT5/HMoney/tree/main/docs/${bp}`;
+
+  function isMarketHoursPT(){
+    const {weekday, hour, minute} = getPTParts();
+    const isWeekday = ["Mon","Tue","Wed","Thu","Fri"].includes(weekday);
+    const mins = hour*60 + minute;
+    // Regular hours: 6:30–13:00 PT
+    return isWeekday && mins >= (6*60+30) && mins <= (13*60+0);
   }
-  function packLinkEl(basePath, sym, label="pack"){
-    const href = packUrl(basePath, sym);
-    if (!href) return null;
-    return link(href, label, {class:"mono"});
+
+  // ----------------------------
+  // Evidence-pack helpers (Worker /pack)
+  // ----------------------------
+  function normalizeTicker(sym){
+    return String(sym || "").trim().toUpperCase().replace(/\s+/g, "");
+  }
+
+  async function loadPackSmart(symbol){
+    const sym = normalizeTicker(symbol);
+    const u = `${HMONEY_WORKER_BASE}/pack?ticker=${encodeURIComponent(sym)}`;
+    const data = await fetchWorkerJson(u);
+    if (!data || !data.ok || !data.found || !data.pack){
+      throw new Error(data?.reason || "pack_not_found");
+    }
+    return data;
   }
 
   // ----------------------------
@@ -522,13 +628,15 @@ function withCacheBust(path){
   }
 
   // ----------------------------
-  // State cache for AI
+  // State cache for AI + UI
   // ----------------------------
   let __HMONEY_STATE = null;
   let __LAST_PACK = null;
+  let __LAST_PACK_META = null;
   let __LAST_SYMBOL = null;
   let __BASE_PATH = null;
   let __TICKER_SET = null;
+  let __LIVE_CACHE = null; // last /live payload
 
   function slimStateForAI(state){
     return {
@@ -575,6 +683,7 @@ function withCacheBust(path){
     return {
       run_id: pack.run_id ?? null,
       schema_version: pack.schema_version ?? null,
+      as_of_utc: pack.as_of_utc ?? null,
       asset: pack.asset ?? null,
       market: pack.market ?? null,
       scores: pack.scores ?? null,
@@ -664,13 +773,135 @@ function withCacheBust(path){
     return results;
   }
 
-  async function loadPack(basePath, symbol){
-    const sym = symbol.trim().toUpperCase();
-    const bp = normalizeBasePath(basePath);
-    const path = `${bp}/${encodeURIComponent(sym)}.json`;
-    return await fetchJson(path);
+  // ----------------------------
+  // Live overlay
+  // ----------------------------
+  function badgeForDelta(n){
+    if (n === null || n === undefined) return "";
+    const v = Number(n);
+    if (!Number.isFinite(v)) return "";
+    if (v > 0) return "pos";
+    if (v >= -10) return "mildneg";
+    return "neg";
   }
 
+  function renderLiveChips(payload){
+    const chips = document.getElementById("liveChips");
+    const meta = document.getElementById("liveMeta");
+
+    chips.innerHTML = "";
+    if (!payload || !payload.ok){
+      meta.textContent = "Live overlay unavailable";
+      chips.appendChild(el("div", {class:"small muted"}, ["Worker /live did not return quotes."]));
+      return;
+    }
+
+    __LIVE_CACHE = payload;
+
+    const asOf = payload.as_of_utc || "—";
+    meta.textContent = `as of ${asOf} • ttl ${payload.cache_ttl_s ?? "?"}s`;
+
+    const quotes = payload.quotes || {};
+    for (const sym of LIVE_DEFAULT_SYMBOLS){
+      const q = quotes[sym] || null;
+      const price = q?.price ?? null;
+      const pct = q?.pct ?? null;
+
+      const cls = badgeForDelta(pct);
+      const pctText = (pct === null || pct === undefined) ? "—" : `${Number(pct).toFixed(2)}%`;
+
+      const kids = [
+        el("span", {class:"mono t"}, [sym]),
+        el("span", {class:"mono s"}, [(price === null || price === undefined) ? "—" : fmt(price, 2)]),
+        el("span", {class:`mono ${cls}`}, [pctText]),
+        link(quoteUrl(sym), "↗", {class:"mono", style:"margin-left:4px"})
+      ];
+      chips.appendChild(el("span", {class:"chip"}, kids));
+    }
+
+    chips.appendChild(el("span", {class:"badge"}, [
+      el("span", {}, ["Baseline: "]),
+      el("b", {}, [(__HMONEY_STATE?.generated_at_utc || __HMONEY_STATE?.as_of_utc || "—")]),
+    ]));
+  }
+
+  async function refreshLive(){
+    try{
+      const symbols = LIVE_DEFAULT_SYMBOLS.join(",");
+      const u = `${HMONEY_WORKER_BASE}/live?symbols=${encodeURIComponent(symbols)}`;
+      const payload = await fetchWorkerJson(u);
+      renderLiveChips(payload);
+    }catch(e){
+      renderLiveChips({ ok:false, error:String(e) });
+    }
+  }
+
+  function scheduleLiveLoop(){
+    // adaptive cadence
+    const tick = async () => {
+      await refreshLive();
+      const ms = isMarketHoursPT() ? 30000 : 300000; // 30s in-hours, 5m otherwise
+      setTimeout(tick, ms);
+    };
+    tick();
+  }
+
+  // ----------------------------
+  // News
+  // ----------------------------
+  function renderNewsList(host, items){
+    host.innerHTML = "";
+    if (!items || !items.length){
+      host.appendChild(el("div", {class:"small muted"}, ["No items."]));
+      return;
+    }
+    for (const it of items.slice(0, 12)){
+      const title = it.title || "(untitled)";
+      const url = it.url || "#";
+      const pub = it.publisher || "—";
+      const when = it.published_at || "—";
+      host.appendChild(el("div", {class:"item", style:"flex-direction:column; align-items:stretch"}, [
+        link(url, title, {class:"newsItemTitle"}),
+        el("div", {class:"newsMeta"}, [`${pub} • ${when}`]),
+      ]));
+    }
+  }
+
+  async function refreshNewsMarket(){
+    const u = `${HMONEY_WORKER_BASE}/news?scope=market`;
+    const payload = await fetchWorkerJson(u);
+    const meta = document.getElementById("newsMeta");
+    meta.textContent = payload?.generated_at_utc ? `as of ${payload.generated_at_utc} • ttl ${payload.cache_ttl_s ?? "?"}s` : "—";
+    renderNewsList(document.getElementById("newsMarket"), payload?.items || []);
+  }
+
+  async function refreshNewsTicker(sym){
+    const host = document.getElementById("newsTicker");
+    if (!sym){
+      host.innerHTML = `<div class="small muted">Load a ticker to see ticker-specific headlines.</div>`;
+      return;
+    }
+    const u = `${HMONEY_WORKER_BASE}/news?tickers=${encodeURIComponent(sym)}`;
+    const payload = await fetchWorkerJson(u);
+    renderNewsList(host, payload?.items || []);
+  }
+
+  function scheduleNewsLoop(){
+    const tick = async () => {
+      try{
+        await refreshNewsMarket();
+        // ticker column refreshed on load ticker; we also refresh here if selected
+        if (__LAST_SYMBOL) await refreshNewsTicker(__LAST_SYMBOL);
+      }catch{}
+      const ms = isMarketHoursPT() ? 120000 : 600000; // 2m in-hours, 10m otherwise
+      setTimeout(tick, ms);
+    };
+    tick();
+  }
+
+  // ----------------------------
+  // AI
+  // ----------------------------
   async function askAI(question, autoInclude){
     const status = document.getElementById("aiStatus");
     const ans = document.getElementById("aiAnswer");
@@ -682,35 +913,14 @@ function withCacheBust(path){
     const ctx = {
       state: __HMONEY_STATE ? slimStateForAI(__HMONEY_STATE) : null,
       chat_history: remember ? trimHistory(__AI_HISTORY) : [],
-      instruction: "Context-first: use ticker_packs (preferred), then ticker_table_rows, then fast-verify links. Avoid generic company descriptions unless asked."
+      instruction: "Context-first: use ticker_packs (preferred), then ticker_table_rows. If you use stale packs, label staleness. Avoid generic company descriptions unless asked."
     };
 
     const mentioned = extractTickersFromText(question);
     const MAX_TICKERS = 6;
     const tickers = mentioned.slice(0, MAX_TICKERS);
 
-    const tickerPacks = {};
-    const tickerPackErrors = {};
     const tickerTableRows = {};
-
-    if (autoInclude && tickers.length && __BASE_PATH){
-      status.textContent = `Fetching packs: ${tickers.join(", ")}…`;
-      const jobs = tickers.map(sym =>
-        loadPack(__BASE_PATH, sym)
-          .then(pack => ({ sym, ok:true, pack }))
-          .catch(err => ({ sym, ok:false, err }))
-      );
-      const results = await Promise.all(jobs);
-
-      for (const r of results){
-        if (r.ok){
-          tickerPacks[r.sym] = slimPackForAI(r.pack);
-        } else {
-          tickerPackErrors[r.sym] = String(r.err);
-        }
-      }
-    }
-
     if (__HMONEY_STATE && tickers.length){
       for (const sym of tickers){
         const rows = findTickerRowsInTables(__HMONEY_STATE, sym);
@@ -719,17 +929,25 @@ function withCacheBust(path){
         }
       }
     }
+    if (Object.keys(tickerTableRows).length) ctx.ticker_table_rows = tickerTableRows;
 
+    // Include last loaded pack (if requested)
     if (autoInclude && __LAST_PACK && __LAST_SYMBOL){
-      if (!tickerPacks[__LAST_SYMBOL]){
-        tickerPacks[__LAST_SYMBOL] = slimPackForAI(__LAST_PACK);
-      }
+      ctx.last_loaded = {
+        symbol: __LAST_SYMBOL,
+        pack: slimPackForAI(__LAST_PACK),
+        meta: __LAST_PACK_META || null,
+      };
     }
 
-    if (tickers.length) ctx.mentioned_tickers = tickers;
-    if (Object.keys(tickerPacks).length) ctx.ticker_packs = tickerPacks;
-    if (Object.keys(tickerTableRows).length) ctx.ticker_table_rows = tickerTableRows;
-    if (Object.keys(tickerPackErrors).length) ctx.ticker_pack_errors = tickerPackErrors;
+    // Include live quotes for mentioned tickers (best-effort)
+    if (autoInclude && tickers.length){
+      try{
+        const u = `${HMONEY_WORKER_BASE}/live?symbols=${encodeURIComponent(tickers.join(","))}`;
+        const live = await fetchWorkerJson(u);
+        if (live && live.ok) ctx.live_quotes = live;
+      }catch{}
+    }
 
     status.textContent = "Asking…";
 
@@ -743,7 +961,6 @@ function withCacheBust(path){
       });
 
       const data = await r.json().catch(() => null);
-
       const ok = !!(data && (data.ok === true || typeof data.answer === "string"));
 
       if (!r.ok || !data || !ok){
@@ -754,7 +971,22 @@ function withCacheBust(path){
       }
 
       const text = (data.answer || "").toString().trim();
-      ans.innerHTML = `<div style="white-space:pre-wrap; line-height:1.35">${text || "(empty response)"}</div>`;
+      const dbg = data.debug || null;
+
+      let debugLine = "";
+      if (dbg && Array.isArray(dbg.packs) && dbg.packs.length){
+        const bits = dbg.packs.map(p => {
+          if (!p || !p.symbol) return null;
+          if (p.found) return `${p.symbol}${p.is_stale ? " (stale)" : ""}`;
+          return `${p.symbol} (missing)`;
+        }).filter(Boolean);
+        if (bits.length) debugLine = `Packs: ${bits.join(", ")}`;
+      }
+
+      ans.innerHTML = `
+        ${debugLine ? `<div class="small muted" style="margin-bottom:8px">${debugLine}</div>` : ""}
+        <div style="white-space:pre-wrap; line-height:1.35">${text || "(empty response)"}</div>
+      `;
       status.textContent = "Ready";
 
       if (remember){
@@ -771,7 +1003,7 @@ function withCacheBust(path){
   }
 
   // ----------------------------
-  // Rendering
+  // Rendering (baseline state)
   // ----------------------------
   function renderPosture(state){
     const posture = state.posture || {};
@@ -882,21 +1114,12 @@ function withCacheBust(path){
     const shardText = (shardCount !== null && shardIndex !== null) ? ` • shard ${Number(shardIndex)+1}/${shardCount}` : "";
 
     document.getElementById("subline").textContent =
-      `State loaded • packs: ${basePath || "—"}${(packsWritten !== null ? ` • packs_written: ${fmtInt(packsWritten)}` : "")}${mode ? ` • mode: ${mode}` : ""}${shardText}`;
+      `State loaded • packs_dir: ${basePath || "—"}${(packsWritten !== null ? ` • packs_written: ${fmtInt(packsWritten)}` : "")}${mode ? ` • mode: ${mode}` : ""}${shardText}`;
 
     document.getElementById("footer").innerHTML =
-      `Data currently sourced primarily from Yahoo Finance via yfinance. Links are click-through provenance.`;
+      `Baseline analytics: GitHub Actions → /docs. Live/news/AI: Cloudflare Worker. Data currently sourced primarily from Yahoo Finance via yfinance/Yahoo endpoints; click-through provenance where possible.`;
 
     return basePath;
-  }
-
-  function badgeForDelta(n){
-    if (n === null || n === undefined) return "";
-    const v = Number(n);
-    if (!Number.isFinite(v)) return "";
-    if (v > 0) return "pos";
-    if (v >= -10) return "mildneg";
-    return "neg";
   }
 
   function methodologyHrefForHeader(header){
@@ -912,7 +1135,7 @@ function withCacheBust(path){
   // ----------------------------
   // Highlights (FROM state.tables)
   // ----------------------------
-  function renderHighlights(state, basePath){
+  function renderHighlights(state){
     const tables = state.tables || {};
     const pulled = (tables.pulled_back && Array.isArray(tables.pulled_back.rows)) ? tables.pulled_back.rows : [];
     const fragile = (tables.fragile && Array.isArray(tables.fragile.rows)) ? tables.fragile.rows : [];
@@ -937,6 +1160,12 @@ function withCacheBust(path){
 
     document.getElementById("hlMeta").textContent = metaParts.join(" • ");
 
+    function packLink(sym){
+      // Use Worker /pack endpoint as a stable link (it returns the best pack + pack_url).
+      const href = `${HMONEY_WORKER_BASE}/pack?ticker=${encodeURIComponent(sym)}`;
+      return link(href, "pack", {class:"mono"});
+    }
+
     function renderList(targetId, rows, emptyMsg){
       const host = document.getElementById(targetId);
       host.innerHTML = "";
@@ -960,23 +1189,23 @@ function withCacheBust(path){
       for (const r of rows.slice(0, 15)){
         const sym = r.ticker;
         const quote = quoteUrl(sym);
-        const packA = packLinkEl(basePath, sym, "pack");
+        const packA = packLink(sym);
 
         const tickerKids = [link(quote, sym, {class:"mono"})];
-        if (packA){
-          tickerKids.push(el("span", {class:"small muted", style:"margin-left:6px"}, ["[", packA, "]"]));
-        }
+        tickerKids.push(el("span", {class:"small muted", style:"margin-left:6px"}, ["[", packA, "]"]));
+
+        const deltaClass = badgeForDelta((() => {
+          if (r.pct_change_1d === null || r.pct_change_1d === undefined) return null;
+          let v = Number(r.pct_change_1d);
+          if (!Number.isFinite(v)) return null;
+          if (Math.abs(v) <= 0.25) v *= 100;
+          return v;
+        })());
 
         const tr = el("tr", {}, [
           el("td", {}, tickerKids),
           el("td", {class:"num"}, [link(quote, (r.last === null || r.last === undefined) ? "—" : fmt(r.last, 2), {class:"mono"})]),
-          el("td", {class:`num ${badgeForDelta((() => {
-            if (r.pct_change_1d === null || r.pct_change_1d === undefined) return null;
-            let v = Number(r.pct_change_1d);
-            if (!Number.isFinite(v)) return null;
-            if (Math.abs(v) <= 0.25) v *= 100;
-            return v;
-          })())}`}, [link(quote, fmtPctChange1d(r.pct_change_1d), {class:"mono"})]),
+          el("td", {class:`num ${deltaClass}`}, [link(quote, fmtPctChange1d(r.pct_change_1d), {class:"mono"})]),
           el("td", {class:"num"}, [link(methodologyHrefForHeader("opp"), fmtInt(r.opportunity_score), {class:"mono"})]),
           el("td", {class:"num"}, [link(methodologyHrefForHeader("risk"), fmtInt(r.risk_score), {class:"mono"})]),
         ]);
@@ -994,10 +1223,10 @@ function withCacheBust(path){
     renderList("hlMixed", mixed, "No cross-currents shortlist in this run (often empty).");
   }
 
-  async function renderBenchmarks(basePath){
+  async function renderBenchmarks(){
     const benchTables = document.getElementById("benchTables");
     benchTables.innerHTML = "";
-    document.getElementById("benchStatus").textContent = `Loading from ${basePath || "—"}`;
+    document.getElementById("benchStatus").textContent = `Loading via Worker /pack…`;
 
     let totalExpected = 0;
     let totalFound = 0;
@@ -1027,21 +1256,33 @@ function withCacheBust(path){
       tbl.appendChild(thead);
       tbl.appendChild(tbody);
 
+      // Fetch packs in parallel (faster)
+      const jobs = symbols.map(async (sym) => {
+        try{
+          const res = await loadPackSmart(sym);
+          return { sym, ok:true, res };
+        }catch(e){
+          return { sym, ok:false, err:String(e) };
+        }
+      });
+
+      const results = await Promise.all(jobs);
+
       let found = 0;
 
-      for (const sym of symbols){
+      for (const r of results){
+        const sym = r.sym;
         const quote = quoteUrl(sym);
-        const packA = packLinkEl(basePath, sym, "pack");
-        const tickerKids = [link(quote, sym, {class:"mono"})];
-        if (packA){
-          tickerKids.push(el("span", {class:"small muted", style:"margin-left:6px"}, ["[", packA, "]"]));
-        }
 
-        try{
-          const pack = await loadPack(basePath, sym);
+        const packA = link(`${HMONEY_WORKER_BASE}/pack?ticker=${encodeURIComponent(sym)}`, "pack", {class:"mono"});
+        const tickerKids = [link(quote, sym, {class:"mono"})];
+        tickerKids.push(el("span", {class:"small muted", style:"margin-left:6px"}, ["[", packA, "]"]));
+
+        if (r.ok){
           found += 1;
           totalFound += 1;
 
+          const pack = r.res.pack || {};
           const market = pack.market || {};
           const scores = pack.scores || {};
           const links = pack.links || {};
@@ -1055,24 +1296,37 @@ function withCacheBust(path){
             dist200 = (Number(last) / Number(ma200)) - 1;
           }
 
+          const staleTag = r.res.is_stale
+            ? el("span", {class:"tag warn", style:"margin-left:8px"}, ["STALE"])
+            : el("span", {class:"tag good", style:"margin-left:8px"}, ["CURRENT"]);
+
+          const repText = `${BENCHMARK_META[sym] || "Benchmark"}`;
+          const repKids = [el("span", {class:"muted"}, [repText]), staleTag];
+
+          const pctClass = badgeForDelta((() => {
+            let v = market.pct_change_1d;
+            if (v === null || v === undefined) return null;
+            v = Number(v);
+            if (!Number.isFinite(v)) return null;
+            if (Math.abs(v) <= 0.25) v *= 100;
+            return v;
+          })());
+
           const tr = el("tr", {}, [
             el("td", {}, tickerKids),
-            el("td", {class:"muted"}, [BENCHMARK_META[sym] || "Benchmark"]),
+            el("td", {}, repKids),
             el("td", {class:"num"}, [link(methodologyHrefForHeader("opp"), fmtInt(scores.opportunity_score), {class:"mono"})]),
             el("td", {class:"num"}, [link(methodologyHrefForHeader("risk"), fmtInt(scores.structural_risk_score), {class:"mono"})]),
-            el("td", {class:`num ${badgeForDelta((() => { let v=market.pct_change_1d; if(v===null||v===undefined) return null; v=Number(v); if(!Number.isFinite(v)) return null; if(Math.abs(v)<=0.25) v*=100; return v; })())}`},
-              [link(quoteLink, fmtPctChange1d(market.pct_change_1d), {class:"mono"})]
-            ),
+            el("td", {class:`num ${pctClass}`}, [link(quoteLink, fmtPctChange1d(market.pct_change_1d), {class:"mono"})]),
             el("td", {class:"num"}, [link(quoteLink, fmtPctRatio(market.pct_off_52w_high), {class:"mono"})]),
             el("td", {class:"num"}, [link(quoteLink, fmtPctRatio(dist200), {class:"mono"})]),
           ]);
 
           tbody.appendChild(tr);
-        }catch(e){
-          const msg = String(e || "");
+        }else{
           const tr = el("tr", {}, [
             el("td", {}, tickerKids),
-            el("td", {class:"muted"}, [`${BENCHMARK_META[sym] || "Benchmark"} • pack missing (${msg})`]),
+            el("td", {class:"muted"}, [`${BENCHMARK_META[sym] || "Benchmark"} • pack missing (${r.err})`]),
             el("td", {class:"num muted"}, ["—"]),
             el("td", {class:"num muted"}, ["—"]),
             el("td", {class:"num muted"}, ["—"]),
@@ -1083,30 +1337,10 @@ function withCacheBust(path){
         }
       }
 
-      // Right-side header: now a real link
       right.innerHTML = "";
-      const gh = githubTreeUrl(basePath);
-      if (gh){
-        right.appendChild(link(gh, "click to open sources"));
-        right.appendChild(document.createTextNode(` • packs: ${found}/${symbols.length}`));
-      } else {
-        right.textContent = `packs: ${found}/${symbols.length}`;
-      }
+      right.appendChild(el("span", {class:"small muted"}, [`packs: ${found}/${symbols.length}`]));
 
       card.appendChild(tbl);
-
-      // If none found, add a clear note
-      if (!found){
-        const wrote = __HMONEY_STATE?.evidence_pack_index?.n_packs_written ?? null;
-        const uni = __HMONEY_STATE?.universe_size ?? __HMONEY_STATE?.universe?.actual_size ?? null;
-        const extra = (wrote !== null && uni !== null)
-          ? ` This state says universe=${fmtInt(uni)} but packs_written=${fmtInt(wrote)} — so missing packs may be expected in partial-pack runs.`
-          : "";
-        card.appendChild(el("div", {class:"small muted", style:"margin-top:8px"}, [
-          `No benchmark packs loaded for this group from this run folder.${extra}`
-        ]));
-      }
-
       benchTables.appendChild(card);
     }
 
@@ -1114,21 +1348,26 @@ function withCacheBust(path){
     const uni = __HMONEY_STATE?.universe_size ?? __HMONEY_STATE?.universe?.actual_size ?? null;
 
     const parts = [];
-    parts.push(`Loaded benchmark table from ${basePath}`);
+    parts.push(`Loaded benchmark table via Worker`);
     parts.push(`found ${totalFound}/${totalExpected} packs`);
     if (wrote !== null) parts.push(`packs_written ${fmtInt(wrote)}`);
     if (uni !== null) parts.push(`universe ${fmtInt(uni)}`);
     document.getElementById("benchStatus").textContent = parts.join(" • ");
   }
 
+  // ----------------------------
+  // Init
+  // ----------------------------
   async function init(){
     try{
       const state = await fetchJson("./state.json");
       __HMONEY_STATE = state;
-            // Use the run folder as the cache-bust token so all pack URLs match this run
+
+      // Use the run folder as the cache-bust token so all pack URLs match this run
       window.__HMONEY_V = normalizeBasePath(state?.evidence_pack_index?.base_path || "")
         || state?.generated_at_utc
         || Date.now();
+
       __TICKER_SET = buildTickerSetFromState(state);
 
       const basePath = setHeaderMeta(state);
@@ -1136,55 +1375,93 @@ function withCacheBust(path){
 
       renderSnapshot(state);
       renderPosture(state);
-      renderHighlights(state, basePath);
+      renderHighlights(state);
 
-      if (basePath){
-        await renderBenchmarks(basePath);
-      } else {
-        document.getElementById("benchStatus").textContent = "Missing evidence_pack_index.base_path in state.json";
-      }
-
-      // Find-a-ticker drawer handlers
-      const input = document.getElementById("tickerInput");
-      const btn = document.getElementById("loadTickerBtn");
-      async function doLoad(){
-        const sym = input.value.trim().toUpperCase();
-        if (!sym) return;
-        const drawer = document.getElementById("drawer");
-        drawer.style.display = "block";
-        drawer.innerHTML = "<div class='small muted'>Loading…</div>";
-
-        try{
-          const pack = await loadPack(basePath, sym);
-          __LAST_PACK = pack;
-          __LAST_SYMBOL = sym;
-
-          const p = packUrl(basePath, sym);
-          drawer.innerHTML = `<div class="ok">Loaded pack for <span class="mono">${sym}</span>.</div>
-            <div class="hint">
-              ${p ? `Open: <a href="${p}" target="_blank" rel="noopener noreferrer" class="mono">[pack]</a> • ` : ""}
-              Tip: ask “Explain ${sym}” in the AI box.
-            </div>`;
-        }catch(e){
-          const p = packUrl(basePath, sym);
-          drawer.innerHTML = `<div class="err">Could not load pack for <span class="mono">${sym}</span> from <span class="mono">${basePath}</span>.</div>
-            <div class="hint">
-              ${p ? `Tried: <a href="${p}" target="_blank" rel="noopener noreferrer" class="mono">${p}</a><br/>` : ""}
-              If this symbol wasn’t included in the current pack-writing set, it may not exist in this run folder yet.
-            </div>`;
-        }
-      }
-      btn.addEventListener("click", doLoad);
-      input.addEventListener("keydown", (ev) => {
-        if (ev.key === "Enter") doLoad();
-      });
+      // Benchmarks now load via Worker /pack with fallback
+      await renderBenchmarks();
 
       document.getElementById("reloadBtn").addEventListener("click", () => location.reload());
 
       // Show where packs live
       const basePathRaw = state?.evidence_pack_index?.base_path || "";
       const basePathNorm = normalizeBasePath(basePathRaw);
-      document.getElementById("runMeta").textContent = basePathNorm ? `packs: ${basePathNorm}` : "—";
+      document.getElementById("runMeta").textContent = basePathNorm ? `packs_dir: ${basePathNorm}` : "—";
+
+      // Find-a-ticker drawer handlers (Worker /pack)
+      const input = document.getElementById("tickerInput");
+      const btn = document.getElementById("loadTickerBtn");
+
+      async function doLoad(){
+        const sym = normalizeTicker(input.value);
+        if (!sym) return;
+
+        const drawer = document.getElementById("drawer");
+        drawer.style.display = "block";
+        drawer.innerHTML = "<div class='small muted'>Loading…</div>";
+
+        try{
+          const res = await loadPackSmart(sym);
+          const pack = res.pack;
+
+          __LAST_PACK = pack;
+          __LAST_SYMBOL = sym;
+          __LAST_PACK_META = {
+            is_stale: !!res.is_stale,
+            source: res.source || null,
+            pack_url: res.pack_url || null,
+            pack_as_of_utc: res.pack_as_of_utc || pack?.as_of_utc || null,
+            pack_run_id: res.pack_run_id || pack?.run_id || null,
+          };
+
+          const tag = res.is_stale
+            ? `<span class="tag warn">STALE</span>`
+            : `<span class="tag good">CURRENT</span>`;
+
+          const packUrl = res.pack_url ? res.pack_url : `${HMONEY_WORKER_BASE}/pack?ticker=${encodeURIComponent(sym)}`;
+
+          // Also show live quote for the ticker (best-effort)
+          let liveLine = "";
+          try{
+            const live = await fetchWorkerJson(`${HMONEY_WORKER_BASE}/live?symbols=${encodeURIComponent(sym)}`);
+            const q = live?.quotes?.[sym];
+            if (q && q.price !== null && q.price !== undefined){
+              const pct = (q.pct === null || q.pct === undefined) ? "—" : `${Number(q.pct).toFixed(2)}%`;
+              const cls = badgeForDelta(q.pct);
+              liveLine = `<div class="small muted" style="margin-top:8px">Live: <span class="mono">${fmt(q.price,2)}</span> • <span class="mono ${cls}">${pct}</span> <span class="muted">(${live.as_of_utc})</span></div>`;
+            }
+          }catch{}
+
+          drawer.innerHTML = `
+            <div class="ok">Loaded evidence for <span class="mono">${sym}</span> ${tag}</div>
+            <div class="hint" style="margin-top:6px">
+              Open: <a href="${packUrl}" target="_blank" rel="noopener noreferrer" class="mono">[pack]</a>
+              • Quote: <a href="${quoteUrl(sym)}" target="_blank" rel="noopener noreferrer" class="mono">[yahoo]</a>
+              • Tip: ask “Explain ${sym}” in the AI box.
+            </div>
+            <div class="small muted" style="margin-top:8px">
+              Pack as_of: <span class="mono">${__LAST_PACK_META.pack_as_of_utc || "—"}</span>
+              ${__LAST_PACK_META.is_stale ? ` • <span class="mildneg">stale fallback</span>` : ""}
+            </div>
+            ${liveLine}
+          `;
+
+          // Refresh ticker news column
+          await refreshNewsTicker(sym);
+        }catch(e){
+          drawer.innerHTML = `
+            <div class="err">Could not load evidence for <span class="mono">${sym}</span> via Worker.</div>
+            <div class="hint">
+              Tried: <a href="${HMONEY_WORKER_BASE}/pack?ticker=${encodeURIComponent(sym)}" target="_blank" rel="noopener noreferrer" class="mono">/pack?ticker=${sym}</a><br/>
+              If this symbol has never been written to evidence packs, there may be no historical fallback yet.
+            </div>
+          `;
+        }
+      }
+
+      btn.addEventListener("click", doLoad);
+      input.addEventListener("keydown", (ev) => {
+        if (ev.key === "Enter") doLoad();
+      });
 
       // AI handlers + memory wiring
       const aiBtn = document.getElementById("aiAskBtn");
@@ -1226,6 +1503,10 @@ function withCacheBust(path){
           doAsk();
         }
       });
+
+      // Kick off automation loops
+      scheduleLiveLoop();
+      scheduleNewsLoop();
 
     }catch(e){
       document.getElementById("subline").textContent = "Failed to load state.json";
