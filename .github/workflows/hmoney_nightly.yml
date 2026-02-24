@@ -77,7 +77,57 @@ jobs:
           HMONEY_DAILY_BRIEF_HTML: "docs/daily_brief.html"
         run: |
           python -m src.pipeline
+      
+      - name: Build daily history rollup (latest per ticker)
+        shell: bash
+        run: |
+          set -euo pipefail
+          DAY=$(date -u +%F)
+          python scripts/build_daily_history.py --day "$DAY"
+          ls -lh "docs/history/daily/${DAY}.csv.gz"
 
+      - name: Prune old evidence pack run folders (keep last 3 days)
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          KEEP_DAYS=3
+          ROOT="docs/evidence_packs"
+
+          if [ ! -d "$ROOT" ]; then
+            echo "No evidence packs folder to prune."
+            exit 0
+          fi
+
+          # Iterate date folders (YYYY-MM-DD) and delete anything older than KEEP_DAYS.
+          for d in $(find "$ROOT" -maxdepth 1 -mindepth 1 -type d -printf "%f\n" | sort); do
+            if python - "$d" "$KEEP_DAYS" <<'PY'
+from datetime import datetime, timezone, timedelta
+import sys
+
+d = sys.argv[1]
+keep_days = int(sys.argv[2])
+
+try:
+    day = datetime.strptime(d, "%Y-%m-%d").replace(tzinfo=timezone.utc)
+except Exception:
+    # Unknown folder name: keep it
+    sys.exit(0)
+
+now = datetime.now(timezone.utc)
+cutoff = (now - timedelta(days=keep_days)).replace(hour=0, minute=0, second=0, microsecond=0)
+
+# exit 0 => keep, exit 1 => prune
+sys.exit(0 if day >= cutoff else 1)
+PY
+            then
+              echo "Keeping $d"
+            else
+              echo "Pruning $d"
+              rm -rf "$ROOT/$d"
+            fi
+          done
+          
       - name: Guard — verify packs exist for state base_path
         shell: bash
         run: |
