@@ -307,11 +307,11 @@
     // Cache-bust token (set after state loads). Falls back to Date.now().
   window.__HMONEY_V = Date.now();
 
-  function withCacheBust(path){
-    const v = window.__HMONEY_V || Date.now();
-    const sep = path.includes("?") ? "&" : "?";
-    return `${path}${sep}v=${v}`;
-  }
+function withCacheBust(path){
+  const v = encodeURIComponent(window.__HMONEY_V || Date.now());
+  const sep = path.includes("?") ? "&" : "?";
+  return `${path}${sep}v=${v}`;
+ }
 
   // ----------------------------
   // AI MEMORY CONFIG (client-side)
@@ -431,7 +431,7 @@
   function packUrl(basePath, sym){
     const bp = normalizeBasePath(basePath);
     if (!bp) return null;
-    return `./${bp}/${encodeURIComponent(sym)}.json`;
+    return withCacheBust(`./${bp}/${encodeURIComponent(sym)}.json`);
   }
   function githubTreeUrl(basePath){
     const bp = normalizeBasePath(basePath);
