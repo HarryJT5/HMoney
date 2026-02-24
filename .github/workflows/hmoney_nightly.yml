@@ -116,65 +116,55 @@ jobs:
             else
               echo "Keeping $d"
             fi
-          done
+done
 
-      - name: Guard — verify packs exist for state base_path
-        run: |
-          set -euo pipefail
-          python -c "import json,os,sys; \
-s=json.load(open('docs/state.json','r',encoding='utf-8')); \
-bp=((s.get('evidence_pack_index') or {}).get('base_path') or '').lstrip('/'); \
-assert bp, 'state.json missing evidence_pack_index.base_path'; \
-folder=os.path.join('docs',bp); \
-assert os.path.isdir(folder), f'missing pack folder: {folder}'; \
-spy=os.path.join(folder,'SPY.json'); \
-assert os.path.isfile(spy), f'missing SPY.json: {spy}'; \
-n=len([fn for fn in os.listdir(folder) if fn.endswith('.json')]); \
-assert n>0, f'no pack json files in: {folder}'; \
-print('OK:', folder, 'json_count=', n)"
+  - name: Guard — verify packs exist for state base_path
+    run: |
+      set -euo pipefail
+      python -c "import json,os,sys; s=json.load(open('docs/state.json','r',encoding='utf-8')); bp=((s.get('evidence_pack_index') or {}).get('base_path') or '').lstrip('/'); assert bp, 'state.json missing evidence_pack_index.base_path'; folder=os.path.join('docs',bp); assert os.path.isdir(folder), f'missing pack folder: {folder}'; spy=os.path.join(folder,'SPY.json'); assert os.path.isfile(spy), f'missing SPY.json: {spy}'; n=len([fn for fn in os.listdir(folder) if fn.endswith('.json')]); assert n>0, f'no pack json files in: {folder}'; print('OK:', folder, 'json_count=', n)"
 
-      - name: Commit nightly outputs (docs only)
-        run: |
-          set -euo pipefail
+  - name: Commit nightly outputs (docs only)
+    run: |
+      set -euo pipefail
 
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
+      git config user.name "github-actions"
+      git config user.email "github-actions@github.com"
 
-          # Stage publish artifacts
-          git add -A docs
-          git add data/forced_movers.json || true
-          git add data/universe_all.csv || true
+      # Stage publish artifacts
+      git add -A docs
+      git add data/forced_movers.json || true
+      git add data/universe_all.csv || true
 
-          # Preserve hand-maintained dashboard file
-          git reset docs/index.html || true
+      # Preserve hand-maintained dashboard file
+      git reset docs/index.html || true
 
-          if git diff --cached --quiet; then
-            echo "No changes to commit"
-            exit 0
-          fi
+      if git diff --cached --quiet; then
+        echo "No changes to commit"
+        exit 0
+      fi
 
-          git commit -m "Nightly HMoney update"
+      git commit -m "Nightly HMoney update"
 
-      - name: Push (retry + rebase)
-        run: |
-          set -euo pipefail
+  - name: Push (retry + rebase)
+    run: |
+      set -euo pipefail
 
-          # If no commit happened, skip push
-          if git diff --quiet HEAD~1..HEAD 2>/dev/null; then
-            echo "No new commit found; skipping push."
-            exit 0
-          fi
+      # If no commit happened, skip push
+      if git diff --quiet HEAD~1..HEAD 2>/dev/null; then
+        echo "No new commit found; skipping push."
+        exit 0
+      fi
 
-          for i in 1 2 3 4 5 6 7 8 9 10; do
-            echo "Push attempt $i..."
-            git fetch origin
-            git pull --rebase --autostash origin main || true
-            if git push origin HEAD:main; then
-              echo "Push succeeded."
-              exit 0
-            fi
-            sleep $((i*8 + (RANDOM % 7)))
-          done
+      for i in 1 2 3 4 5 6 7 8 9 10; do
+        echo "Push attempt $i..."
+        git fetch origin
+        git pull --rebase --autostash origin main || true
+        if git push origin HEAD:main; then
+          echo "Push succeeded."
+          exit 0
+        fi
+        sleep $((i*8 + (RANDOM % 7)))
+      done
 
-          echo "Failed to push after retries."
-          exit 1
+      echo "Failed to push after retries."
+      exit 1
