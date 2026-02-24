@@ -65,6 +65,31 @@ jobs:
         run: |
           python -m src.pipeline
 
+          - name: Verify packs exist for state base_path
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          s = json.loads(Path("docs/state.json").read_text(encoding="utf-8"))
+          bp = (s.get("evidence_pack_index", {}) or {}).get("base_path", "").lstrip("/")
+          if not bp:
+            raise SystemExit("state.json missing evidence_pack_index.base_path")
+
+          folder = Path("docs") / bp
+          if not folder.exists():
+           raise SystemExit(f"Missing pack folder: {folder}")
+
+         n = len(list(folder.glob("*.json")))
+          if n == 0:
+            raise SystemExit(f"No pack JSON files found in: {folder}")
+
+          if not (folder / "SPY.json").exists():
+            raise SystemExit(f"Missing SPY.json in: {folder}")
+
+          print("OK:", folder, "json_count=", n)
+          PY
+          
       - name: Commit intraday outputs (docs only)
         run: |
           set -euo pipefail
