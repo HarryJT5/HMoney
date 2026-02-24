@@ -227,11 +227,6 @@ def main() -> None:
         except Exception:
             pass
         return
-
-    # Write broad "database" snapshot for ALL tickers in this run universe
-    snapshot_path = _write_universe_snapshot(df_out, now, snapshots_root, selection_meta)
-    if snapshot_path:
-        selection_meta["snapshot_path"] = snapshot_path.replace("docs/", "")
     
     # Normalize ticker casing
     df_market["ticker"] = df_market["ticker"].astype(str).str.upper()
@@ -435,6 +430,14 @@ def main() -> None:
         "🔴": int(vc.get("🔴", 0)),
     }
 
+    # Write broad "database" snapshot for ALL tickers in this run universe
+    try:
+        snapshot_path = _write_universe_snapshot(df_out, now, snapshots_root, selection_meta)
+        if snapshot_path:
+            selection_meta["snapshot_path"] = snapshot_path.replace("docs/", "")
+    except Exception as e:
+        print(f"[warn] snapshot write failed: {e}")
+        
     build_state_json(
         as_of_utc=now,
         legacy_market_bias=legacy_market_bias,
