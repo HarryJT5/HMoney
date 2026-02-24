@@ -1,4 +1,3 @@
-# .github/workflows/hmoney_nightly.yml
 name: HMoney Nightly Newsletter
 
 permissions:
@@ -7,7 +6,8 @@ permissions:
 on:
   workflow_dispatch:
   schedule:
-    - cron: "30 22 * * 1-5"   # Soon after US market close (DST-safe)
+    # Weekdays. After US market close (UTC; "DST-safe" in the sense it still runs daily).
+    - cron: "30 22 * * 1-5"
 
 concurrency:
   group: hmoney-nightly
@@ -16,14 +16,17 @@ concurrency:
 jobs:
   run:
     runs-on: ubuntu-latest
+    timeout-minutes: 35
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
           persist-credentials: true
           fetch-depth: 0
 
-      - uses: actions/setup-python@v5
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
@@ -38,9 +41,22 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      # Optional: rebuild universe catalog nightly if you have the script
+      - name: Rebuild universe catalog (if script exists)
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -f scripts/build_universe.py ]; then
+            python scripts/build_universe.py
+          else
+            echo "scripts/build_universe.py not found; skipping universe rebuild."
+          fi
+
       - name: Compute rolling shard index
         id: shard
+        shell: bash
         run: |
+          set -euo pipefail
           SHARDS=10
           DOY=$(date -u +%j)
           IDX=$((10#$DOY % SHARDS))
@@ -62,7 +78,39 @@ jobs:
         run: |
           python -m src.pipeline
 
+      - name: Guard — verify packs exist for state base_path
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          state_path = Path("docs/state.json")
+          if not state_path.exists():
+            raise SystemExit("docs/state.json not found (pipeline did not write it)")
+
+          s = json.loads(state_path.read_text(encoding="utf-8"))
+          bp = (s.get("evidence_pack_index", {}) or {}).get("base_path", "").lstrip("/")
+          if not bp:
+            raise SystemExit("state.json missing evidence_pack_index.base_path")
+
+          folder = Path("docs") / bp
+          if not folder.exists():
+            raise SystemExit(f"Missing pack folder: {folder}")
+
+          n = len(list(folder.glob("*.json")))
+          if n == 0:
+            raise SystemExit(f"No pack JSON files found in: {folder}")
+
+          if not (folder / "SPY.json").exists():
+            raise SystemExit(f"Missing SPY.json in: {folder}")
+
+          print("OK:", folder, "json_count=", n)
+          PY
+
       - name: Commit nightly outputs (docs only)
+        shell: bash
         run: |
           set -euo pipefail
 
@@ -71,9 +119,7 @@ jobs:
 
           # Stage publish artifacts
           git add -A docs
-
-          # If you still want the nightly job to version the universe CSV, keep this line.
-          # If not, delete it.
+          git add data/forced_movers.json || true
           git add data/universe_all.csv || true
 
           # Preserve hand-maintained dashboard file
@@ -87,6 +133,7 @@ jobs:
           git commit -m "Nightly HMoney update"
 
           for i in 1 2 3; do
+            git fetch origin
             git pull --rebase --autostash origin main || true
             if git push origin main; then
               exit 0
