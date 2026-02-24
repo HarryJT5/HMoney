@@ -41,6 +41,50 @@ def _top(df: pd.DataFrame, col: str, n: int = 25, ascending: bool = False) -> Li
         )
     return rows
 
+def _write_universe_snapshot(df_out: pd.DataFrame, now: datetime, out_root: str, selection_meta: Dict[str, Any]) -> str | None:
+    """
+    Write a compressed snapshot for ALL tickers in this run universe.
+    Output: docs/history/snapshots/YYYY-MM-DD/HHMM.csv.gz
+
+    This is the main "database growth" path (much broader than evidence packs).
+    """
+    if df_out is None or df_out.empty:
+        return None
+
+    day = now.strftime("%Y-%m-%d")
+    hhmm = now.strftime("%H%M")
+    out_dir = Path(out_root) / day
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out_path = out_dir / f"{hhmm}.csv.gz"
+
+    # Keep columns small + stable (enough for history + later AI use)
+    cols = [
+        "ticker",
+        "last_price",
+        "pct_change_1d",
+        "volume",
+        "pct_off_52w_high",
+        "ma_200",
+        "atr_pct",
+        "opportunity_score",
+        "structural_risk_score",
+        "discount_score",
+        "label",
+        "confidence",
+        "deployment_bias",
+    ]
+    keep = [c for c in cols if c in df_out.columns]
+
+    snap = df_out[keep].copy()
+    snap.insert(1, "as_of_utc", now.isoformat().replace("+00:00", "Z"))
+    snap.insert(2, "run_mode", selection_meta.get("mode"))
+    snap.insert(3, "shard_count", selection_meta.get("shard_count"))
+    snap.insert(4, "shard_index", selection_meta.get("shard_index"))
+    snap.insert(5, "time_bucket", selection_meta.get("time_bucket"))
+
+    snap.to_csv(out_path, index=False, compression="gzip")
+    return str(out_path)
+
 
 def main() -> None:
     mode = os.getenv("HMONEY_MODE", "intraday")
@@ -65,6 +109,7 @@ def main() -> None:
     brief_md = os.getenv("HMONEY_DAILY_BRIEF_MD", "docs/daily_brief.md")
     brief_html = os.getenv("HMONEY_DAILY_BRIEF_HTML", "docs/daily_brief.html")
     state_path = os.getenv("HMONEY_STATE_JSON", "docs/state.json")
+    snapshots_root = os.getenv("HMONEY_SNAPSHOTS_ROOT", "docs/history/snapshots")
 
     now = _utc_now()
     pack_dir = f"{evidence_base}/{now.strftime('%Y-%m-%d')}/{now.strftime('%H%M')}"
@@ -183,6 +228,11 @@ def main() -> None:
             pass
         return
 
+    # Write broad "database" snapshot for ALL tickers in this run universe
+    snapshot_path = _write_universe_snapshot(df_out, now, snapshots_root, selection_meta)
+    if snapshot_path:
+        selection_meta["snapshot_path"] = snapshot_path.replace("docs/", "")
+    
     # Normalize ticker casing
     df_market["ticker"] = df_market["ticker"].astype(str).str.upper()
 
