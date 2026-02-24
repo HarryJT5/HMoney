@@ -307,10 +307,10 @@
     // Cache-bust token (set after state loads). Falls back to Date.now().
   window.__HMONEY_V = Date.now();
 
-   function packUrl(basePath, sym){
-    const bp = normalizeBasePath(basePath);
-    if (!bp) return null;
-    return withCacheBust(`./${bp}/${encodeURIComponent(sym)}.json`);
+  function withCacheBust(path){
+    const v = window.__HMONEY_V || Date.now();
+    const sep = path.includes("?") ? "&" : "?";
+    return `${path}${sep}v=${v}`;
   }
 
   // ----------------------------
@@ -401,7 +401,9 @@
     if (s.startsWith("/")) s = s.slice(1);
     s = s.replace(/\/+$/, "");
     return s;
-    async function fetchJson(path){
+  }
+
+  async function fetchJson(path){
     const r = await fetch(withCacheBust(path), {cache:"no-store"});
     if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
     return await r.json();
