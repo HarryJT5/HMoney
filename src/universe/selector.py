@@ -18,6 +18,7 @@ class UniverseSelection:
     shard_index: int
     shard_count: int
     time_bucket: int
+    shards_per_run: int
 
 
 def _utc_now() -> datetime:
@@ -37,16 +38,10 @@ def compute_time_bucket(dt: datetime, cadence_minutes: int = 15) -> int:
     return yyyymmdd * buckets_per_day + minute_bucket
 
 
-def compute_shard_index(dt: datetime, shard_count: int, cadence_minutes: int = 15) -> tuple[int, int]:
-    shard_count = max(1, int(shard_count))
-    tb = compute_time_bucket(dt, cadence_minutes=cadence_minutes)
-    return (tb % shard_count), tb
-
-
 def _read_lines_csv(path: Path) -> List[str]:
     """
-    Minimal CSV reader for a single-column or ticker-first CSV.
-    Works fine even if the CSV has more columns (we take the first column).
+    Minimal CSV reader for ticker-first CSV.
+    Works even if the CSV has multiple columns (we take col 0).
     """
     if not path.exists():
         return []
@@ -93,35 +88,46 @@ def _stable_dedupe(seq: Iterable[str]) -> List[str]:
     return out
 
 
+def _rotate_window(items: List[str], start: int, n: int) -> List[str]:
+    if n <= 0 or not items:
+        return []
+    if len(items) <= n:
+        return items
+    start = start % len(items)
+    end = start + n
+    if end <= len(items):
+        return items[start:end]
+    # wrap
+    return items[start:] + items[: (end - len(items))]
+
+
 def select_universe(
     *,
     universe_all: List[str],
     target_size: int = 1100,
     shard_count: int = 10,
+    shards_per_run: int = 1,
     cadence_minutes: int = 15,
     panel_tickers: Optional[List[str]] = None,
     sentinel_tickers: Optional[List[str]] = None,
     forced_movers: Optional[List[str]] = None,
     now_utc: Optional[datetime] = None,
     shard_index_override: Optional[int] = None,
-    time_bucket_override: Optional[int] = None,
 ) -> UniverseSelection:
     """
     final = panel + sentinels + forced_movers + rolling_shard (deduped) up to target_size
 
-    rolling_shard is a deterministic slice of universe_all based on shard_index.
-
-    shard_index_override / time_bucket_override let the workflow/pipeline explicitly control
-    which shard is selected (useful when you schedule every 5 minutes).
+    Improvements vs previous:
+    - supports shard_index_override (workflow-controlled)
+    - supports shards_per_run (e.g. 2) to fill closer to target_size
+    - rotates within the shard pool using time_bucket so repeated runs keep sweeping
     """
     dt = now_utc or _utc_now()
 
-    if time_bucket_override is not None:
-        time_bucket = int(time_bucket_override)
-    else:
-        time_bucket = compute_time_bucket(dt, cadence_minutes=cadence_minutes)
-
     shard_count_i = max(1, int(shard_count))
+    shards_per_run_i = max(1, min(shard_count_i, int(shards_per_run)))
+
+    time_bucket = compute_time_bucket(dt, cadence_minutes=cadence_minutes)
 
     if shard_index_override is not None:
         shard_index = int(shard_index_override) % shard_count_i
@@ -132,34 +138,43 @@ def select_universe(
     sentinels = _stable_dedupe(sentinel_tickers or [])
     movers = _stable_dedupe(forced_movers or [])
 
-    # Remove anything already in panel/sentinels/movers from the shard pool
     exclude = set(panel) | set(sentinels) | set(movers)
     pool = [t for t in _stable_dedupe(universe_all) if t not in exclude]
 
-    # Deterministic shard slicing: take every K-th item starting at shard_index
-    shard = pool[shard_index::shard_count_i]
-    shard = _stable_dedupe(shard)
+    # Pull multiple shard streams if requested
+    shard_pool: List[str] = []
+    for k in range(shards_per_run_i):
+        idx = (shard_index + k) % shard_count_i
+        shard_pool.extend(pool[idx::shard_count_i])
+    shard_pool = _stable_dedupe(shard_pool)
 
-    # Build final up to target_size
-    final = _stable_dedupe([*panel, *sentinels, *movers, *shard])
+    # Remaining capacity after priority lists
+    remaining = max(0, int(target_size) - (len(panel) + len(sentinels) + len(movers)))
+
+    # Rotate within the shard_pool so repeated runs sweep different names
+    # Use a deterministic start derived from time_bucket + shard_index.
+    start = (time_bucket * 97 + shard_index * 1009)  # deterministic “spin”
+    shard_window = _rotate_window(shard_pool, start=start, n=remaining)
+
+    final = _stable_dedupe([*panel, *sentinels, *movers, *shard_window])
+
+    # If still over (possible if lists are huge), hard-cut but preserve order
     if len(final) > target_size:
-        # Preserve priority ordering: panel → sentinels → movers → shard
         final = final[:target_size]
-
-        # Recompute what actually made it in (for counts)
         final_set = set(final)
         panel = [t for t in panel if t in final_set]
         sentinels = [t for t in sentinels if t in final_set]
         movers = [t for t in movers if t in final_set]
-        shard = [t for t in shard if t in final_set]
+        shard_window = [t for t in shard_window if t in final_set]
 
     return UniverseSelection(
         final=final,
         panel=panel,
         sentinels=sentinels,
         forced_movers=movers,
-        rolling_shard=shard,
+        rolling_shard=shard_window,
         shard_index=shard_index,
         shard_count=shard_count_i,
         time_bucket=time_bucket,
+        shards_per_run=shards_per_run_i,
     )
