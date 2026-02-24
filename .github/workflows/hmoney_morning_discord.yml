@@ -52,7 +52,8 @@ jobs:
           # For scheduled runs: only send at exactly 09:00 PT
           if event == "schedule" and not send_now:
             now_local = datetime.now(ZoneInfo("America/Los_Angeles"))
-            if not (now_local.weekday() < 5 and now_local.hour == 9 and now_local.minute == 0):
+            # Allow a small delay window (GitHub schedules can drift by a few minutes)
+              if not (now_local.weekday() < 5 and now_local.hour == 9 and now_local.minute <= 10):
               print(f"Skip: local time is {now_local.isoformat()} (not 09:00)")
               raise SystemExit(0)
 
