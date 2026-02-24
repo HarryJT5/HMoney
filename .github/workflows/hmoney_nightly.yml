@@ -6,7 +6,7 @@ permissions:
 on:
   workflow_dispatch:
   schedule:
-    # Weekdays. After US market close (UTC; "DST-safe" in the sense it still runs daily).
+    # Weekdays — after US market close-ish (UTC)
     - cron: "30 22 * * 1-5"
 
 concurrency:
@@ -16,7 +16,7 @@ concurrency:
 jobs:
   run:
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 40
 
     steps:
       - name: Checkout
@@ -38,23 +38,21 @@ jobs:
 
       - name: Install deps
         run: |
+          set -euo pipefail
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # Optional: rebuild universe catalog nightly if you have the script
-      - name: Rebuild universe catalog (if script exists)
-        shell: bash
+      - name: Rebuild universe catalog (nightly)
         run: |
           set -euo pipefail
           if [ -f scripts/build_universe.py ]; then
             python scripts/build_universe.py
           else
-            echo "scripts/build_universe.py not found; skipping universe rebuild."
+            echo "scripts/build_universe.py not found; skipping."
           fi
 
-      - name: Compute rolling shard index
+      - name: Compute shard index (daily rotation)
         id: shard
-        shell: bash
         run: |
           set -euo pipefail
           SHARDS=10
@@ -67,27 +65,27 @@ jobs:
         env:
           HMONEY_MODE: "daily"
           HMONEY_LOCAL_TZ: "America/Los_Angeles"
+
           UNIVERSE_SHARDS: "10"
           UNIVERSE_SHARD_INDEX: ${{ steps.shard.outputs.index }}
 
-          # ✅ Publish targets (GitHub Pages serves from docs/)
+          # Publish targets (GitHub Pages serves from docs/)
           HMONEY_EVIDENCE_PACK_BASE: "docs/evidence_packs"
           HMONEY_STATE_JSON: "docs/state.json"
           HMONEY_DAILY_BRIEF_MD: "docs/daily_brief.md"
           HMONEY_DAILY_BRIEF_HTML: "docs/daily_brief.html"
         run: |
+          set -euo pipefail
           python -m src.pipeline
-      
+
       - name: Build daily history rollup (latest per ticker)
-        shell: bash
         run: |
           set -euo pipefail
           DAY=$(date -u +%F)
           python scripts/build_daily_history.py --day "$DAY"
           ls -lh "docs/history/daily/${DAY}.csv.gz"
 
-            - name: Prune old evidence pack run folders (keep last 3 days)
-        shell: bash
+      - name: Prune old evidence pack run folders (keep last 3 days)
         run: |
           set -euo pipefail
 
@@ -99,14 +97,12 @@ jobs:
             exit 0
           fi
 
-          # Cutoff is KEEP_DAYS days ago at 00:00 UTC
           CUTOFF_EPOCH=$(date -u -d "${KEEP_DAYS} days ago 00:00:00" +%s)
 
           for path in "$ROOT"/*; do
             [ -d "$path" ] || continue
             d=$(basename "$path")
 
-            # Only prune folders that look like YYYY-MM-DD and parse as dates
             if ! date -u -d "$d" >/dev/null 2>&1; then
               echo "Keeping $d (not a date folder)"
               continue
@@ -123,38 +119,21 @@ jobs:
           done
 
       - name: Guard — verify packs exist for state base_path
-        shell: bash
         run: |
           set -euo pipefail
-          python - <<'PY'
-          import json
-          from pathlib import Path
-
-          state_path = Path("docs/state.json")
-          if not state_path.exists():
-            raise SystemExit("docs/state.json not found (pipeline did not write it)")
-
-          s = json.loads(state_path.read_text(encoding="utf-8"))
-          bp = (s.get("evidence_pack_index", {}) or {}).get("base_path", "").lstrip("/")
-          if not bp:
-            raise SystemExit("state.json missing evidence_pack_index.base_path")
-
-          folder = Path("docs") / bp
-          if not folder.exists():
-            raise SystemExit(f"Missing pack folder: {folder}")
-
-          n = len(list(folder.glob("*.json")))
-          if n == 0:
-            raise SystemExit(f"No pack JSON files found in: {folder}")
-
-          if not (folder / "SPY.json").exists():
-            raise SystemExit(f"Missing SPY.json in: {folder}")
-
-          print("OK:", folder, "json_count=", n)
-          PY
+          python -c "import json,os,sys; \
+s=json.load(open('docs/state.json','r',encoding='utf-8')); \
+bp=((s.get('evidence_pack_index') or {}).get('base_path') or '').lstrip('/'); \
+assert bp, 'state.json missing evidence_pack_index.base_path'; \
+folder=os.path.join('docs',bp); \
+assert os.path.isdir(folder), f'missing pack folder: {folder}'; \
+spy=os.path.join(folder,'SPY.json'); \
+assert os.path.isfile(spy), f'missing SPY.json: {spy}'; \
+n=len([fn for fn in os.listdir(folder) if fn.endswith('.json')]); \
+assert n>0, f'no pack json files in: {folder}'; \
+print('OK:', folder, 'json_count=', n)"
 
       - name: Commit nightly outputs (docs only)
-        shell: bash
         run: |
           set -euo pipefail
 
@@ -176,14 +155,25 @@ jobs:
 
           git commit -m "Nightly HMoney update"
 
-          for i in 1 2 3; do
+      - name: Push (retry + rebase)
+        run: |
+          set -euo pipefail
+
+          # If no commit happened, skip push
+          if git diff --quiet HEAD~1..HEAD 2>/dev/null; then
+            echo "No new commit found; skipping push."
+            exit 0
+          fi
+
+          for i in 1 2 3 4 5 6 7 8 9 10; do
+            echo "Push attempt $i..."
             git fetch origin
             git pull --rebase --autostash origin main || true
-            if git push origin main; then
+            if git push origin HEAD:main; then
+              echo "Push succeeded."
               exit 0
             fi
-            echo "Push failed (attempt $i). Retrying..."
-            sleep $((i*5))
+            sleep $((i*8 + (RANDOM % 7)))
           done
 
           echo "Failed to push after retries."
