@@ -1,0 +1,120 @@
+name: HMoney Morning (Discord)
+
+permissions:
+  contents: read
+
+on:
+  workflow_dispatch:
+  schedule:
+    # DST-safe trick: run at both 16:00 and 17:00 UTC on weekdays.
+    # One of these is 09:00 America/Los_Angeles depending on DST.
+    - cron: "0 16 * * 1-5"
+    - cron: "0 17 * * 1-5"
+
+concurrency:
+  group: hmoney-morning-discord
+  cancel-in-progress: true
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Build Discord payload from docs/state.json (only at 9:00am PT)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from datetime import datetime
+          from zoneinfo import ZoneInfo
+
+          # Only send at exactly 09:00 America/Los_Angeles
+          now_local = datetime.now(ZoneInfo("America/Los_Angeles"))
+          if not (now_local.weekday() < 5 and now_local.hour == 9 and now_local.minute == 0):
+              print(f"Skip: local time is {now_local.isoformat()} (not 09:00)")
+              raise SystemExit(0)
+
+          state_path = Path("docs/state.json")
+          if not state_path.exists():
+              raise SystemExit("docs/state.json missing")
+
+          s = json.loads(state_path.read_text(encoding="utf-8"))
+
+          dashboard_url = "https://harryjt5.github.io/HMoney/"
+          brief_url = "https://harryjt5.github.io/HMoney/daily_brief.html"
+
+          base_path = ((s.get("evidence_pack_index") or {}).get("base_path") or "").lstrip("/")
+          packs_url = f"https://harryjt5.github.io/HMoney/{base_path}/" if base_path else dashboard_url
+
+          posture = (s.get("posture") or {})
+          breadth = (s.get("breadth") or {})
+          sample = (breadth.get("sample") or {})
+
+          label = posture.get("label") or "—"
+          plain = posture.get("plain_english") or "—"
+          as_of = s.get("generated_at_utc") or s.get("as_of_utc") or "—"
+
+          def f1(x):
+              try: return f"{float(x):.1f}"
+              except: return "—"
+
+          uni = (s.get("universe") or {}).get("actual_size") or s.get("universe_size")
+          wrote = (s.get("evidence_pack_index") or {}).get("n_packs_written")
+          succ = (s.get("quality") or {}).get("success_rate_pct")
+
+          pull = sample.get("pullback_density_pct")
+          frag = sample.get("fragility_presence_pct")
+          tilt = sample.get("net_tilt_pct_points")
+
+          content = f"**HMoney Morning** — {now_local.strftime('%Y-%m-%d')} — **{label}**\n{dashboard_url}"
+
+          payload = {
+              "content": content,
+              "embeds": [
+                  {
+                      "title": "Open Dashboard / Brief",
+                      "description": f"[Dashboard]({dashboard_url}) • [Daily Brief]({brief_url}) • [Run Packs]({packs_url})",
+                      "fields": [
+                          {"name": "As of (UTC)", "value": str(as_of), "inline": True},
+                          {"name": "Universe", "value": str(uni) if uni is not None else "—", "inline": True},
+                          {"name": "Packs written", "value": str(wrote) if wrote is not None else "—", "inline": True},
+                          {"name": "Coverage", "value": (f"{float(succ):.1f}%" if succ is not None else "—"), "inline": True},
+                          {"name": "Pullback/Stabilization presence", "value": f"{f1(pull)}%", "inline": True},
+                          {"name": "Fragility presence", "value": f"{f1(frag)}%", "inline": True},
+                          {"name": "Net tilt", "value": f"{f1(tilt)} pts", "inline": True},
+                          {"name": "Plain English", "value": plain[:950], "inline": False},
+                      ],
+                  }
+              ],
+          }
+
+          Path("discord_payload.json").write_text(json.dumps(payload), encoding="utf-8")
+          print("Prepared discord_payload.json")
+          PY
+
+      - name: Post to Discord webhook
+        if: hashFiles('discord_payload.json') != ''
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "${DISCORD_WEBHOOK_URL:-}" ]; then
+            echo "Missing DISCORD_WEBHOOK_URL secret"
+            exit 1
+          fi
+          curl -sS -H "Content-Type: application/json" \
+            -X POST \
+            --data-binary @discord_payload.json \
+            "$DISCORD_WEBHOOK_URL"
