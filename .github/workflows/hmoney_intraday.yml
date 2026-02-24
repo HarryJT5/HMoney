@@ -1,4 +1,3 @@
-# .github/workflows/hmoney_intraday.yml
 name: HMoney Intraday
 
 permissions:
@@ -7,10 +6,11 @@ permissions:
 on:
   workflow_dispatch:
   schedule:
-    # Every 15 min during US market hours (UTC)
-    - cron: "*/15 14-20 * * 1-5"
-    # Last run at 21:00 UTC
-    - cron: "0 21 * * 1-5"
+    # Max practical frequency on GitHub Actions: every 5 minutes.
+    # Weekdays only. Wide UTC window to cover US market hours with buffer.
+    - cron: "*/5 13-22 * * 1-5"
+    # One final run near the end of the window
+    - cron: "0 23 * * 1-5"
 
 concurrency:
   group: hmoney-intraday
@@ -19,14 +19,17 @@ concurrency:
 jobs:
   run:
     runs-on: ubuntu-latest
+    timeout-minutes: 25
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
           persist-credentials: true
           fetch-depth: 0
 
-      - uses: actions/setup-python@v5
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
@@ -41,14 +44,17 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Compute rolling shard index
+      - name: Compute rolling shard index (stable for 1 hour)
         id: shard
+        shell: bash
         run: |
+          set -euo pipefail
           SHARDS=10
           DOY=$(date -u +%j)
-          IDX=$((10#$DOY % SHARDS))
+          HOUR=$(date -u +%H)
+          IDX=$(( (10#$DOY * 24 + 10#$HOUR) % SHARDS ))
           echo "index=$IDX" >> $GITHUB_OUTPUT
-          echo "Shard index: $IDX / $SHARDS"
+          echo "Shard index: $IDX / $SHARDS (DOY=$DOY HOUR=$HOUR)"
 
       - name: Run pipeline (intraday)
         env:
@@ -65,22 +71,28 @@ jobs:
         run: |
           python -m src.pipeline
 
-          - name: Verify packs exist for state base_path
+      - name: Guard — verify packs exist for state base_path
+        shell: bash
         run: |
+          set -euo pipefail
           python - <<'PY'
           import json
           from pathlib import Path
 
-          s = json.loads(Path("docs/state.json").read_text(encoding="utf-8"))
+          state_path = Path("docs/state.json")
+          if not state_path.exists():
+            raise SystemExit("docs/state.json not found (pipeline did not write it)")
+
+          s = json.loads(state_path.read_text(encoding="utf-8"))
           bp = (s.get("evidence_pack_index", {}) or {}).get("base_path", "").lstrip("/")
           if not bp:
             raise SystemExit("state.json missing evidence_pack_index.base_path")
 
           folder = Path("docs") / bp
           if not folder.exists():
-           raise SystemExit(f"Missing pack folder: {folder}")
+            raise SystemExit(f"Missing pack folder: {folder}")
 
-         n = len(list(folder.glob("*.json")))
+          n = len(list(folder.glob("*.json")))
           if n == 0:
             raise SystemExit(f"No pack JSON files found in: {folder}")
 
@@ -89,8 +101,9 @@ jobs:
 
           print("OK:", folder, "json_count=", n)
           PY
-          
+
       - name: Commit intraday outputs (docs only)
+        shell: bash
         run: |
           set -euo pipefail
 
@@ -112,8 +125,9 @@ jobs:
 
           git commit -m "Intraday HMoney update"
 
-          # Sync + push (avoid dirty-tree rebase failure)
+          # Sync + push (avoid remote-ahead failures)
           for i in 1 2 3; do
+            git fetch origin
             git pull --rebase --autostash origin main || true
             if git push origin main; then
               exit 0
