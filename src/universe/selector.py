@@ -5,7 +5,7 @@ import json
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Iterable, List, Dict, Optional, Set
+from typing import Iterable, List, Optional, Set
 
 
 @dataclass(frozen=True)
@@ -45,8 +45,8 @@ def compute_shard_index(dt: datetime, shard_count: int, cadence_minutes: int = 1
 
 def _read_lines_csv(path: Path) -> List[str]:
     """
-    Minimal CSV reader for a single-column or symbol-first CSV.
-    Falls back to naive splitting and ignores header.
+    Minimal CSV reader for a single-column or ticker-first CSV.
+    Works fine even if the CSV has more columns (we take the first column).
     """
     if not path.exists():
         return []
@@ -103,13 +103,30 @@ def select_universe(
     sentinel_tickers: Optional[List[str]] = None,
     forced_movers: Optional[List[str]] = None,
     now_utc: Optional[datetime] = None,
+    shard_index_override: Optional[int] = None,
+    time_bucket_override: Optional[int] = None,
 ) -> UniverseSelection:
     """
     final = panel + sentinels + forced_movers + rolling_shard (deduped) up to target_size
+
     rolling_shard is a deterministic slice of universe_all based on shard_index.
+
+    shard_index_override / time_bucket_override let the workflow/pipeline explicitly control
+    which shard is selected (useful when you schedule every 5 minutes).
     """
     dt = now_utc or _utc_now()
-    shard_index, time_bucket = compute_shard_index(dt, shard_count=shard_count, cadence_minutes=cadence_minutes)
+
+    if time_bucket_override is not None:
+        time_bucket = int(time_bucket_override)
+    else:
+        time_bucket = compute_time_bucket(dt, cadence_minutes=cadence_minutes)
+
+    shard_count_i = max(1, int(shard_count))
+
+    if shard_index_override is not None:
+        shard_index = int(shard_index_override) % shard_count_i
+    else:
+        shard_index = time_bucket % shard_count_i
 
     panel = _stable_dedupe(panel_tickers or [])
     sentinels = _stable_dedupe(sentinel_tickers or [])
@@ -120,8 +137,7 @@ def select_universe(
     pool = [t for t in _stable_dedupe(universe_all) if t not in exclude]
 
     # Deterministic shard slicing: take every K-th item starting at shard_index
-    # This avoids needing equal chunk sizes and stays stable if universe list grows.
-    shard = pool[shard_index::max(1, shard_count)]
+    shard = pool[shard_index::shard_count_i]
     shard = _stable_dedupe(shard)
 
     # Build final up to target_size
@@ -144,6 +160,6 @@ def select_universe(
         forced_movers=movers,
         rolling_shard=shard,
         shard_index=shard_index,
-        shard_count=max(1, int(shard_count)),
+        shard_count=shard_count_i,
         time_bucket=time_bucket,
     )
