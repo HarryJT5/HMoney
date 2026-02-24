@@ -6,7 +6,7 @@ permissions:
 on:
   workflow_dispatch:
   schedule:
-    # Weekdays — after US market close-ish (UTC)
+    # Weekdays (UTC)
     - cron: "30 22 * * 1-5"
 
 concurrency:
@@ -16,7 +16,7 @@ concurrency:
 jobs:
   run:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 45
 
     steps:
       - name: Checkout
@@ -37,12 +37,14 @@ jobs:
           key: pip-${{ runner.os }}-${{ hashFiles('requirements.txt') }}
 
       - name: Install deps
+        shell: bash
         run: |
           set -euo pipefail
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
       - name: Rebuild universe catalog (nightly)
+        shell: bash
         run: |
           set -euo pipefail
           if [ -f scripts/build_universe.py ]; then
@@ -53,15 +55,17 @@ jobs:
 
       - name: Compute shard index (daily rotation)
         id: shard
+        shell: bash
         run: |
           set -euo pipefail
           SHARDS=10
           DOY=$(date -u +%j)
           IDX=$((10#$DOY % SHARDS))
-          echo "index=$IDX" >> $GITHUB_OUTPUT
+          echo "index=$IDX" >> "$GITHUB_OUTPUT"
           echo "Shard index: $IDX / $SHARDS"
 
       - name: Run pipeline (nightly)
+        shell: bash
         env:
           HMONEY_MODE: "daily"
           HMONEY_LOCAL_TZ: "America/Los_Angeles"
@@ -79,6 +83,7 @@ jobs:
           python -m src.pipeline
 
       - name: Build daily history rollup (latest per ticker)
+        shell: bash
         run: |
           set -euo pipefail
           DAY=$(date -u +%F)
@@ -86,6 +91,7 @@ jobs:
           ls -lh "docs/history/daily/${DAY}.csv.gz"
 
       - name: Prune old evidence pack run folders (keep last 3 days)
+        shell: bash
         run: |
           set -euo pipefail
 
@@ -116,55 +122,79 @@ jobs:
             else
               echo "Keeping $d"
             fi
-done
+          done
 
-  - name: Guard — verify packs exist for state base_path
-    run: |
-      set -euo pipefail
-      python -c "import json,os,sys; s=json.load(open('docs/state.json','r',encoding='utf-8')); bp=((s.get('evidence_pack_index') or {}).get('base_path') or '').lstrip('/'); assert bp, 'state.json missing evidence_pack_index.base_path'; folder=os.path.join('docs',bp); assert os.path.isdir(folder), f'missing pack folder: {folder}'; spy=os.path.join(folder,'SPY.json'); assert os.path.isfile(spy), f'missing SPY.json: {spy}'; n=len([fn for fn in os.listdir(folder) if fn.endswith('.json')]); assert n>0, f'no pack json files in: {folder}'; print('OK:', folder, 'json_count=', n)"
+      - name: Guard - verify packs exist for state base_path
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, os, sys
+          state_path = "docs/state.json"
+          if not os.path.isfile(state_path):
+              raise SystemExit("docs/state.json not found")
 
-  - name: Commit nightly outputs (docs only)
-    run: |
-      set -euo pipefail
+          s = json.load(open(state_path, "r", encoding="utf-8"))
+          bp = ((s.get("evidence_pack_index") or {}).get("base_path") or "").lstrip("/")
+          if not bp:
+              raise SystemExit("state.json missing evidence_pack_index.base_path")
 
-      git config user.name "github-actions"
-      git config user.email "github-actions@github.com"
+          folder = os.path.join("docs", bp)
+          if not os.path.isdir(folder):
+              raise SystemExit(f"Missing pack folder: {folder}")
 
-      # Stage publish artifacts
-      git add -A docs
-      git add data/forced_movers.json || true
-      git add data/universe_all.csv || true
+          spy = os.path.join(folder, "SPY.json")
+          if not os.path.isfile(spy):
+              raise SystemExit(f"Missing SPY.json: {spy}")
 
-      # Preserve hand-maintained dashboard file
-      git reset docs/index.html || true
+          n = len([fn for fn in os.listdir(folder) if fn.endswith(".json")])
+          if n == 0:
+              raise SystemExit(f"No pack JSON files found in: {folder}")
 
-      if git diff --cached --quiet; then
-        echo "No changes to commit"
-        exit 0
-      fi
+          print("OK:", folder, "json_count=", n)
+          PY
 
-      git commit -m "Nightly HMoney update"
+      - name: Commit nightly outputs (docs only)
+        id: commit
+        shell: bash
+        run: |
+          set -euo pipefail
 
-  - name: Push (retry + rebase)
-    run: |
-      set -euo pipefail
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
 
-      # If no commit happened, skip push
-      if git diff --quiet HEAD~1..HEAD 2>/dev/null; then
-        echo "No new commit found; skipping push."
-        exit 0
-      fi
+          git add -A docs
+          git add data/forced_movers.json || true
+          git add data/universe_all.csv || true
 
-      for i in 1 2 3 4 5 6 7 8 9 10; do
-        echo "Push attempt $i..."
-        git fetch origin
-        git pull --rebase --autostash origin main || true
-        if git push origin HEAD:main; then
-          echo "Push succeeded."
-          exit 0
-        fi
-        sleep $((i*8 + (RANDOM % 7)))
-      done
+          # Preserve hand-maintained dashboard file
+          git reset docs/index.html || true
 
-      echo "Failed to push after retries."
-      exit 1
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            echo "has_commit=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          git commit -m "Nightly HMoney update"
+          echo "has_commit=true" >> "$GITHUB_OUTPUT"
+
+      - name: Push (retry + rebase)
+        if: steps.commit.outputs.has_commit == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          for i in 1 2 3 4 5 6 7 8 9 10; do
+            echo "Push attempt $i..."
+            git fetch origin
+            git pull --rebase --autostash origin main || true
+            if git push origin HEAD:main; then
+              echo "Push succeeded."
+              exit 0
+            fi
+            sleep $((i*8 + (RANDOM % 7)))
+          done
+
+          echo "Failed to push after retries."
+          exit 1
