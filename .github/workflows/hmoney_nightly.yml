@@ -86,7 +86,7 @@ jobs:
           python scripts/build_daily_history.py --day "$DAY"
           ls -lh "docs/history/daily/${DAY}.csv.gz"
 
-      - name: Prune old evidence pack run folders (keep last 3 days)
+            - name: Prune old evidence pack run folders (keep last 3 days)
         shell: bash
         run: |
           set -euo pipefail
@@ -99,35 +99,29 @@ jobs:
             exit 0
           fi
 
-          # Iterate date folders (YYYY-MM-DD) and delete anything older than KEEP_DAYS.
-          for d in $(find "$ROOT" -maxdepth 1 -mindepth 1 -type d -printf "%f\n" | sort); do
-            if python - "$d" "$KEEP_DAYS" <<'PY'
-from datetime import datetime, timezone, timedelta
-import sys
+          # Cutoff is KEEP_DAYS days ago at 00:00 UTC
+          CUTOFF_EPOCH=$(date -u -d "${KEEP_DAYS} days ago 00:00:00" +%s)
 
-d = sys.argv[1]
-keep_days = int(sys.argv[2])
+          for path in "$ROOT"/*; do
+            [ -d "$path" ] || continue
+            d=$(basename "$path")
 
-try:
-    day = datetime.strptime(d, "%Y-%m-%d").replace(tzinfo=timezone.utc)
-except Exception:
-    # Unknown folder name: keep it
-    sys.exit(0)
+            # Only prune folders that look like YYYY-MM-DD and parse as dates
+            if ! date -u -d "$d" >/dev/null 2>&1; then
+              echo "Keeping $d (not a date folder)"
+              continue
+            fi
 
-now = datetime.now(timezone.utc)
-cutoff = (now - timedelta(days=keep_days)).replace(hour=0, minute=0, second=0, microsecond=0)
+            epoch=$(date -u -d "$d 00:00:00" +%s)
 
-# exit 0 => keep, exit 1 => prune
-sys.exit(0 if day >= cutoff else 1)
-PY
-            then
-              echo "Keeping $d"
-            else
+            if [ "$epoch" -lt "$CUTOFF_EPOCH" ]; then
               echo "Pruning $d"
-              rm -rf "$ROOT/$d"
+              rm -rf "$path"
+            else
+              echo "Keeping $d"
             fi
           done
-          
+
       - name: Guard — verify packs exist for state base_path
         shell: bash
         run: |
