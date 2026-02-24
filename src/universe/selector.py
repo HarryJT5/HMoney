@@ -26,22 +26,17 @@ def _utc_now() -> datetime:
 
 
 def compute_time_bucket(dt: datetime, cadence_minutes: int = 15) -> int:
-    """
-    Deterministic bucket. For 15-min cadence there are 96 buckets per day.
-    """
     if cadence_minutes <= 0:
         cadence_minutes = 15
     buckets_per_day = (24 * 60) // cadence_minutes
     minute_bucket = (dt.hour * (60 // cadence_minutes)) + (dt.minute // cadence_minutes)
-
     yyyymmdd = dt.year * 10000 + dt.month * 100 + dt.day
     return yyyymmdd * buckets_per_day + minute_bucket
 
 
 def _read_lines_csv(path: Path) -> List[str]:
     """
-    Minimal CSV reader for ticker-first CSV.
-    Works even if the CSV has multiple columns (we take col 0).
+    Ticker-first CSV reader. Works even if there are multiple columns (uses first col).
     """
     if not path.exists():
         return []
@@ -88,6 +83,30 @@ def _stable_dedupe(seq: Iterable[str]) -> List[str]:
     return out
 
 
+def _is_run_eligible(sym: str) -> bool:
+    """
+    Keep the catalog maximal, but make the per-run universe more Yahoo-friendly.
+    Filters common artifacts that frequently fail in yfinance.
+    """
+    s = (sym or "").upper().strip()
+    if not s:
+        return False
+
+    # Units/warrants/rights are the biggest failure cluster in your logs
+    if s.endswith("-U") or s.endswith("-W") or s.endswith("-R"):
+        return False
+
+    # Super long symbols are often preferred/notes/structured products
+    if len(s) > 10:
+        return False
+
+    # Multiple hyphens often indicates series/rights variants that are flaky
+    if s.count("-") >= 2:
+        return False
+
+    return True
+
+
 def _rotate_window(items: List[str], start: int, n: int) -> List[str]:
     if n <= 0 or not items:
         return []
@@ -97,7 +116,6 @@ def _rotate_window(items: List[str], start: int, n: int) -> List[str]:
     end = start + n
     if end <= len(items):
         return items[start:end]
-    # wrap
     return items[start:] + items[: (end - len(items))]
 
 
@@ -117,10 +135,9 @@ def select_universe(
     """
     final = panel + sentinels + forced_movers + rolling_shard (deduped) up to target_size
 
-    Improvements vs previous:
-    - supports shard_index_override (workflow-controlled)
-    - supports shards_per_run (e.g. 2) to fill closer to target_size
-    - rotates within the shard pool using time_bucket so repeated runs keep sweeping
+    - shard_index_override lets workflow control which shard runs
+    - shards_per_run > 1 fills closer to target_size and increases sweep coverage
+    - rotates within shard pool so repeated runs sweep different names
     """
     dt = now_utc or _utc_now()
 
@@ -128,7 +145,6 @@ def select_universe(
     shards_per_run_i = max(1, min(shard_count_i, int(shards_per_run)))
 
     time_bucket = compute_time_bucket(dt, cadence_minutes=cadence_minutes)
-
     if shard_index_override is not None:
         shard_index = int(shard_index_override) % shard_count_i
     else:
@@ -139,26 +155,28 @@ def select_universe(
     movers = _stable_dedupe(forced_movers or [])
 
     exclude = set(panel) | set(sentinels) | set(movers)
-    pool = [t for t in _stable_dedupe(universe_all) if t not in exclude]
 
-    # Pull multiple shard streams if requested
+    # Build eligible pool (selection-time filtering only)
+    pool = [
+        t for t in _stable_dedupe(universe_all)
+        if t not in exclude and _is_run_eligible(t)
+    ]
+
+    # Pull multiple shard streams
     shard_pool: List[str] = []
     for k in range(shards_per_run_i):
         idx = (shard_index + k) % shard_count_i
         shard_pool.extend(pool[idx::shard_count_i])
     shard_pool = _stable_dedupe(shard_pool)
 
-    # Remaining capacity after priority lists
     remaining = max(0, int(target_size) - (len(panel) + len(sentinels) + len(movers)))
 
-    # Rotate within the shard_pool so repeated runs sweep different names
-    # Use a deterministic start derived from time_bucket + shard_index.
-    start = (time_bucket * 97 + shard_index * 1009)  # deterministic “spin”
+    # Deterministic rotation to sweep within the shard pool
+    start = (time_bucket * 97 + shard_index * 1009)
     shard_window = _rotate_window(shard_pool, start=start, n=remaining)
 
     final = _stable_dedupe([*panel, *sentinels, *movers, *shard_window])
 
-    # If still over (possible if lists are huge), hard-cut but preserve order
     if len(final) > target_size:
         final = final[:target_size]
         final_set = set(final)
