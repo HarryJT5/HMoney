@@ -5,9 +5,13 @@ permissions:
 
 on:
   workflow_dispatch:
+    inputs:
+      send_now:
+        description: "Send immediately (ignore 9:00am PT gate)"
+        required: false
+        default: "true"
   schedule:
-    # DST-safe trick: run at both 16:00 and 17:00 UTC on weekdays.
-    # One of these is 09:00 America/Los_Angeles depending on DST.
+    # DST-safe trick: one of these is 09:00 America/Los_Angeles depending on DST
     - cron: "0 16 * * 1-5"
     - cron: "0 17 * * 1-5"
 
@@ -29,19 +33,26 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Build Discord payload from docs/state.json (only at 9:00am PT)
+      - name: Build Discord payload from docs/state.json
         shell: bash
+        env:
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          SEND_NOW: ${{ github.event.inputs.send_now }}
         run: |
           set -euo pipefail
           python - <<'PY'
-          import json
+          import json, os
           from pathlib import Path
           from datetime import datetime
           from zoneinfo import ZoneInfo
 
-          # Only send at exactly 09:00 America/Los_Angeles
-          now_local = datetime.now(ZoneInfo("America/Los_Angeles"))
-          if not (now_local.weekday() < 5 and now_local.hour == 9 and now_local.minute == 0):
+          event = os.environ.get("GITHUB_EVENT_NAME", "")
+          send_now = (os.environ.get("SEND_NOW", "false").lower() == "true")
+
+          # For scheduled runs: only send at exactly 09:00 PT
+          if event == "schedule" and not send_now:
+            now_local = datetime.now(ZoneInfo("America/Los_Angeles"))
+            if not (now_local.weekday() < 5 and now_local.hour == 9 and now_local.minute == 0):
               print(f"Skip: local time is {now_local.isoformat()} (not 09:00)")
               raise SystemExit(0)
 
@@ -77,7 +88,9 @@ jobs:
           frag = sample.get("fragility_presence_pct")
           tilt = sample.get("net_tilt_pct_points")
 
-          content = f"**HMoney Morning** — {now_local.strftime('%Y-%m-%d')} — **{label}**\n{dashboard_url}"
+          today_local = datetime.now(ZoneInfo("America/Los_Angeles")).strftime("%Y-%m-%d")
+
+          content = f"**HMoney Morning** — {today_local} — **{label}**\n{dashboard_url}"
 
           payload = {
               "content": content,
@@ -90,10 +103,10 @@ jobs:
                           {"name": "Universe", "value": str(uni) if uni is not None else "—", "inline": True},
                           {"name": "Packs written", "value": str(wrote) if wrote is not None else "—", "inline": True},
                           {"name": "Coverage", "value": (f"{float(succ):.1f}%" if succ is not None else "—"), "inline": True},
-                          {"name": "Pullback/Stabilization presence", "value": f"{f1(pull)}%", "inline": True},
-                          {"name": "Fragility presence", "value": f"{f1(frag)}%", "inline": True},
+                          {"name": "Pullback/Stabilization", "value": f"{f1(pull)}%", "inline": True},
+                          {"name": "Fragility", "value": f"{f1(frag)}%", "inline": True},
                           {"name": "Net tilt", "value": f"{f1(tilt)} pts", "inline": True},
-                          {"name": "Plain English", "value": plain[:950], "inline": False},
+                          {"name": "Plain English", "value": plain[:900], "inline": False},
                       ],
                   }
               ],
