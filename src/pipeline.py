@@ -44,9 +44,14 @@ def _top(df: pd.DataFrame, col: str, n: int = 25, ascending: bool = False) -> Li
 
 def main() -> None:
     mode = os.getenv("HMONEY_MODE", "intraday")
-    cadence = int(os.getenv("HMONEY_CADENCE_MIN", "15"))
+    cadence = int(os.getenv("HMONEY_CADENCE_MIN", "5" if mode == "intraday" else "15"))
     shard_count = int(os.getenv("UNIVERSE_SHARDS", "10"))
     target_size = int(os.getenv("HMONEY_TARGET_SIZE", "1100"))
+    shard_index_env = os.getenv("UNIVERSE_SHARD_INDEX", "").strip()
+    shard_index_override = int(shard_index_env) if shard_index_env else None
+
+    # default: intraday uses 2 shards/run to get closer to target_size; override via env anytime
+    shards_per_run = int(os.getenv("HMONEY_SHARDS_PER_RUN", "2" if mode == "intraday" else "1"))
 
     # Breadth thresholds (dashboard bars only)
     opp_green_threshold = int(os.getenv("HMONEY_OPP_GREEN_THRESHOLD", "60"))
@@ -79,15 +84,17 @@ def main() -> None:
     forced_movers = load_forced_movers(forced_movers_path, max_n=150)
 
     selection = select_universe(
-        universe_all=universe_all,
-        target_size=target_size,
-        shard_count=shard_count,
-        cadence_minutes=cadence,
-        panel_tickers=panel,
-        sentinel_tickers=sentinels,
-        forced_movers=forced_movers,
-        now_utc=now,
-    )
+    universe_all=universe_all,
+    target_size=target_size,
+    shard_count=shard_count,
+    shards_per_run=shards_per_run,
+    cadence_minutes=cadence,
+    panel_tickers=panel,
+    sentinel_tickers=sentinels,
+    forced_movers=forced_movers,
+    now_utc=now,
+    shard_index_override=shard_index_override,
+)
 
     # --- Snapshot fetch ---
     df_market, quality = fetch_market_snapshot(selection.final)
@@ -151,6 +158,7 @@ def main() -> None:
                 "rolling_shard_tickers": selection.rolling_shard,
                 "shard_count": selection.shard_count,
                 "shard_index": selection.shard_index,
+                "shards_per_run": getattr(selection, "shards_per_run", 1),
                 "time_bucket": selection.time_bucket,
                 "coverage_note": "No market data returned in this run.",
                 "opp_green_threshold": opp_green_threshold,
