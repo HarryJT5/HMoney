@@ -304,6 +304,15 @@
   // ----------------------------
   const HMONEY_AI_ENDPOINT = "https://bearingbullishballs.htgamein.workers.dev";
 
+    // Cache-bust token (set after state loads). Falls back to Date.now().
+  window.__HMONEY_V = Date.now();
+
+   function packUrl(basePath, sym){
+    const bp = normalizeBasePath(basePath);
+    if (!bp) return null;
+    return withCacheBust(`./${bp}/${encodeURIComponent(sym)}.json`);
+  }
+
   // ----------------------------
   // AI MEMORY CONFIG (client-side)
   // ----------------------------
@@ -392,9 +401,8 @@
     if (s.startsWith("/")) s = s.slice(1);
     s = s.replace(/\/+$/, "");
     return s;
-  }
-  async function fetchJson(path){
-    const r = await fetch(path, {cache:"no-store"});
+    async function fetchJson(path){
+    const r = await fetch(withCacheBust(path), {cache:"no-store"});
     if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
     return await r.json();
   }
@@ -1115,6 +1123,10 @@
     try{
       const state = await fetchJson("./state.json");
       __HMONEY_STATE = state;
+            // Use the run folder as the cache-bust token so all pack URLs match this run
+      window.__HMONEY_V = normalizeBasePath(state?.evidence_pack_index?.base_path || "")
+        || state?.generated_at_utc
+        || Date.now();
       __TICKER_SET = buildTickerSetFromState(state);
 
       const basePath = setHeaderMeta(state);
