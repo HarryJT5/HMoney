@@ -1737,9 +1737,9 @@ function renderSnapshot(state){
 
   const denom = sample.denom_used_for_presence ?? null;
   snap.appendChild(el("div", {class:"kv", style:"min-width:160px"}, [
-    el("div", {class:"k"}, ["Breadth base"]),
-    el("div", {class:"v mono"}, [denom !== null ? fmtInt(denom) : "—"]
-  ]));
+  el("div", {class:"k"}, ["Breadth base"]),
+  el("div", {class:"v mono"}, [denom !== null ? fmtInt(denom) : "—"])
+]));
 }
 
 /* ----------------------------
