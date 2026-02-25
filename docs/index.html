@@ -17,6 +17,7 @@
       --warn:#ffb020;
       --bad:#ff5a67;
       --link:#9ad0ff;
+      --shadow: 0 10px 30px rgba(0,0,0,0.18);
     }
     *{box-sizing:border-box}
     body{
@@ -30,7 +31,7 @@
     .wrap{max-width:1200px; margin:0 auto; padding:18px}
     .topbar{
       display:flex; gap:12px; align-items:center; justify-content:space-between;
-      margin-bottom:14px;
+      margin-bottom:10px;
     }
     .brand{display:flex; gap:10px; align-items:baseline}
     .brand h1{font-size:18px; margin:0}
@@ -47,6 +48,17 @@
       white-space:nowrap;
     }
     .btn:hover{filter:brightness(1.06)}
+    .iconBtn{
+      border:1px solid var(--line);
+      background: rgba(10,14,20,0.25);
+      color:var(--muted);
+      padding:6px 10px;
+      border-radius:12px;
+      font-size:12px;
+      cursor:pointer;
+      line-height:1;
+    }
+    .iconBtn:hover{filter:brightness(1.08)}
     .grid{
       display:grid;
       grid-template-columns: 1.2fr 0.8fr;
@@ -60,19 +72,82 @@
       border:1px solid var(--line);
       border-radius:16px;
       padding:14px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+      box-shadow: var(--shadow);
     }
     .card h2{font-size:14px; margin:0 0 10px}
+    .sectionTitle{display:flex; align-items:center; justify-content:space-between; gap:8px}
+    .small{font-size:11px; color:var(--muted)}
+    .muted{color:var(--muted)}
+    .mono{font-variant-numeric: tabular-nums; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}
+
+    /* Status strip */
+    .statusStrip{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+      margin:0 0 12px;
+    }
+
     .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
     .kv{display:flex; flex-direction:column; gap:4px; padding:10px 12px; background:rgba(10,14,20,0.35); border:1px solid var(--line); border-radius:14px}
     .k{color:var(--muted); font-size:11px}
     .v{font-size:13px}
-    .mono{font-variant-numeric: tabular-nums; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}
+
     .chips{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
-    .chip{background:var(--chip); border:1px solid var(--line); padding:6px 8px; border-radius:999px; font-size:12px; color:var(--text); display:inline-flex; gap:8px; align-items:baseline}
+    .chip{
+      background:var(--chip);
+      border:1px solid var(--line);
+      padding:6px 8px;
+      border-radius:999px;
+      font-size:12px;
+      color:var(--text);
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      max-width:100%;
+    }
     .chip .m{color:var(--muted)}
     .chip .t{color:var(--text)}
     .chip .s{color:var(--muted); font-size:11px}
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:4px 8px;
+      border:1px solid var(--line);
+      background: rgba(10,14,20,0.30);
+      border-radius:999px;
+      font-size:11px;
+      color:var(--muted);
+      white-space:nowrap;
+    }
+    .badge b{color:var(--text); font-weight:600}
+    .badge.good{border-color: rgba(43,213,118,0.35)}
+    .badge.warn{border-color: rgba(255,176,32,0.35)}
+    .badge.bad{border-color: rgba(255,90,103,0.35)}
+    .dot{width:8px; height:8px; border-radius:999px; background:rgba(159,178,204,0.35); display:inline-block}
+    .dot.good{background:rgba(43,213,118,0.85)}
+    .dot.warn{background:rgba(255,176,32,0.85)}
+    .dot.bad{background:rgba(255,90,103,0.85)}
+
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      padding:2px 6px;
+      border-radius:999px;
+      font-size:11px;
+      border:1px solid var(--line);
+      background: rgba(10,14,20,0.25);
+      color:var(--muted);
+      white-space:nowrap;
+    }
+    .tag.good{color:var(--good)}
+    .tag.warn{color:var(--warn)}
+    .tag.bad{color:var(--bad)}
+    .tag.tiny{font-size:10px; padding:1px 6px; opacity:0.95}
+
     .barwrap{display:flex; flex-direction:column; gap:8px}
     .barline{display:flex; gap:10px; align-items:center; justify-content:space-between}
     .barlabel{font-size:12px; color:var(--muted)}
@@ -90,15 +165,22 @@
     .fill.bad{background: linear-gradient(90deg, rgba(255,90,103,0.2), rgba(255,90,103,0.9))}
     .fill.warn{background: linear-gradient(90deg, rgba(255,176,32,0.2), rgba(255,176,32,0.9))}
     .pct{font-size:12px; color:var(--text); min-width:70px; text-align:right}
+
     table{width:100%; border-collapse:collapse; font-size:12px}
     th,td{border-bottom:1px solid rgba(34,48,71,0.7); padding:8px 6px; vertical-align:top}
     th{color:var(--muted); font-weight:600; text-align:left}
     td.num{text-align:right; font-variant-numeric: tabular-nums}
+
+    /* Compact mode */
+    body.compact table{font-size:11px}
+    body.compact th, body.compact td{padding:6px 5px}
+    body.compact .kv{padding:8px 10px}
+    body.compact .chip{font-size:11px}
+
     .pos{color:var(--good)}
     .neg{color:var(--bad)}
     .mildneg{color:var(--warn)}
-    .sectionTitle{display:flex; align-items:center; justify-content:space-between; gap:8px}
-    .small{font-size:11px; color:var(--muted)}
+
     .search{
       display:flex; gap:8px; align-items:center; width:100%;
       padding:10px; background:rgba(10,14,20,0.35); border:1px solid var(--line); border-radius:14px;
@@ -106,45 +188,6 @@
     input[type="text"]{
       flex:1; background:transparent; border:0; outline:none;
       color:var(--text); font-size:13px;
-    }
-    .hint{color:var(--muted); font-size:11px; margin-top:8px}
-    .drawer{
-      margin-top:12px;
-      border:1px solid var(--line);
-      border-radius:16px;
-      padding:12px;
-      background: rgba(10,14,20,0.35);
-    }
-    .cols{display:grid; grid-template-columns: 1fr 1fr; gap:12px}
-    @media (max-width: 980px){ .cols{grid-template-columns:1fr} }
-    .list{display:flex; flex-direction:column; gap:8px}
-    .item{display:flex; justify-content:space-between; gap:10px; padding:8px 10px; border:1px solid rgba(34,48,71,0.7); border-radius:12px}
-    .err{color:var(--bad); font-size:12px}
-    .ok{color:var(--good); font-size:12px}
-    .muted{color:var(--muted)}
-    .footer{margin-top:14px; color:var(--muted); font-size:11px}
-
-    /* Highlights layout */
-    .cols3{display:grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap:12px}
-    @media (max-width: 980px){ .cols3{grid-template-columns:1fr} }
-    .miniCard{
-      border:1px solid var(--line);
-      border-radius:16px;
-      padding:12px;
-      background: rgba(10,14,20,0.35);
-    }
-    .miniCard h3{margin:0 0 10px; font-size:13px}
-
-    /* AI panel */
-    .aiBox{
-      display:flex;
-      gap:8px;
-      align-items:stretch;
-      width:100%;
-      padding:10px;
-      background:rgba(10,14,20,0.35);
-      border:1px solid var(--line);
-      border-radius:14px;
     }
     textarea{
       flex:1;
@@ -156,34 +199,43 @@
       resize:vertical;
       min-height:60px;
     }
+    .hint{color:var(--muted); font-size:11px; margin-top:8px}
 
-    /* Live badges + tags */
-    .badge{
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      padding:4px 8px;
+    .drawer{
+      margin-top:12px;
       border:1px solid var(--line);
-      background: rgba(10,14,20,0.30);
-      border-radius:999px;
-      font-size:11px;
-      color:var(--muted);
-      white-space:nowrap;
+      border-radius:16px;
+      padding:12px;
+      background: rgba(10,14,20,0.35);
     }
-    .badge b{color:var(--text); font-weight:600}
-    .tag{
-      display:inline-flex;
-      align-items:center;
-      padding:2px 6px;
-      border-radius:999px;
-      font-size:11px;
+
+    .cols{display:grid; grid-template-columns: 1fr 1fr; gap:12px}
+    @media (max-width: 980px){ .cols{grid-template-columns:1fr} }
+
+    .cols3{display:grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap:12px}
+    @media (max-width: 980px){ .cols3{grid-template-columns:1fr} }
+
+    .list{display:flex; flex-direction:column; gap:8px}
+    .item{display:flex; justify-content:space-between; gap:10px; padding:8px 10px; border:1px solid rgba(34,48,71,0.7); border-radius:12px}
+
+    .miniCard{
       border:1px solid var(--line);
-      background: rgba(10,14,20,0.25);
-      color:var(--muted);
+      border-radius:16px;
+      padding:12px;
+      background: rgba(10,14,20,0.35);
     }
-    .tag.good{color:var(--good)}
-    .tag.warn{color:var(--warn)}
-    .tag.bad{color:var(--bad)}
+    .miniCard h3{margin:0 0 10px; font-size:13px}
+
+    .aiBox{
+      display:flex;
+      gap:8px;
+      align-items:stretch;
+      width:100%;
+      padding:10px;
+      background:rgba(10,14,20,0.35);
+      border:1px solid var(--line);
+      border-radius:14px;
+    }
 
     .formRow{
       display:flex;
@@ -213,6 +265,30 @@
     }
     .newsItemTitle{display:block; margin-bottom:2px}
     .newsMeta{font-size:11px; color:var(--muted)}
+    .err{color:var(--bad); font-size:12px}
+    .ok{color:var(--good); font-size:12px}
+
+    .cardBody{margin-top:10px}
+    .hidden{display:none !important}
+
+    .footer{margin-top:14px; color:var(--muted); font-size:11px}
+
+    /* Toast */
+    .toast{
+      position:fixed;
+      right:14px;
+      bottom:14px;
+      z-index:9999;
+      background: rgba(10,14,20,0.92);
+      border: 1px solid var(--line);
+      color: var(--text);
+      padding:10px 12px;
+      border-radius:14px;
+      box-shadow: var(--shadow);
+      font-size:12px;
+      max-width: min(520px, calc(100vw - 28px));
+      display:none;
+    }
   </style>
 </head>
 
@@ -226,56 +302,109 @@
     <div class="actions">
       <a class="btn" href="./daily_brief.html" target="_blank" rel="noopener noreferrer">Open Daily Brief (HTML)</a>
       <a class="btn" href="./daily_brief.md" target="_blank" rel="noopener noreferrer">Open Brief (MD)</a>
+      <button class="btn" id="copyDebugBtn" title="Copy a safe debug blob (no API keys)">Copy debug</button>
       <button class="btn" id="reloadBtn">Reload</button>
     </div>
+  </div>
+
+  <!-- Status strip -->
+  <div class="statusStrip" id="statusStrip">
+    <span class="badge" id="stState"><span class="dot"></span><b>State</b> —</span>
+    <span class="badge" id="stWorker"><span class="dot"></span><b>Worker</b> —</span>
+    <span class="badge" id="stPacks"><b>Packs</b> —</span>
+    <span class="badge" id="stTime"><b>As-of</b> —</span>
+    <span class="badge" id="stUi"><b>UI</b> —</span>
   </div>
 
   <!-- Live overlay tape + settings -->
   <div class="card" id="liveCard" style="padding:12px; margin-bottom:12px;">
     <div class="sectionTitle">
       <h2 style="margin:0">Live overlay</h2>
-      <div class="small" id="liveMeta">—</div>
+      <div class="row" style="gap:8px; align-items:center">
+        <div class="small" id="liveMeta">—</div>
+        <button class="iconBtn" data-collapse="liveBody" title="Collapse/expand">—</button>
+      </div>
     </div>
 
-    <div class="chips" id="liveChips"></div>
+    <div class="cardBody" id="liveBody">
+      <div class="chips" id="liveChips"></div>
 
-    <div class="drawer" id="liveSettings" style="margin-top:10px">
-      <div class="sectionTitle">
-        <h3 style="margin:0; font-size:13px;">Live Data Settings (BYO key)</h3>
-        <div class="small" id="liveSettingsStatus">—</div>
+      <!-- UI Preferences -->
+      <div class="drawer" id="uiPrefs" style="margin-top:10px">
+        <div class="sectionTitle">
+          <h3 style="margin:0; font-size:13px;">UI Preferences</h3>
+          <div class="small" id="uiPrefsStatus">—</div>
+        </div>
+
+        <div class="formRow">
+          <span class="small muted">Layout:</span>
+          <select class="sel" id="uiLayout">
+            <option value="market">Market-first (default)</option>
+            <option value="research">Research-first</option>
+          </select>
+
+          <label class="small muted">
+            <input type="checkbox" id="uiCompact" />
+            Compact mode
+          </label>
+
+          <label class="small muted">
+            <input type="checkbox" id="uiCollapseLiveSettings" />
+            Collapse Live Settings by default
+          </label>
+
+          <button class="btn" id="uiSaveBtn">Save</button>
+        </div>
+
+        <div class="hint" style="margin-top:10px">
+          Preferences are stored locally (this browser only). They do not affect pipeline outputs.
+        </div>
       </div>
 
-      <div class="formRow">
-        <label class="small muted">
-          <input type="checkbox" id="liveEnabled" />
-          Enable live overlay
-        </label>
+      <!-- Live Settings -->
+      <div class="drawer" id="liveSettings" style="margin-top:10px">
+        <div class="sectionTitle">
+          <h3 style="margin:0; font-size:13px;">Live Data Settings (BYO key)</h3>
+          <div class="row" style="gap:8px; align-items:center">
+            <div class="small" id="liveSettingsStatus">—</div>
+            <button class="iconBtn" data-collapse="liveSettingsBody" title="Collapse/expand">—</button>
+          </div>
+        </div>
 
-        <span class="small muted">Provider:</span>
-        <select class="sel" id="liveProvider">
-          <option value="auto">Auto (Finnhub + Twelve Data)</option>
-          <option value="finnhub">Finnhub only</option>
-          <option value="twelvedata">Twelve Data only</option>
-        </select>
+        <div id="liveSettingsBody">
+          <div class="formRow">
+            <label class="small muted">
+              <input type="checkbox" id="liveEnabled" />
+              Enable live overlay
+            </label>
 
-        <button class="btn" id="liveSaveBtn">Save</button>
-        <button class="btn" id="liveClearBtn">Clear keys</button>
-        <button class="btn" id="liveTestBtn">Test now</button>
-      </div>
+            <span class="small muted">Provider:</span>
+            <select class="sel" id="liveProvider">
+              <option value="auto">Auto (Finnhub + Twelve Data)</option>
+              <option value="finnhub">Finnhub only</option>
+              <option value="twelvedata">Twelve Data only</option>
+            </select>
 
-      <div class="formRow">
-        <span class="small muted" style="min-width:110px">Finnhub key</span>
-        <input class="keyInput mono" id="finnhubKey" type="password" placeholder="Stored locally (this browser only)" autocomplete="off" />
-      </div>
+            <button class="btn" id="liveSaveBtn">Save</button>
+            <button class="btn" id="liveClearBtn">Clear keys</button>
+            <button class="btn" id="liveTestBtn">Test now</button>
+          </div>
 
-      <div class="formRow">
-        <span class="small muted" style="min-width:110px">Twelve Data key</span>
-        <input class="keyInput mono" id="twelveKey" type="password" placeholder="Stored locally (this browser only)" autocomplete="off" />
-      </div>
+          <div class="formRow">
+            <span class="small muted" style="min-width:110px">Finnhub key</span>
+            <input class="keyInput mono" id="finnhubKey" type="password" placeholder="Stored locally (this browser only)" autocomplete="off" />
+          </div>
 
-      <div class="hint" style="margin-top:10px">
-        Keys are stored in <span class="mono">localStorage</span> on this device and sent only as request headers to the Worker (<span class="mono">/live</span>).
-        If keys are missing, the dashboard falls back to baseline analytics (still updating automatically).
+          <div class="formRow">
+            <span class="small muted" style="min-width:110px">Twelve Data key</span>
+            <input class="keyInput mono" id="twelveKey" type="password" placeholder="Stored locally (this browser only)" autocomplete="off" />
+          </div>
+
+          <div class="hint" style="margin-top:10px">
+            Keys are stored in <span class="mono">localStorage</span> on this device and sent only as request headers to the Worker (<span class="mono">/live</span>).
+            If keys are missing, the dashboard falls back to baseline analytics (still updating automatically).
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -284,148 +413,184 @@
     <div class="card" id="postureCard">
       <div class="sectionTitle">
         <h2>Market Posture</h2>
-        <div class="small" id="asOf">—</div>
+        <div class="row" style="gap:8px; align-items:center">
+          <div class="small" id="asOf">—</div>
+          <button class="iconBtn" data-collapse="postureBody" title="Collapse/expand">—</button>
+        </div>
       </div>
-      <div class="row" id="postureRow"></div>
-      <div style="height:10px"></div>
-      <div class="barwrap" id="bars"></div>
-      <div class="hint">These summarize cross-sectional breadth and relative-to-self behavior. Not a forecast.</div>
+      <div class="cardBody" id="postureBody">
+        <div class="row" id="postureRow"></div>
+        <div style="height:10px"></div>
+        <div class="barwrap" id="bars"></div>
+        <div class="hint">These summarize cross-sectional breadth and relative-to-self behavior. Not a forecast.</div>
+      </div>
     </div>
 
     <div class="card" id="runCard">
       <div class="sectionTitle">
         <h2>Run Snapshot</h2>
-        <div class="small" id="runMeta">—</div>
+        <div class="row" style="gap:8px; align-items:center">
+          <div class="small" id="runMeta">—</div>
+          <button class="iconBtn" data-collapse="runBody" title="Collapse/expand">—</button>
+        </div>
       </div>
 
-      <div class="row" id="snapshotRow"></div>
+      <div class="cardBody" id="runBody">
+        <div class="row" id="snapshotRow"></div>
 
-      <div style="height:12px"></div>
+        <div style="height:12px"></div>
 
-      <h2 style="margin-top:0">Find a Ticker</h2>
-      <div class="search">
-        <span class="muted mono">⌕</span>
-        <input id="tickerInput" type="text" placeholder="Type a ticker (e.g., AMZN, SPY, BTC-USD) and press Enter" />
-        <button class="btn" id="loadTickerBtn">Load</button>
+        <h2 style="margin-top:0">Find a Ticker</h2>
+        <div class="search">
+          <span class="muted mono">⌕</span>
+          <input id="tickerInput" type="text" placeholder="Type a ticker (e.g., AMZN, SPY, BTC-USD) and press Enter" />
+          <button class="btn" id="loadTickerBtn">Load</button>
+        </div>
+        <div class="hint">
+          Loads evidence via Worker (<span class="mono">/pack</span>) with stale fallback when current-run packs are missing.
+        </div>
+
+        <div class="drawer" id="drawer" style="display:none"></div>
       </div>
-      <div class="hint">
-        Loads evidence via Worker (<span class="mono">/pack</span>) with stale fallback when current-run packs are missing.
-      </div>
-
-      <div class="drawer" id="drawer" style="display:none"></div>
     </div>
   </div>
 
   <div style="height:12px"></div>
 
-  <!-- Highlights -->
-  <div class="card" id="highlightsCard">
-    <div class="sectionTitle">
-      <h2>Highlights</h2>
-      <div class="small" id="hlMeta">—</div>
-    </div>
-    <div class="small muted" style="margin-bottom:8px">
-      Shortlists are diagnostic samples from the current run. Click tickers to open quote pages. Click <span class="mono">[pack]</span> to open the most recent available evidence JSON (may be stale). Click Opp/Risk to open methodology.
-    </div>
-
-    <div class="cols3">
-      <div class="miniCard">
-        <h3>🟢 Top setups</h3>
-        <div id="hlSetups"></div>
+  <div id="belowGrid">
+    <!-- Highlights -->
+    <div class="card" id="highlightsCard">
+      <div class="sectionTitle">
+        <h2>Highlights</h2>
+        <div class="row" style="gap:8px; align-items:center">
+          <div class="small" id="hlMeta">—</div>
+          <button class="iconBtn" data-collapse="highlightsBody" title="Collapse/expand">—</button>
+        </div>
       </div>
-      <div class="miniCard">
-        <h3>🔴 Structural risk</h3>
-        <div id="hlRisk"></div>
-      </div>
-      <div class="miniCard">
-        <h3>🟡 Cross-currents</h3>
-        <div id="hlMixed"></div>
-      </div>
-    </div>
 
-    <div class="hint" style="margin-top:10px">
-      These lists come directly from <span class="mono">state.tables</span> (fast: no evidence-pack crawling on page load).
-    </div>
-  </div>
+      <div class="cardBody" id="highlightsBody">
+        <div class="small muted" style="margin-bottom:8px">
+          Shortlists are diagnostic samples from the current run. Click tickers to open quote pages. Click <span class="mono">[pack]</span> to open the most recent available evidence JSON (may be stale). Click Opp/Risk to open methodology.
+        </div>
 
-  <div style="height:12px"></div>
+        <div class="cols3">
+          <div class="miniCard">
+            <h3>🟢 Top setups</h3>
+            <div id="hlSetups"></div>
+          </div>
+          <div class="miniCard">
+            <h3>🔴 Structural risk</h3>
+            <div id="hlRisk"></div>
+          </div>
+          <div class="miniCard">
+            <h3>🟡 Cross-currents</h3>
+            <div id="hlMixed"></div>
+          </div>
+        </div>
 
-  <!-- News -->
-  <div class="card" id="newsCard">
-    <div class="sectionTitle">
-      <h2>News (cached)</h2>
-      <div class="small" id="newsMeta">—</div>
-    </div>
-    <div class="cols">
-      <div>
-        <div class="small muted" style="margin-bottom:8px">Market</div>
-        <div id="newsMarket" class="list"></div>
-      </div>
-      <div>
-        <div class="small muted" style="margin-bottom:8px">Selected ticker</div>
-        <div id="newsTicker" class="list"></div>
-      </div>
-    </div>
-    <div class="hint" style="margin-top:10px">
-      Headlines are fetched via Worker (<span class="mono">/news</span>) from RSS/official feeds and deduped best-effort. Click-through only.
-    </div>
-  </div>
-
-  <div style="height:12px"></div>
-
-  <!-- AI -->
-  <div class="card" id="aiCard">
-    <div class="sectionTitle">
-      <h2>Ask HMoney (AI)</h2>
-      <div class="small" id="aiStatus">Ready</div>
-    </div>
-    <div class="small muted" style="margin-bottom:8px">
-      Ask anything. If you mention tickers, the Worker will try to auto-fetch their packs (current or stale) and use live/news context when available.
-    </div>
-
-    <div class="aiBox">
-      <textarea id="aiQuestion" placeholder="Try: 'Compare IRWD vs AMD' or 'Summarize today's market + what to watch'"></textarea>
-      <button class="btn" id="aiAskBtn">Ask</button>
-    </div>
-
-    <div class="row" style="margin-top:8px">
-      <label class="small muted">
-        <input type="checkbox" id="aiIncludeTicker" checked />
-        Include last loaded pack + (optional) live quotes for mentioned tickers
-      </label>
-
-      <label class="small muted">
-        <input type="checkbox" id="aiRemember" checked />
-        Remember this chat (local)
-      </label>
-
-      <button class="btn" id="aiClearMemoryBtn">Clear memory</button>
-
-      <div class="small muted" style="margin-left:auto">
-        Tip: press <span class="mono">Ctrl+Enter</span> to send
+        <div class="hint" style="margin-top:10px">
+          These lists come directly from <span class="mono">state.tables</span> (fast: no evidence-pack crawling on page load).
+        </div>
       </div>
     </div>
 
-    <div class="small muted" id="aiMemoryMeta" style="margin-top:6px">Memory: —</div>
+    <div style="height:12px"></div>
 
-    <div class="drawer" id="aiAnswer" style="display:none"></div>
-  </div>
-
-  <div style="height:12px"></div>
-
-  <div class="card" id="benchCard">
-    <div class="sectionTitle">
-      <h2>Benchmarks (Context)</h2>
-      <div class="small" id="benchStatus">—</div>
+    <!-- Benchmarks -->
+    <div class="card" id="benchCard">
+      <div class="sectionTitle">
+        <h2>Benchmarks (Context)</h2>
+        <div class="row" style="gap:8px; align-items:center">
+          <div class="small" id="benchStatus">—</div>
+          <button class="iconBtn" data-collapse="benchBody" title="Collapse/expand">—</button>
+        </div>
+      </div>
+      <div class="cardBody" id="benchBody">
+        <div class="small muted" style="margin-bottom:8px">
+          Click tickers to open quote pages. Click <span class="mono">[pack]</span> to open evidence JSON (best available; may be stale). Click Opp/Risk to open methodology.
+        </div>
+        <div id="benchTables"></div>
+      </div>
     </div>
-    <div class="small muted" style="margin-bottom:8px">
-      Click tickers to open quote pages. Click <span class="mono">[pack]</span> to open evidence JSON (best available; may be stale). Click Opp/Risk to open methodology.
+
+    <div style="height:12px"></div>
+
+    <!-- News -->
+    <div class="card" id="newsCard">
+      <div class="sectionTitle">
+        <h2>News (cached)</h2>
+        <div class="row" style="gap:8px; align-items:center">
+          <div class="small" id="newsMeta">—</div>
+          <button class="iconBtn" data-collapse="newsBody" title="Collapse/expand">—</button>
+        </div>
+      </div>
+      <div class="cardBody" id="newsBody">
+        <div class="cols">
+          <div>
+            <div class="small muted" style="margin-bottom:8px">Market</div>
+            <div id="newsMarket" class="list"></div>
+          </div>
+          <div>
+            <div class="small muted" style="margin-bottom:8px">Selected ticker</div>
+            <div id="newsTicker" class="list"></div>
+          </div>
+        </div>
+        <div class="hint" style="margin-top:10px">
+          Headlines are fetched via Worker (<span class="mono">/news</span>) from RSS/official feeds and deduped best-effort. Click-through only.
+        </div>
+      </div>
     </div>
-    <div id="benchTables"></div>
+
+    <div style="height:12px"></div>
+
+    <!-- AI -->
+    <div class="card" id="aiCard">
+      <div class="sectionTitle">
+        <h2>Ask HMoney (AI)</h2>
+        <div class="row" style="gap:8px; align-items:center">
+          <div class="small" id="aiStatus">Ready</div>
+          <button class="iconBtn" data-collapse="aiBody" title="Collapse/expand">—</button>
+        </div>
+      </div>
+      <div class="cardBody" id="aiBody">
+        <div class="small muted" style="margin-bottom:8px">
+          Ask anything. If you mention tickers, the Worker will try to auto-fetch their packs (current or stale) and use live/news context when available.
+        </div>
+
+        <div class="aiBox">
+          <textarea id="aiQuestion" placeholder="Try: 'Compare IRWD vs AMD' or 'Summarize today's market + what to watch'"></textarea>
+          <button class="btn" id="aiAskBtn">Ask</button>
+        </div>
+
+        <div class="row" style="margin-top:8px">
+          <label class="small muted">
+            <input type="checkbox" id="aiIncludeTicker" checked />
+            Include last loaded pack + (optional) live quotes for mentioned tickers
+          </label>
+
+          <label class="small muted">
+            <input type="checkbox" id="aiRemember" checked />
+            Remember this chat (local)
+          </label>
+
+          <button class="btn" id="aiClearMemoryBtn">Clear memory</button>
+
+          <div class="small muted" style="margin-left:auto">
+            Tip: press <span class="mono">Ctrl+Enter</span> to send
+          </div>
+        </div>
+
+        <div class="small muted" id="aiMemoryMeta" style="margin-top:6px">Memory: —</div>
+
+        <div class="drawer" id="aiAnswer" style="display:none"></div>
+      </div>
+    </div>
   </div>
 
   <div class="footer" id="footer"></div>
 </div>
+
+<div class="toast" id="toast"></div>
 
 <script>
   // ----------------------------
@@ -451,6 +616,12 @@
   const LS_FINNHUB_KEY  = "hmoney_finnhub_key_v1";
   const LS_TWELVE_KEY   = "hmoney_twelvedata_key_v1";
 
+  // UI prefs
+  const LS_UI_LAYOUT = "hmoney_ui_layout_v1";            // "market" | "research"
+  const LS_UI_COMPACT = "hmoney_ui_compact_v1";          // "true" | "false"
+  const LS_UI_COLLAPSE_LIVESETTINGS = "hmoney_ui_collapse_livesettings_v1"; // "true" | "false"
+  const LS_UI_COLLAPSE_PREFIX = "hmoney_ui_collapse_";   // + panel id
+
   // ----------------------------
   // AI MEMORY CONFIG (client-side)
   // ----------------------------
@@ -464,10 +635,11 @@
   // ----------------------------
   const LIVE_DEFAULT_SYMBOLS = ["SPY","QQQ","DIA","IWM","VXX","TLT","UUP","BTC-USD"];
 
+  // FIXED: removed accidental double-comma hole that caused "TypeError: .for is not iterable"
   const BENCHMARK_GROUPS = [
     ["US Equity", ["SPY", "QQQ", "DIA", "IWM", "VTI"]],
     ["Global Equity", ["VT", "VXUS", "VEA", "VWO"]],
-    ["Rates / USD / Vol", ["BND", "TLT", "UUP", "VXX"]],,
+    ["Rates / USD / Vol", ["BND", "TLT", "UUP", "VXX"]],
     ["Real Assets", ["GLD", "SLV", "USO"]],
     ["Crypto (context)", ["BTC-USD"]],
   ];
@@ -493,6 +665,13 @@
   };
 
   const METHODOLOGY_BASE = "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md";
+
+  function toast(msg, ms=2200){
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.style.display = "block";
+    setTimeout(() => { t.style.display = "none"; }, ms);
+  }
 
   function fmt(x, digits=1){
     if (x === null || x === undefined) return "—";
@@ -565,7 +744,124 @@
   }
 
   function link(href, text, extraAttrs={}){
-    return el("a", {href, target:"_blank", rel:"noopener noreferrer", ...extraAttrs}, [text]);
+    const safeHref = href ? href : "#";
+    return el("a", {href:safeHref, target:"_blank", rel:"noopener noreferrer", ...extraAttrs}, [text]);
+  }
+
+  function setBadge(id, kind, label, value){
+    const b = document.getElementById(id);
+    if (!b) return;
+    b.classList.remove("good","warn","bad");
+    if (kind) b.classList.add(kind);
+    // dot styling if present
+    const dot = b.querySelector(".dot");
+    if (dot){
+      dot.classList.remove("good","warn","bad");
+      if (kind) dot.classList.add(kind);
+    }
+    b.innerHTML = b.innerHTML; // keep structure
+    // Rewrite content safely:
+    const pieces = [];
+    if (dot) pieces.push(dot.cloneNode(true));
+    pieces.push(el("b", {}, [label]));
+    pieces.push(document.createTextNode(" "));
+    pieces.push(document.createTextNode(value));
+    b.innerHTML = "";
+    pieces.forEach(p => b.appendChild(p));
+  }
+
+  // ----------------------------
+  // Collapsibles
+  // ----------------------------
+  function applyCollapse(panelId, collapsed){
+    const body = document.getElementById(panelId);
+    if (!body) return;
+    body.classList.toggle("hidden", !!collapsed);
+  }
+
+  function loadCollapsePref(panelId, defaultCollapsed=false){
+    const v = localStorage.getItem(LS_UI_COLLAPSE_PREFIX + panelId);
+    if (v === null) return defaultCollapsed;
+    return v === "true";
+  }
+
+  function saveCollapsePref(panelId, collapsed){
+    localStorage.setItem(LS_UI_COLLAPSE_PREFIX + panelId, collapsed ? "true" : "false");
+  }
+
+  function initCollapseButtons(){
+    const btns = document.querySelectorAll("[data-collapse]");
+    btns.forEach(btn => {
+      const panelId = btn.getAttribute("data-collapse");
+      const collapsed = loadCollapsePref(panelId, false);
+      applyCollapse(panelId, collapsed);
+      btn.addEventListener("click", () => {
+        const nowCollapsed = !document.getElementById(panelId).classList.contains("hidden");
+        applyCollapse(panelId, nowCollapsed);
+        saveCollapsePref(panelId, nowCollapsed);
+      });
+    });
+  }
+
+  // ----------------------------
+  // UI Preferences
+  // ----------------------------
+  function loadUiPrefs(){
+    const layout = localStorage.getItem(LS_UI_LAYOUT) || "market";
+    const compact = (localStorage.getItem(LS_UI_COMPACT) || "false") === "true";
+    const collapseLiveSettings = (localStorage.getItem(LS_UI_COLLAPSE_LIVESETTINGS) || "false") === "true";
+    return { layout, compact, collapseLiveSettings };
+  }
+
+  function saveUiPrefs(p){
+    localStorage.setItem(LS_UI_LAYOUT, p.layout || "market");
+    localStorage.setItem(LS_UI_COMPACT, p.compact ? "true" : "false");
+    localStorage.setItem(LS_UI_COLLAPSE_LIVESETTINGS, p.collapseLiveSettings ? "true" : "false");
+  }
+
+  function applyUiPrefs(){
+    const p = loadUiPrefs();
+    document.body.classList.toggle("compact", !!p.compact);
+
+    // Reorder belowGrid sections
+    const below = document.getElementById("belowGrid");
+    const highlights = document.getElementById("highlightsCard");
+    const bench = document.getElementById("benchCard");
+    const news = document.getElementById("newsCard");
+    const ai = document.getElementById("aiCard");
+
+    if (below && highlights && bench && news && ai){
+      below.innerHTML = "";
+      if (p.layout === "research"){
+        below.appendChild(ai);
+        below.appendChild(el("div", {style:"height:12px"}));
+        below.appendChild(news);
+        below.appendChild(el("div", {style:"height:12px"}));
+        below.appendChild(bench);
+        below.appendChild(el("div", {style:"height:12px"}));
+        below.appendChild(highlights);
+      } else {
+        below.appendChild(highlights);
+        below.appendChild(el("div", {style:"height:12px"}));
+        below.appendChild(bench);
+        below.appendChild(el("div", {style:"height:12px"}));
+        below.appendChild(news);
+        below.appendChild(el("div", {style:"height:12px"}));
+        below.appendChild(ai);
+      }
+    }
+
+    // Live settings collapse preference
+    applyCollapse("liveSettingsBody", !!p.collapseLiveSettings);
+    saveCollapsePref("liveSettingsBody", !!p.collapseLiveSettings);
+
+    document.getElementById("uiLayout").value = p.layout;
+    document.getElementById("uiCompact").checked = !!p.compact;
+    document.getElementById("uiCollapseLiveSettings").checked = !!p.collapseLiveSettings;
+
+    document.getElementById("stUi").textContent = "";
+    setBadge("stUi", null, "UI", `${p.layout}${p.compact ? " • compact" : ""}`);
+    document.getElementById("uiPrefsStatus").textContent = `${p.layout}${p.compact ? " • compact" : ""}${p.collapseLiveSettings ? " • live settings collapsed" : ""}`;
   }
 
   // ----------------------------
@@ -645,6 +941,23 @@
     const r = await fetch(fullUrl, init);
     if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
     return await r.json();
+  }
+
+  // ----------------------------
+  // Worker health
+  // ----------------------------
+  let __WORKER_HEALTH = { ok:false, as_of:null, err:null };
+
+  async function refreshWorkerHealth(){
+    try{
+      const r = await fetch(`${HMONEY_WORKER_BASE}/`, {cache:"no-store"});
+      const txt = await r.text().catch(()=> "");
+      __WORKER_HEALTH = { ok: r.ok, as_of: new Date().toISOString(), err: r.ok ? null : (txt || `${r.status}`) };
+      setBadge("stWorker", r.ok ? "good" : "warn", "Worker", r.ok ? "OK" : "Degraded");
+    }catch(e){
+      __WORKER_HEALTH = { ok:false, as_of: new Date().toISOString(), err: String(e) };
+      setBadge("stWorker", "bad", "Worker", "Down");
+    }
   }
 
   // ----------------------------
@@ -866,7 +1179,6 @@
   function findTickerRowsInTables(state, sym){
     const tables = state?.tables || {};
     const results = [];
-
     const defs = ["pulled_back","fragile","mixed"];
     for (const key of defs){
       const rows = tables?.[key]?.rows;
@@ -893,12 +1205,49 @@
     return "neg";
   }
 
+  function buildLiveHeaders(){
+    const p = loadLivePrefs();
+    const headers = {};
+    if (p.finnhubKey && p.finnhubKey.trim()) headers["X-Finnhub-Key"] = p.finnhubKey.trim();
+    if (p.twelveKey && p.twelveKey.trim()) headers["X-TwelveData-Key"] = p.twelveKey.trim();
+    return headers;
+  }
+
+  function providerTag(q){
+    const prov = (q?.provider || q?.source || q?.vendor || "").toString().toLowerCase();
+    if (!prov) return null;
+    if (prov.includes("finn")) return el("span", {class:"tag tiny"}, ["FH"]);
+    if (prov.includes("twelve") || prov.includes("12")) return el("span", {class:"tag tiny"}, ["12D"]);
+    return el("span", {class:"tag tiny"}, [prov.slice(0,6).toUpperCase()]);
+  }
+
+  function buildChipTitle(sym, q, payload, fetchedAtUtc, baselineTs){
+    const lines = [];
+    lines.push(`${sym}`);
+    if (q){
+      if (q.price !== undefined && q.price !== null) lines.push(`price: ${q.price}`);
+      if (q.pct !== undefined && q.pct !== null) lines.push(`pct: ${q.pct}`);
+      if (q.provider) lines.push(`provider: ${q.provider}`);
+      if (q.source && !q.provider) lines.push(`provider: ${q.source}`);
+      if (q.market_time_utc) lines.push(`provider_time_utc: ${q.market_time_utc}`);
+      if (q.time_utc && !q.market_time_utc) lines.push(`provider_time_utc: ${q.time_utc}`);
+      if (q.ts_utc && !q.market_time_utc && !q.time_utc) lines.push(`provider_time_utc: ${q.ts_utc}`);
+    }
+    if (payload?.as_of_utc) lines.push(`worker_as_of_utc: ${payload.as_of_utc}`);
+    if (payload?.cache_ttl_s !== undefined) lines.push(`worker_ttl_s: ${payload.cache_ttl_s}`);
+    if (payload?.cache_hit !== undefined) lines.push(`worker_cache_hit: ${payload.cache_hit}`);
+    lines.push(`fetched_at_utc: ${fetchedAtUtc}`);
+    if (baselineTs) lines.push(`baseline_ts: ${baselineTs}`);
+    return lines.join("\n");
+  }
+
   function renderLiveChips(payload){
     const chips = document.getElementById("liveChips");
     const meta = document.getElementById("liveMeta");
     chips.innerHTML = "";
 
     const baselineTs = (__HMONEY_STATE?.generated_at_utc || __HMONEY_STATE?.as_of_utc || "—");
+    const fetchedAtUtc = new Date().toISOString();
 
     if (!payload || !payload.ok){
       meta.textContent = "Live overlay unavailable";
@@ -911,7 +1260,9 @@
 
     const asOf = payload.as_of_utc || "—";
     const ttl = payload.cache_ttl_s ?? "?";
-    const used = Array.isArray(payload?.debug?.used) ? payload.debug.used.map(x => x.provider).filter(Boolean).join(", ") : "";
+    const used = Array.isArray(payload?.debug?.used)
+      ? payload.debug.used.map(x => x.provider).filter(Boolean).join(", ")
+      : "";
 
     meta.textContent = `as of ${asOf} • ttl ${ttl}s${used ? " • " + used : ""}`;
 
@@ -926,25 +1277,20 @@
 
       const kids = [
         el("span", {class:"mono t"}, [sym]),
+        providerTag(q),
         el("span", {class:"mono s"}, [(price === null || price === undefined) ? "—" : fmt(price, 2)]),
         el("span", {class:`mono ${cls}`}, [pctText]),
         link(quoteUrl(sym), "↗", {class:"mono", style:"margin-left:4px"})
-      ];
-      chips.appendChild(el("span", {class:"chip"}, kids));
+      ].filter(Boolean);
+
+      const title = buildChipTitle(sym, q, payload, fetchedAtUtc, baselineTs);
+      chips.appendChild(el("span", {class:"chip", title}, kids));
     }
 
     chips.appendChild(el("span", {class:"badge"}, [
       el("span", {}, ["Baseline: "]),
       el("b", {}, [baselineTs]),
     ]));
-  }
-
-  function buildLiveHeaders(){
-    const p = loadLivePrefs();
-    const headers = {};
-    if (p.finnhubKey && p.finnhubKey.trim()) headers["X-Finnhub-Key"] = p.finnhubKey.trim();
-    if (p.twelveKey && p.twelveKey.trim()) headers["X-TwelveData-Key"] = p.twelveKey.trim();
-    return headers;
   }
 
   // backoff if 429s happen
@@ -974,7 +1320,6 @@
       updateLiveSettingsStatus("ok");
     }catch(e){
       const msg = String(e || "");
-      // If preflight/CORS issues happen, msg might be opaque; still back off.
       if (msg.includes("429")){
         __LIVE_BACKOFF_UNTIL = Date.now() + 120000; // 2 minutes
         updateLiveSettingsStatus("rate limited (backing off)");
@@ -1078,7 +1423,6 @@
     }
     if (Object.keys(tickerTableRows).length) ctx.ticker_table_rows = tickerTableRows;
 
-    // Include last loaded pack
     if (autoInclude && __LAST_PACK && __LAST_SYMBOL){
       ctx.last_loaded = {
         symbol: __LAST_SYMBOL,
@@ -1087,7 +1431,6 @@
       };
     }
 
-    // Optionally include live quotes (only if enabled; uses headers)
     if (autoInclude && tickers.length){
       const p = loadLivePrefs();
       if (p.enabled){
@@ -1100,7 +1443,6 @@
     }
 
     status.textContent = "Asking…";
-
     const payload = { question, tickers, context: ctx };
 
     try{
@@ -1269,6 +1611,11 @@
     document.getElementById("footer").innerHTML =
       `Baseline analytics: GitHub Actions → /docs. Live/news/AI: Cloudflare Worker. Live overlay uses BYO keys stored locally (this browser).`;
 
+    // Status strip
+    setBadge("stState", "good", "State", "Loaded");
+    setBadge("stPacks", null, "Packs", `${basePath || "—"}${packsWritten !== null ? ` • written ${fmtInt(packsWritten)}` : ""}`);
+    setBadge("stTime", null, "As-of", asOf || "—");
+
     return basePath;
   }
 
@@ -1379,7 +1726,14 @@
     let totalExpected = 0;
     let totalFound = 0;
 
-    for (const [groupName, symbols] of BENCHMARK_GROUPS){
+    for (const entry of BENCHMARK_GROUPS){
+      if (!Array.isArray(entry) || entry.length !== 2){
+        // fail-soft: skip invalid group entries
+        continue;
+      }
+      const [groupName, symbols] = entry;
+      if (!Array.isArray(symbols)) continue;
+
       totalExpected += symbols.length;
 
       const right = el("div", {class:"small muted"}, ["Loading…"]);
@@ -1501,11 +1855,86 @@
   }
 
   // ----------------------------
-  // Init
+  // Init / safe steps
   // ----------------------------
-  async function init(){
+  async function safeStep(name, fn){
     try{
-      const state = await fetchJson("./state.json");
+      await fn();
+      return true;
+    }catch(e){
+      console.error(`[HMoney] Step failed: ${name}`, e);
+      toast(`${name} failed (see console)`, 2800);
+      return false;
+    }
+  }
+
+  function buildSafeDebugBlob(){
+    const live = loadLivePrefs();
+    const ui = loadUiPrefs();
+    const state = __HMONEY_STATE;
+    return {
+      ts_utc: new Date().toISOString(),
+      user_agent: navigator.userAgent,
+      state_loaded: !!state,
+      state_generated_at_utc: state?.generated_at_utc ?? null,
+      state_as_of_utc: state?.as_of_utc ?? null,
+      packs_base_path: state?.evidence_pack_index?.base_path ?? null,
+      packs_written: state?.evidence_pack_index?.n_packs_written ?? null,
+      run: state?.run ?? null,
+      worker: __WORKER_HEALTH,
+      live: {
+        enabled: live.enabled,
+        provider: live.provider,
+        has_finnhub_key: !!(live.finnhubKey && live.finnhubKey.trim()),
+        has_twelve_key: !!(live.twelveKey && live.twelveKey.trim()),
+      },
+      ui_prefs: ui,
+      last_loaded: {
+        symbol: __LAST_SYMBOL ?? null,
+        pack_meta: __LAST_PACK_META ?? null,
+      }
+    };
+  }
+
+  async function init(){
+    // Always wire basics
+    document.getElementById("reloadBtn").addEventListener("click", () => location.reload());
+
+    // UI prefs wiring
+    document.getElementById("uiSaveBtn").addEventListener("click", () => {
+      const layout = document.getElementById("uiLayout").value || "market";
+      const compact = !!document.getElementById("uiCompact").checked;
+      const collapseLiveSettings = !!document.getElementById("uiCollapseLiveSettings").checked;
+      saveUiPrefs({ layout, compact, collapseLiveSettings });
+      applyUiPrefs();
+      toast("UI prefs saved");
+    });
+
+    document.getElementById("copyDebugBtn").addEventListener("click", async () => {
+      try{
+        const blob = JSON.stringify(buildSafeDebugBlob(), null, 2);
+        await navigator.clipboard.writeText(blob);
+        toast("Debug copied to clipboard");
+      }catch{
+        toast("Could not copy debug (clipboard blocked)");
+      }
+    });
+
+    initCollapseButtons();
+    applyUiPrefs();
+
+    // Initial statuses (optimistic)
+    setBadge("stState", "warn", "State", "Loading…");
+    setBadge("stWorker", "warn", "Worker", "Checking…");
+    setBadge("stPacks", null, "Packs", "—");
+    setBadge("stTime", null, "As-of", "—");
+
+    await safeStep("Worker health", refreshWorkerHealth);
+
+    // Load state
+    let state = null;
+    try{
+      state = await fetchJson("./state.json");
       __HMONEY_STATE = state;
 
       window.__HMONEY_V = normalizeBasePath(state?.evidence_pack_index?.base_path || "")
@@ -1513,192 +1942,207 @@
         || Date.now();
 
       __TICKER_SET = buildTickerSetFromState(state);
-
       setHeaderMeta(state);
       renderSnapshot(state);
       renderPosture(state);
       renderHighlights(state);
 
-      await renderBenchmarks();
-
-      document.getElementById("reloadBtn").addEventListener("click", () => location.reload());
-
-      // Run meta
-      const basePathRaw = state?.evidence_pack_index?.base_path || "";
-      const basePathNorm = normalizeBasePath(basePathRaw);
-      document.getElementById("runMeta").textContent = basePathNorm ? `packs_dir: ${basePathNorm}` : "—";
-
-      // Live settings wiring
-      applyLivePrefsToUI();
-
-      document.getElementById("liveSaveBtn").addEventListener("click", async () => {
-        const enabled = !!document.getElementById("liveEnabled").checked;
-        const provider = document.getElementById("liveProvider").value || "auto";
-        const finnhubKey = document.getElementById("finnhubKey").value || "";
-        const twelveKey  = document.getElementById("twelveKey").value || "";
-        saveLivePrefs({ enabled, provider, finnhubKey, twelveKey });
-        updateLiveSettingsStatus("saved");
-        await refreshLive(true);
-      });
-
-      document.getElementById("liveClearBtn").addEventListener("click", async () => {
-        saveLivePrefs({ enabled:false, provider:"auto", finnhubKey:"", twelveKey:"" });
-        applyLivePrefsToUI();
-        updateLiveSettingsStatus("cleared");
-        await refreshLive(true);
-      });
-
-      document.getElementById("liveTestBtn").addEventListener("click", async () => {
-        await refreshLive(true);
-      });
-
-      document.getElementById("liveEnabled").addEventListener("change", async () => {
-        const p = loadLivePrefs();
-        saveLivePrefs({ ...p, enabled: !!document.getElementById("liveEnabled").checked });
-        updateLiveSettingsStatus("toggled");
-        await refreshLive(true);
-      });
-
-      document.getElementById("liveProvider").addEventListener("change", async () => {
-        const p = loadLivePrefs();
-        saveLivePrefs({ ...p, provider: document.getElementById("liveProvider").value || "auto" });
-        updateLiveSettingsStatus("provider");
-        await refreshLive(true);
-      });
-
-      // Find-a-ticker drawer handlers
-      const input = document.getElementById("tickerInput");
-      const btn = document.getElementById("loadTickerBtn");
-
-      async function doLoad(){
-        const sym = normalizeTicker(input.value);
-        if (!sym) return;
-
-        const drawer = document.getElementById("drawer");
-        drawer.style.display = "block";
-        drawer.innerHTML = "<div class='small muted'>Loading…</div>";
-
-        try{
-          const res = await loadPackSmart(sym);
-          const pack = res.pack;
-
-          __LAST_PACK = pack;
-          __LAST_SYMBOL = sym;
-          __LAST_PACK_META = {
-            is_stale: !!res.is_stale,
-            source: res.source || null,
-            pack_url: res.pack_url || null,
-            pack_as_of_utc: res.pack_as_of_utc || pack?.as_of_utc || null,
-            pack_run_id: res.pack_run_id || pack?.run_id || null,
-          };
-
-          const tag = res.is_stale
-            ? `<span class="tag warn">STALE</span>`
-            : `<span class="tag good">CURRENT</span>`;
-
-          const packUrl = res.pack_url ? res.pack_url : `${HMONEY_WORKER_BASE}/pack?ticker=${encodeURIComponent(sym)}`;
-
-          // Show live quote best-effort (only if enabled + keys)
-          let liveLine = "";
-          const p = loadLivePrefs();
-          if (p.enabled){
-            try{
-              const live = await fetchWorkerJson(
-                `${HMONEY_WORKER_BASE}/live?symbols=${encodeURIComponent(sym)}&provider=${encodeURIComponent(p.provider || "auto")}`,
-                buildLiveHeaders()
-              );
-              const q = live?.quotes?.[sym];
-              if (q && q.price !== null && q.price !== undefined){
-                const pct = (q.pct === null || q.pct === undefined) ? "—" : `${Number(q.pct).toFixed(2)}%`;
-                const cls = badgeForDelta(q.pct);
-                liveLine = `<div class="small muted" style="margin-top:8px">Live: <span class="mono">${fmt(q.price,2)}</span> • <span class="mono ${cls}">${pct}</span> <span class="muted">(${live.as_of_utc})</span></div>`;
-              }
-            }catch{}
-          }
-
-          drawer.innerHTML = `
-            <div class="ok">Loaded evidence for <span class="mono">${sym}</span> ${tag}</div>
-            <div class="hint" style="margin-top:6px">
-              Open: <a href="${packUrl}" target="_blank" rel="noopener noreferrer" class="mono">[pack]</a>
-              • Quote: <a href="${quoteUrl(sym)}" target="_blank" rel="noopener noreferrer" class="mono">[yahoo]</a>
-              • Tip: ask “Explain ${sym}” in the AI box.
-            </div>
-            <div class="small muted" style="margin-top:8px">
-              Pack as_of: <span class="mono">${__LAST_PACK_META.pack_as_of_utc || "—"}</span>
-              ${__LAST_PACK_META.is_stale ? ` • <span class="mildneg">stale fallback</span>` : ""}
-            </div>
-            ${liveLine}
-          `;
-
-          await refreshNewsTicker(sym);
-        }catch(e){
-          drawer.innerHTML = `
-            <div class="err">Could not load evidence for <span class="mono">${sym}</span> via Worker.</div>
-            <div class="hint">
-              Tried: <a href="${HMONEY_WORKER_BASE}/pack?ticker=${encodeURIComponent(sym)}" target="_blank" rel="noopener noreferrer" class="mono">/pack?ticker=${sym}</a><br/>
-              If this symbol has never been written to evidence packs, there may be no historical fallback yet.
-            </div>
-          `;
-        }
-      }
-
-      btn.addEventListener("click", doLoad);
-      input.addEventListener("keydown", (ev) => {
-        if (ev.key === "Enter") doLoad();
-      });
-
-      // AI handlers + memory wiring
-      const aiBtn = document.getElementById("aiAskBtn");
-      const aiQ = document.getElementById("aiQuestion");
-      const aiInclude = document.getElementById("aiIncludeTicker");
-      const aiRemember = document.getElementById("aiRemember");
-      const aiClear = document.getElementById("aiClearMemoryBtn");
-
-      const rememberOn = loadRememberPref();
-      aiRemember.checked = rememberOn;
-      __AI_HISTORY = rememberOn ? trimHistory(loadHistoryFromStorage()) : [];
-      updateMemoryMeta();
-
-      aiRemember.addEventListener("change", () => {
-        const on = !!aiRemember.checked;
-        saveRememberPref(on);
-        if (on){
-          __AI_HISTORY = trimHistory(loadHistoryFromStorage());
-        } else {
-          clearHistory();
-        }
-        updateMemoryMeta();
-      });
-
-      aiClear.addEventListener("click", () => clearHistory());
-
-      async function doAsk(){
-        const q = (aiQ.value || "").trim();
-        if (!q) return;
-        await askAI(q, !!aiInclude.checked);
-      }
-
-      aiBtn.addEventListener("click", doAsk);
-      aiQ.addEventListener("keydown", (ev) => {
-        if (ev.key === "Enter" && (ev.ctrlKey || ev.metaKey)) {
-          ev.preventDefault();
-          doAsk();
-        }
-      });
-
-      // Start loops
-      scheduleLiveLoop();
-      scheduleNewsLoop();
-
-      // Initial paint
-      await refreshLive(true);
-      await refreshNewsMarket();
-      await refreshNewsTicker(__LAST_SYMBOL);
-
     }catch(e){
       document.getElementById("subline").textContent = "Failed to load state.json";
-      document.getElementById("postureCard").innerHTML = `<div class="err">Error loading state: ${String(e)}</div>`;
+      setBadge("stState", "bad", "State", "Failed");
+      document.getElementById("postureBody").innerHTML = `<div class="err">Error loading state: ${String(e)}</div>`;
+      return; // baseline is required for the rest
     }
+
+    // Run meta
+    const basePathRaw = state?.evidence_pack_index?.base_path || "";
+    const basePathNorm = normalizeBasePath(basePathRaw);
+    document.getElementById("runMeta").textContent = basePathNorm ? `packs_dir: ${basePathNorm}` : "—";
+
+    // Live settings wiring
+    applyLivePrefsToUI();
+
+    document.getElementById("liveSaveBtn").addEventListener("click", async () => {
+      const enabled = !!document.getElementById("liveEnabled").checked;
+      const provider = document.getElementById("liveProvider").value || "auto";
+      const finnhubKey = document.getElementById("finnhubKey").value || "";
+      const twelveKey  = document.getElementById("twelveKey").value || "";
+      saveLivePrefs({ enabled, provider, finnhubKey, twelveKey });
+      updateLiveSettingsStatus("saved");
+      await refreshLive(true);
+      toast("Live settings saved");
+    });
+
+    document.getElementById("liveClearBtn").addEventListener("click", async () => {
+      saveLivePrefs({ enabled:false, provider:"auto", finnhubKey:"", twelveKey:"" });
+      applyLivePrefsToUI();
+      updateLiveSettingsStatus("cleared");
+      await refreshLive(true);
+      toast("Live keys cleared");
+    });
+
+    document.getElementById("liveTestBtn").addEventListener("click", async () => {
+      await refreshLive(true);
+      toast("Live test requested");
+    });
+
+    document.getElementById("liveEnabled").addEventListener("change", async () => {
+      const p = loadLivePrefs();
+      saveLivePrefs({ ...p, enabled: !!document.getElementById("liveEnabled").checked });
+      updateLiveSettingsStatus("toggled");
+      await refreshLive(true);
+    });
+
+    document.getElementById("liveProvider").addEventListener("change", async () => {
+      const p = loadLivePrefs();
+      saveLivePrefs({ ...p, provider: document.getElementById("liveProvider").value || "auto" });
+      updateLiveSettingsStatus("provider");
+      await refreshLive(true);
+    });
+
+    // Find-a-ticker drawer handlers
+    const input = document.getElementById("tickerInput");
+    const btn = document.getElementById("loadTickerBtn");
+
+    async function doLoad(){
+      const sym = normalizeTicker(input.value);
+      if (!sym) return;
+
+      const drawer = document.getElementById("drawer");
+      drawer.style.display = "block";
+      drawer.innerHTML = "<div class='small muted'>Loading…</div>";
+
+      try{
+        const res = await loadPackSmart(sym);
+        const pack = res.pack;
+
+        __LAST_PACK = pack;
+        __LAST_SYMBOL = sym;
+        __LAST_PACK_META = {
+          is_stale: !!res.is_stale,
+          source: res.source || null,
+          pack_url: res.pack_url || null,
+          pack_as_of_utc: res.pack_as_of_utc || pack?.as_of_utc || null,
+          pack_run_id: res.pack_run_id || pack?.run_id || null,
+        };
+
+        const tag = res.is_stale
+          ? `<span class="tag warn">STALE</span>`
+          : `<span class="tag good">CURRENT</span>`;
+
+        const packUrl = res.pack_url ? res.pack_url : `${HMONEY_WORKER_BASE}/pack?ticker=${encodeURIComponent(sym)}`;
+
+        // Show live quote best-effort (only if enabled + keys)
+        let liveLine = "";
+        const p = loadLivePrefs();
+        if (p.enabled){
+          try{
+            const live = await fetchWorkerJson(
+              `${HMONEY_WORKER_BASE}/live?symbols=${encodeURIComponent(sym)}&provider=${encodeURIComponent(p.provider || "auto")}`,
+              buildLiveHeaders()
+            );
+            const q = live?.quotes?.[sym];
+            if (q && q.price !== null && q.price !== undefined){
+              const pct = (q.pct === null || q.pct === undefined) ? "—" : `${Number(q.pct).toFixed(2)}%`;
+              const cls = badgeForDelta(q.pct);
+              const prov = (q.provider || q.source || "").toString();
+              const ptime = q.market_time_utc || q.time_utc || q.ts_utc || "—";
+              liveLine = `<div class="small muted" style="margin-top:8px">
+                Live: <span class="mono">${fmt(q.price,2)}</span> • <span class="mono ${cls}">${pct}</span>
+                <span class="muted">(${live.as_of_utc || "—"})</span>
+                ${prov ? ` • <span class="muted">prov:</span> <span class="mono">${prov}</span>` : ""}
+                ${ptime ? ` • <span class="muted">prov_time:</span> <span class="mono">${ptime}</span>` : ""}
+              </div>`;
+            }
+          }catch{}
+        }
+
+        drawer.innerHTML = `
+          <div class="ok">Loaded evidence for <span class="mono">${sym}</span> ${tag}</div>
+          <div class="hint" style="margin-top:6px">
+            Open: <a href="${packUrl}" target="_blank" rel="noopener noreferrer" class="mono">[pack]</a>
+            • Quote: <a href="${quoteUrl(sym)}" target="_blank" rel="noopener noreferrer" class="mono">[yahoo]</a>
+            • Tip: ask “Explain ${sym}” in the AI box.
+          </div>
+          <div class="small muted" style="margin-top:8px">
+            Pack as_of: <span class="mono">${__LAST_PACK_META.pack_as_of_utc || "—"}</span>
+            ${__LAST_PACK_META.pack_run_id ? ` • run_id: <span class="mono">${__LAST_PACK_META.pack_run_id}</span>` : ""}
+            ${__LAST_PACK_META.source ? ` • source: <span class="mono">${__LAST_PACK_META.source}</span>` : ""}
+            ${__LAST_PACK_META.is_stale ? ` • <span class="mildneg">stale fallback</span>` : ""}
+          </div>
+          ${liveLine}
+        `;
+
+        await refreshNewsTicker(sym);
+      }catch(e){
+        drawer.innerHTML = `
+          <div class="err">Could not load evidence for <span class="mono">${sym}</span> via Worker.</div>
+          <div class="hint">
+            Tried: <a href="${HMONEY_WORKER_BASE}/pack?ticker=${encodeURIComponent(sym)}" target="_blank" rel="noopener noreferrer" class="mono">/pack?ticker=${sym}</a><br/>
+            If this symbol has never been written to evidence packs, there may be no historical fallback yet.
+          </div>
+        `;
+      }
+    }
+
+    btn.addEventListener("click", doLoad);
+    input.addEventListener("keydown", (ev) => {
+      if (ev.key === "Enter") doLoad();
+    });
+
+    // AI handlers + memory wiring
+    const aiBtn = document.getElementById("aiAskBtn");
+    const aiQ = document.getElementById("aiQuestion");
+    const aiInclude = document.getElementById("aiIncludeTicker");
+    const aiRemember = document.getElementById("aiRemember");
+    const aiClear = document.getElementById("aiClearMemoryBtn");
+
+    const rememberOn = loadRememberPref();
+    aiRemember.checked = rememberOn;
+    __AI_HISTORY = rememberOn ? trimHistory(loadHistoryFromStorage()) : [];
+    updateMemoryMeta();
+
+    aiRemember.addEventListener("change", () => {
+      const on = !!aiRemember.checked;
+      saveRememberPref(on);
+      if (on){
+        __AI_HISTORY = trimHistory(loadHistoryFromStorage());
+      } else {
+        clearHistory();
+      }
+      updateMemoryMeta();
+    });
+
+    aiClear.addEventListener("click", () => clearHistory());
+
+    async function doAsk(){
+      const q = (aiQ.value || "").trim();
+      if (!q) return;
+      await askAI(q, !!aiInclude.checked);
+    }
+
+    aiBtn.addEventListener("click", doAsk);
+    aiQ.addEventListener("keydown", (ev) => {
+      if (ev.key === "Enter" && (ev.ctrlKey || ev.metaKey)) {
+        ev.preventDefault();
+        doAsk();
+      }
+    });
+
+    // Fail-soft: Benchmarks shouldn’t take the whole page down
+    await safeStep("Benchmarks", renderBenchmarks);
+
+    // Start loops
+    scheduleLiveLoop();
+    scheduleNewsLoop();
+
+    // Initial paint
+    await safeStep("Live refresh", async () => refreshLive(true));
+    await safeStep("News market", refreshNewsMarket);
+    await safeStep("News ticker", async () => refreshNewsTicker(__LAST_SYMBOL));
+
+    // Refresh worker health periodically (slow)
+    setInterval(() => { refreshWorkerHealth().catch(()=>{}); }, 300000);
   }
 
   init();
