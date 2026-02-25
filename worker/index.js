@@ -18,6 +18,8 @@ export default {
       // IMPORTANT: allow BYO-key headers
       "Access-Control-Allow-Headers": "Content-Type, X-Finnhub-Key, X-TwelveData-Key",
       "Access-Control-Max-Age": "86400",
+      // Expose cache headers if UI ever wants them
+      "Access-Control-Expose-Headers": "X-HMoney-Cache-Hit, X-HMoney-Cache-TTL",
       "Vary": "Origin",
     };
 
@@ -86,6 +88,7 @@ export default {
 
     // -------------------------
     // Cache helper (Cloudflare cache)
+    // Returns { resp, cacheHit }
     // -------------------------
     async function cachedFetch(urlStr, ttlSeconds, opts = {}) {
       const bypass = opts.bypassCache === true;
@@ -94,7 +97,7 @@ export default {
 
       if (!bypass) {
         const hit = await cache.match(cacheKey);
-        if (hit) return hit;
+        if (hit) return { resp: hit, cacheHit: true };
       }
 
       let resp;
@@ -107,19 +110,23 @@ export default {
           },
         });
       } catch (e) {
-        return new Response(String(e || "fetch error"), { status: 502 });
+        return { resp: new Response(String(e || "fetch error"), { status: 502 }), cacheHit: false };
       }
 
       const headers = new Headers(resp.headers);
       headers.set("Cache-Control", `public, max-age=${ttlSeconds}, s-maxage=${ttlSeconds}`);
       headers.set("X-HMoney-Cache-TTL", String(ttlSeconds));
+      headers.set("X-HMoney-Cache-Hit", "0");
 
       const wrapped = new Response(resp.body, { status: resp.status, headers });
 
       if (!bypass && resp.ok) {
-        await cache.put(cacheKey, wrapped.clone());
+        const toCache = wrapped.clone();
+        toCache.headers.set("X-HMoney-Cache-Hit", "1"); // for downstream visibility if ever read
+        await cache.put(cacheKey, toCache);
       }
-      return wrapped;
+
+      return { resp: wrapped, cacheHit: false };
     }
 
     // -------------------------
@@ -127,16 +134,16 @@ export default {
     // -------------------------
     async function fetchState(bypassCache = false) {
       const stateUrl = joinUrl(GH_PAGES_BASE, "state.json");
-      const resp = await cachedFetch(stateUrl, TTL_STATE, { bypassCache });
-      if (!resp.ok) return null;
-      try { return await resp.json(); } catch { return null; }
+      const { resp, cacheHit } = await cachedFetch(stateUrl, TTL_STATE, { bypassCache });
+      if (!resp.ok) return { state: null, cacheHit };
+      try { return { state: await resp.json(), cacheHit }; } catch { return { state: null, cacheHit }; }
     }
 
     async function fetchEvidenceIndex(bypassCache = false) {
       const idxUrl = joinUrl(GH_PAGES_BASE, "evidence_index.json");
-      const resp = await cachedFetch(idxUrl, TTL_EVID_INDEX, { bypassCache });
-      if (!resp.ok) return null;
-      try { return await resp.json(); } catch { return null; }
+      const { resp, cacheHit } = await cachedFetch(idxUrl, TTL_EVID_INDEX, { bypassCache });
+      if (!resp.ok) return { idx: null, cacheHit };
+      try { return { idx: await resp.json(), cacheHit }; } catch { return { idx: null, cacheHit }; }
     }
 
     // state.json uses evidence_pack_index.base_path as FULL run folder:
@@ -188,15 +195,27 @@ export default {
       const t = normalizeTicker(ticker);
       if (!t) return { found: false, ticker: t, reason: "empty_ticker" };
 
-      const state = await fetchState(bypassCache);
+      const { state, cacheHit: stateCacheHit } = await fetchState(bypassCache);
       const currentRel = computeCurrentPackPathFromState(state, t);
 
-      const debug = { ticker: t, gh_pages_base: GH_PAGES_BASE, current_rel: currentRel };
+      const debug = {
+        ticker: t,
+        gh_pages_base: GH_PAGES_BASE,
+        current_rel: currentRel,
+        cache: {
+          state_cache_hit: stateCacheHit,
+          evidence_index_cache_hit: null,
+          current_pack_cache_hit: null,
+          fallback_pack_cache_hit: null,
+        }
+      };
 
       // Try current run folder
       if (currentRel) {
         const currentUrl = joinUrl(GH_PAGES_BASE, currentRel);
-        const resp = await cachedFetch(currentUrl, TTL_PACK, { bypassCache });
+        const { resp, cacheHit } = await cachedFetch(currentUrl, TTL_PACK, { bypassCache });
+        debug.cache.current_pack_cache_hit = cacheHit;
+
         if (resp.ok) {
           const pack = await resp.json().catch(() => null);
           return {
@@ -213,13 +232,17 @@ export default {
       }
 
       // Stale fallback via evidence_index.json (if present)
-      const idx = await fetchEvidenceIndex(bypassCache);
+      const { idx, cacheHit: idxCacheHit } = await fetchEvidenceIndex(bypassCache);
+      debug.cache.evidence_index_cache_hit = idxCacheHit;
+
       const latest = idx && idx.latest && typeof idx.latest === "object" ? idx.latest : null;
       const entry = latest ? latest[t] : null;
 
       if (entry && entry.path) {
         const fallbackUrl = joinUrl(GH_PAGES_BASE, entry.path);
-        const resp2 = await cachedFetch(fallbackUrl, TTL_PACK, { bypassCache });
+        const { resp: resp2, cacheHit: cacheHit2 } = await cachedFetch(fallbackUrl, TTL_PACK, { bypassCache });
+        debug.cache.fallback_pack_cache_hit = cacheHit2;
+
         if (resp2.ok) {
           const pack2 = await resp2.json().catch(() => null);
           return {
@@ -245,22 +268,52 @@ export default {
       if (!t) return errJson("Missing ticker= (or symbol=)", 400);
 
       const force = url.searchParams.get("force") === "1";
-      const res = await getPackForTicker(t, force);
 
-      if (!res.found) {
-        return okJson({
-          ok: true,
-          found: false,
-          ticker: t,
-          reason: res.reason || "pack_not_found",
-          debug: res.debug || null
-        });
+      // Cache the /pack response itself unless force=1
+      const cacheKeyUrl = `https://hmoney.local/pack?ticker=${encodeURIComponent(t)}`;
+      if (!force) {
+        const hit = await caches.default.match(new Request(cacheKeyUrl));
+        if (hit) {
+          const j = await hit.json().catch(() => null);
+          if (j && typeof j === "object") {
+            j.cache_hit = true;
+            return okJson(j, 200, {
+              "Cache-Control": `public, max-age=${TTL_PACK}, s-maxage=${TTL_PACK}`,
+              "X-HMoney-Cache-Hit": "1",
+              "X-HMoney-Cache-TTL": String(TTL_PACK),
+            });
+          }
+          return hit; // fallback (shouldn't happen)
+        }
       }
 
-      return okJson({
+      const res = await getPackForTicker(t, force);
+      const payloadBase = {
         ok: true,
-        found: true,
         ticker: t,
+        cache_ttl_s: TTL_PACK,
+        cache_hit: false,
+      };
+
+      if (!res.found) {
+        const payload = {
+          ...payloadBase,
+          found: false,
+          reason: res.reason || "pack_not_found",
+          debug: res.debug || null
+        };
+        const out = okJson(payload, 200, {
+          "Cache-Control": `public, max-age=${TTL_PACK}, s-maxage=${TTL_PACK}`,
+          "X-HMoney-Cache-Hit": "0",
+          "X-HMoney-Cache-TTL": String(TTL_PACK),
+        });
+        if (!force) await caches.default.put(new Request(cacheKeyUrl), out.clone());
+        return out;
+      }
+
+      const payload = {
+        ...payloadBase,
+        found: true,
         is_stale: !!res.is_stale,
         source: res.source,
         stale_reason: res.stale_reason || null,
@@ -268,9 +321,20 @@ export default {
         pack_meta: res.pack_meta || null,
         pack_as_of_utc: res.pack?.as_of_utc || res.pack_meta?.as_of_utc || null,
         pack_run_id: res.pack?.run_id || res.pack_meta?.run_id || null,
+        // You can optionally return pack_slim for smaller payloads later;
+        // keep full pack for now since dashboard uses it.
         pack: res.pack,
         debug: res.debug || null,
+      };
+
+      const out = okJson(payload, 200, {
+        "Cache-Control": `public, max-age=${TTL_PACK}, s-maxage=${TTL_PACK}`,
+        "X-HMoney-Cache-Hit": "0",
+        "X-HMoney-Cache-TTL": String(TTL_PACK),
       });
+
+      if (!force) await caches.default.put(new Request(cacheKeyUrl), out.clone());
+      return out;
     }
 
     // -------------------------
@@ -306,6 +370,7 @@ export default {
 
       return {
         symbol: sym,
+        provider: "finnhub",
         price: c,
         chg,
         pct,
@@ -321,7 +386,6 @@ export default {
     function parseTwelveDataMulti(respJson) {
       if (!respJson || typeof respJson !== "object") return {};
 
-      // Shape: keyed object { AAPL: {...}, MSFT: {...} }
       const out = {};
       for (const [k, v] of Object.entries(respJson)) {
         if (!v || typeof v !== "object") continue;
@@ -330,7 +394,6 @@ export default {
         out[sym] = v;
       }
 
-      // Shape: single object
       if (!Object.keys(out).length && respJson.symbol) {
         const sym = String(respJson.symbol).toUpperCase();
         out[sym] = respJson;
@@ -357,7 +420,7 @@ export default {
         const q = multi[mappedSym] || multi[original.toUpperCase()] || null;
 
         if (!q) {
-          out[original] = { symbol: original, price: null, pct: null, chg: null, debug: "missing" };
+          out[original] = { symbol: original, provider: "twelvedata", price: null, pct: null, chg: null, debug: "missing" };
           continue;
         }
 
@@ -372,6 +435,7 @@ export default {
 
         out[original] = {
           symbol: original,
+          provider: "twelvedata",
           price: close !== null ? Number(close) : null,
           chg,
           pct,
@@ -380,6 +444,7 @@ export default {
           prevClose: prev !== null ? Number(prev) : null,
           open: q.open !== undefined ? Number(q.open) : null,
           volume: q.volume !== undefined ? Number(q.volume) : null,
+          // TwelveData datetime is usually a string; keep it as-is
           market_time_utc: q.datetime ? String(q.datetime) : null,
         };
       }
@@ -418,13 +483,26 @@ export default {
       const cacheKeyUrl =
         `https://hmoney.local/live?provider=${encodeURIComponent(provider)}&fh=${finnhubHash}&td=${tdHash}&symbols=${encodeURIComponent([...requested].sort().join(","))}`;
 
+      // Cache hit: return same payload but with cache_hit:true
       const hit = await caches.default.match(new Request(cacheKeyUrl));
-      if (hit) return hit;
+      if (hit) {
+        const j = await hit.json().catch(() => null);
+        if (j && typeof j === "object") {
+          j.cache_hit = true;
+          return okJson(j, 200, {
+            "Cache-Control": `public, max-age=${TTL_LIVE}, s-maxage=${TTL_LIVE}`,
+            "X-HMoney-Cache-Hit": "1",
+            "X-HMoney-Cache-TTL": String(TTL_LIVE),
+          });
+        }
+        return hit;
+      }
 
       const payload = {
         ok: true,
         as_of_utc: nowUtcIso(),
         cache_ttl_s: TTL_LIVE,
+        cache_hit: false,
         provider_mode: provider,
         quotes: {},
         debug: { used: [], alias_map: aliasMap },
@@ -443,7 +521,6 @@ export default {
           if (finnhubSyms.length) {
             if (!finnhubKey) throw new Error("missing_finnhub_key");
 
-            // Finnhub is single-symbol per call; keep concurrency moderate
             const CONC = 6;
             const results = [];
             for (let i = 0; i < finnhubSyms.length; i += CONC) {
@@ -478,7 +555,7 @@ export default {
           const q = payload.quotes[fetched] || null;
 
           if (!q) {
-            outputQuotes[orig] = { symbol: orig, price: null, pct: null, chg: null, debug: "unavailable" };
+            outputQuotes[orig] = { symbol: orig, provider: null, price: null, pct: null, chg: null, debug: "unavailable" };
             continue;
           }
 
@@ -495,6 +572,8 @@ export default {
 
       const out = okJson(payload, 200, {
         "Cache-Control": `public, max-age=${TTL_LIVE}, s-maxage=${TTL_LIVE}`,
+        "X-HMoney-Cache-Hit": "0",
+        "X-HMoney-Cache-TTL": String(TTL_LIVE),
       });
 
       await caches.default.put(new Request(cacheKeyUrl), out.clone());
@@ -553,7 +632,18 @@ export default {
 
       const cacheKey = `https://hmoney.local/news?tickers=${encodeURIComponent(tickers.join(","))}`;
       const hit = await caches.default.match(new Request(cacheKey));
-      if (hit) return hit;
+      if (hit) {
+        const j = await hit.json().catch(() => null);
+        if (j && typeof j === "object") {
+          j.cache_hit = true;
+          return okJson(j, 200, {
+            "Cache-Control": `public, max-age=${TTL_NEWS}, s-maxage=${TTL_NEWS}`,
+            "X-HMoney-Cache-Hit": "1",
+            "X-HMoney-Cache-TTL": String(TTL_NEWS),
+          });
+        }
+        return hit;
+      }
 
       const marketFeeds = [
         { name: "SEC Press Releases", url: "https://www.sec.gov/news/pressreleases.rss" },
@@ -618,11 +708,14 @@ export default {
         tickers,
         generated_at_utc: nowUtcIso(),
         cache_ttl_s: TTL_NEWS,
+        cache_hit: false,
         items: itemsOut,
       };
 
       const out = okJson(payload, 200, {
         "Cache-Control": `public, max-age=${TTL_NEWS}, s-maxage=${TTL_NEWS}`,
+        "X-HMoney-Cache-Hit": "0",
+        "X-HMoney-Cache-TTL": String(TTL_NEWS),
       });
 
       await caches.default.put(new Request(cacheKey), out.clone());
