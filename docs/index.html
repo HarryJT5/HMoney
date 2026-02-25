@@ -3,57 +3,72 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>HMoney Dashboard (MVP)</title>
+  <title>HMoney Dashboard</title>
+
+  <!-- Optional: modern font. If blocked, it falls back to system UI fonts. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <style>
     :root{
-      --bg:#0b0f14;
-      --panel:#111826;
-      --panel2:#0f1622;
-      --text:#e7eef9;
-      --muted:#9fb2cc;
-      --line:#223047;
-      --chip:#1a2740;
-      --good:#2bd576;
-      --warn:#ffb020;
-      --bad:#ff5a67;
-      --link:#9ad0ff;
-      --shadow: 0 10px 30px rgba(0,0,0,0.18);
+      --bg:#f5f7fb;
+      --panel:#ffffff;
+      --panel2:#fbfcff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --line:#e5e7eb;
+      --chip:#f1f5f9;
+      --good:#16a34a;
+      --warn:#f59e0b;
+      --bad:#dc2626;
+      --link:#2563eb;
+      --shadow: 0 10px 28px rgba(2,6,23,0.08);
+      --shadow2: 0 6px 16px rgba(2,6,23,0.06);
     }
+
     *{box-sizing:border-box}
     html{scroll-behavior:smooth}
+
     body{
       margin:0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-      background: radial-gradient(1200px 800px at 20% -10%, #142238 0%, var(--bg) 55%) fixed;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      font-size: 15.5px;
+      line-height: 1.35;
+      background:
+        radial-gradient(1200px 700px at 20% -10%, #e6f0ff 0%, var(--bg) 55%) fixed;
       color:var(--text);
     }
-    a{color:var(--link); text-decoration: none}
-    a:hover{text-decoration: underline}
-    .wrap{max-width:1200px; margin:0 auto; padding:18px}
+
+    a{color:var(--link); text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    .wrap{max-width:1220px; margin:0 auto; padding:18px}
 
     .topbar{
       display:flex; gap:12px; align-items:center; justify-content:space-between;
       margin-bottom:10px;
     }
     .brand{display:flex; gap:10px; align-items:baseline}
-    .brand h1{font-size:18px; margin:0}
+    .brand h1{font-size:20px; margin:0; letter-spacing:-0.01em}
     .brand .sub{color:var(--muted); font-size:12px}
     .actions{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
 
     .btn{
       border:1px solid var(--line);
-      background: linear-gradient(180deg, #17243a 0%, #121b2a 100%);
+      background: linear-gradient(180deg, #ffffff 0%, #f6f8fd 100%);
       color:var(--text);
-      padding:8px 10px;
+      padding:9px 11px;
       border-radius:12px;
       font-size:12px;
       cursor:pointer;
       white-space:nowrap;
+      box-shadow: var(--shadow2);
     }
-    .btn:hover{filter:brightness(1.06)}
+    .btn:hover{filter:brightness(1.02)}
     .iconBtn{
       border:1px solid var(--line);
-      background: rgba(10,14,20,0.25);
+      background: rgba(255,255,255,0.85);
       color:var(--muted);
       padding:6px 10px;
       border-radius:12px;
@@ -63,77 +78,79 @@
       min-width:36px;
       text-align:center;
       user-select:none;
+      box-shadow: var(--shadow2);
     }
-    .iconBtn:hover{filter:brightness(1.08)}
+    .iconBtn:hover{filter:brightness(1.02)}
 
     .card{
-      background: linear-gradient(180deg, rgba(17,24,38,0.92) 0%, rgba(15,22,34,0.92) 100%);
+      background: linear-gradient(180deg, rgba(255,255,255,0.92) 0%, rgba(251,252,255,0.92) 100%);
       border:1px solid var(--line);
-      border-radius:16px;
+      border-radius:18px;
       padding:14px;
       box-shadow: var(--shadow);
     }
-    .card h2{font-size:14px; margin:0 0 10px}
+    .card h2{font-size:15px; margin:0}
     .sectionTitle{display:flex; align-items:center; justify-content:space-between; gap:8px}
     .cardBody{margin-top:10px}
     .hidden{display:none !important}
 
-    .grid{
-      display:grid;
-      grid-template-columns: 1.2fr 0.8fr;
-      gap:12px;
-    }
-    @media (max-width: 980px){
-      .grid{grid-template-columns:1fr}
-    }
-
-    .small{font-size:11px; color:var(--muted)}
+    .small{font-size:12px; color:var(--muted)}
     .muted{color:var(--muted)}
     .mono{font-variant-numeric: tabular-nums; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}
-    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
 
-    /* Status strip + jump */
     .statusStrip{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      align-items:center;
-      margin:0 0 8px;
+      display:flex; gap:8px; flex-wrap:wrap; align-items:center;
+      margin:0 0 10px;
     }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:6px 10px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,0.78);
+      border-radius:999px;
+      font-size:12px;
+      color:var(--muted);
+      white-space:nowrap;
+      box-shadow: var(--shadow2);
+    }
+    .badge b{color:var(--text); font-weight:600}
+    .dot{width:8px; height:8px; border-radius:999px; background:rgba(100,116,139,0.35); display:inline-block}
+    .dot.good{background:rgba(22,163,74,0.95)}
+    .dot.warn{background:rgba(245,158,11,0.95)}
+    .dot.bad{background:rgba(220,38,38,0.95)}
+
     .jump{
       display:flex;
       gap:10px;
       flex-wrap:wrap;
       align-items:center;
-      margin:0 0 12px;
-      padding:8px 10px;
+      margin:0 0 14px;
+      padding:10px 12px;
       border:1px solid var(--line);
-      border-radius:14px;
-      background: rgba(10,14,20,0.28);
+      border-radius:16px;
+      background: rgba(255,255,255,0.6);
+      box-shadow: var(--shadow2);
     }
     .jump a{font-size:12px}
-    .jump .sep{opacity:0.45}
+    .jump .sep{opacity:0.35}
 
-    .badge{
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      padding:4px 8px;
-      border:1px solid var(--line);
-      background: rgba(10,14,20,0.30);
-      border-radius:999px;
-      font-size:11px;
-      color:var(--muted);
-      white-space:nowrap;
+    .grid{
+      display:grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap:12px;
     }
-    .badge b{color:var(--text); font-weight:600}
-    .badge.good{border-color: rgba(43,213,118,0.35)}
-    .badge.warn{border-color: rgba(255,176,32,0.35)}
-    .badge.bad{border-color: rgba(255,90,103,0.35)}
-    .dot{width:8px; height:8px; border-radius:999px; background:rgba(159,178,204,0.35); display:inline-block}
-    .dot.good{background:rgba(43,213,118,0.85)}
-    .dot.warn{background:rgba(255,176,32,0.85)}
-    .dot.bad{background:rgba(255,90,103,0.85)}
+    @media (max-width: 980px){ .grid{grid-template-columns:1fr} }
+
+    .belowGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+      align-items:start; /* fixes empty stretched column */
+    }
+    @media (max-width: 980px){ .belowGrid{grid-template-columns:1fr} }
+    .span2{grid-column: 1 / -1}
 
     /* Live tape */
     .tape{
@@ -141,7 +158,7 @@
       gap:8px;
       align-items:center;
       overflow-x:auto;
-      padding-bottom:4px;
+      padding:4px 0;
       scrollbar-width: none;
     }
     .tape::-webkit-scrollbar{display:none}
@@ -149,7 +166,7 @@
     .chip{
       background:var(--chip);
       border:1px solid var(--line);
-      padding:6px 8px;
+      padding:7px 10px;
       border-radius:999px;
       font-size:12px;
       color:var(--text);
@@ -158,57 +175,66 @@
       align-items:center;
       white-space:nowrap;
     }
-    .chip .s{color:var(--muted); font-size:11px}
-
     .tag{
       display:inline-flex;
       align-items:center;
-      padding:2px 6px;
+      padding:2px 8px;
       border-radius:999px;
       font-size:11px;
       border:1px solid var(--line);
-      background: rgba(10,14,20,0.25);
+      background: rgba(255,255,255,0.75);
       color:var(--muted);
       white-space:nowrap;
     }
     .tag.good{color:var(--good)}
     .tag.warn{color:var(--warn)}
     .tag.bad{color:var(--bad)}
-    .tag.tiny{font-size:10px; padding:1px 6px; opacity:0.95}
+    .tag.tiny{font-size:10px; padding:1px 7px}
 
-    .kv{display:flex; flex-direction:column; gap:4px; padding:10px 12px; background:rgba(10,14,20,0.35); border:1px solid var(--line); border-radius:14px}
-    .k{color:var(--muted); font-size:11px}
-    .v{font-size:13px}
+    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .kv{
+      display:flex; flex-direction:column; gap:4px;
+      padding:12px 12px;
+      background: rgba(241,245,249,0.55);
+      border:1px solid var(--line);
+      border-radius:16px;
+    }
+    .k{color:var(--muted); font-size:12px}
+    .v{font-size:14px}
 
-    /* Bars */
-    .barwrap{display:flex; flex-direction:column; gap:8px}
+    /* “Human” details accordion */
+    .detailsBox{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:12px;
+      background: rgba(255,255,255,0.72);
+      box-shadow: var(--shadow2);
+    }
+
+    /* Bars (kept, but hidden behind Details by default) */
+    .barwrap{display:flex; flex-direction:column; gap:10px}
     .barline{display:flex; gap:10px; align-items:center; justify-content:space-between}
     .barlabel{font-size:12px; color:var(--muted)}
     .bar{
       flex:1;
       height:10px;
       border:1px solid var(--line);
-      background:#0b1220;
+      background:#eef2ff;
       border-radius:999px;
       overflow:hidden;
       margin:0 10px;
     }
     .fill{height:100%}
-    .fill.good{background: linear-gradient(90deg, rgba(43,213,118,0.2), rgba(43,213,118,0.9))}
-    .fill.bad{background: linear-gradient(90deg, rgba(255,90,103,0.2), rgba(255,90,103,0.9))}
-    .fill.warn{background: linear-gradient(90deg, rgba(255,176,32,0.2), rgba(255,176,32,0.9))}
-    .pct{font-size:12px; color:var(--text); min-width:70px; text-align:right}
+    .fill.good{background: linear-gradient(90deg, rgba(22,163,74,0.18), rgba(22,163,74,0.9))}
+    .fill.bad{background: linear-gradient(90deg, rgba(220,38,38,0.18), rgba(220,38,38,0.9))}
+    .fill.warn{background: linear-gradient(90deg, rgba(245,158,11,0.18), rgba(245,158,11,0.9))}
+    .pct{font-size:12px; min-width:72px; text-align:right; color:var(--text)}
 
-    table{width:100%; border-collapse:collapse; font-size:12px}
-    th,td{border-bottom:1px solid rgba(34,48,71,0.7); padding:8px 6px; vertical-align:top}
+    /* Tables */
+    table{width:100%; border-collapse:collapse; font-size:12.5px}
+    th,td{border-bottom:1px solid rgba(226,232,240,0.95); padding:9px 7px; vertical-align:top}
     th{color:var(--muted); font-weight:600; text-align:left}
     td.num{text-align:right; font-variant-numeric: tabular-nums}
-
-    body.compact table{font-size:11px}
-    body.compact th, body.compact td{padding:6px 5px}
-    body.compact .kv{padding:8px 10px}
-    body.compact .chip{font-size:11px}
-
     .pos{color:var(--good)}
     .neg{color:var(--bad)}
     .mildneg{color:var(--warn)}
@@ -216,11 +242,14 @@
     /* Inputs */
     .search{
       display:flex; gap:8px; align-items:center; width:100%;
-      padding:10px; background:rgba(10,14,20,0.35); border:1px solid var(--line); border-radius:14px;
+      padding:10px 12px;
+      background: rgba(241,245,249,0.55);
+      border:1px solid var(--line);
+      border-radius:16px;
     }
     input[type="text"]{
       flex:1; background:transparent; border:0; outline:none;
-      color:var(--text); font-size:13px;
+      color:var(--text); font-size:14px;
     }
     textarea{
       flex:1;
@@ -228,101 +257,58 @@
       border:0;
       outline:none;
       color:var(--text);
-      font-size:13px;
+      font-size:14px;
       resize:vertical;
-      min-height:60px;
+      min-height:70px;
     }
 
-    .drawer{
-      margin-top:12px;
-      border:1px solid var(--line);
-      border-radius:16px;
-      padding:12px;
-      background: rgba(10,14,20,0.35);
-    }
-
-    .formRow{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      align-items:center;
-      margin-top:8px;
-    }
-    .sel{
-      background: rgba(10,14,20,0.20);
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 8px 10px;
-      color: var(--text);
-      font-size: 12px;
-      outline: none;
-    }
-    .keyInput{
-      background: rgba(10,14,20,0.20);
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 8px 10px;
-      color: var(--text);
-      font-size: 12px;
-      outline: none;
-      width: min(520px, 100%);
-    }
-
-    /* News compact */
+    /* News */
     .cols{display:grid; grid-template-columns: 1fr 1fr; gap:12px}
     @media (max-width: 980px){ .cols{grid-template-columns:1fr} }
-
-    .list{display:flex; flex-direction:column; gap:6px}
+    .list{display:flex; flex-direction:column; gap:8px}
     .newsRow{
       display:flex;
       gap:10px;
       justify-content:space-between;
       align-items:flex-start;
-      padding:8px 10px;
-      border:1px solid rgba(34,48,71,0.55);
-      border-radius:12px;
-      background: rgba(10,14,20,0.18);
-    }
-    .newsRow:hover{filter:brightness(1.06)}
-    .newsTitle{font-size:12px; line-height:1.25}
-    .newsMeta{font-size:11px; color:var(--muted); margin-top:4px}
-
-    /* Below grid layout (more dashboard-y) */
-    .belowGrid{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:12px;
-    }
-    @media (max-width: 980px){ .belowGrid{grid-template-columns:1fr} }
-    .span2{grid-column: 1 / -1}
-
-    .err{color:var(--bad); font-size:12px}
-    .ok{color:var(--good); font-size:12px}
-    .hint{color:var(--muted); font-size:11px; margin-top:8px}
-    .footer{margin-top:14px; color:var(--muted); font-size:11px}
-
-    /* Toast */
-    .toast{
-      position:fixed;
-      right:14px;
-      bottom:14px;
-      z-index:9999;
-      background: rgba(10,14,20,0.92);
-      border: 1px solid var(--line);
-      color: var(--text);
       padding:10px 12px;
+      border:1px solid rgba(226,232,240,0.95);
       border-radius:14px;
-      box-shadow: var(--shadow);
+      background: rgba(255,255,255,0.82);
+      box-shadow: var(--shadow2);
+    }
+    .newsRow:hover{filter:brightness(1.01)}
+    .newsTitle{font-size:13px; line-height:1.25}
+    .newsMeta{font-size:11.5px; color:var(--muted); margin-top:4px}
+    .newsScroll{
+      max-height: 360px; /* prevents the section from taking over the page */
+      overflow:auto;
+      padding-right:4px;
+    }
+
+    /* Highlights tabs */
+    .tabs{display:flex; gap:8px; flex-wrap:wrap; margin:8px 0 10px}
+    .tabBtn{
+      border:1px solid var(--line);
+      background: rgba(241,245,249,0.75);
+      padding:7px 10px;
+      border-radius:999px;
+      cursor:pointer;
       font-size:12px;
-      max-width: min(520px, calc(100vw - 28px));
-      display:none;
+      box-shadow: var(--shadow2);
+    }
+    .tabBtn.active{
+      background: rgba(37,99,235,0.10);
+      border-color: rgba(37,99,235,0.25);
+      color:#1e40af;
+      font-weight:600;
     }
 
     /* Modal */
     .modalBack{
       position:fixed;
       inset:0;
-      background: rgba(0,0,0,0.55);
+      background: rgba(2,6,23,0.45);
       display:none;
       align-items:center;
       justify-content:center;
@@ -330,16 +316,16 @@
       padding:18px;
     }
     .modal{
-      width:min(760px, 100%);
-      background: linear-gradient(180deg, rgba(17,24,38,0.98) 0%, rgba(15,22,34,0.98) 100%);
+      width:min(780px, 100%);
+      background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(251,252,255,0.98) 100%);
       border:1px solid var(--line);
       border-radius:18px;
       box-shadow: var(--shadow);
       padding:14px;
     }
-    .modal h3{margin:0 0 8px; font-size:14px}
-    .modal .body{color:var(--text); font-size:12px; line-height:1.35}
-    .modal .x{margin-left:auto}
+    .modal h3{margin:0 0 8px; font-size:15px}
+    .modal .body{color:var(--text); font-size:13px; line-height:1.35}
+    .footer{margin-top:14px; color:var(--muted); font-size:12px}
   </style>
 </head>
 
@@ -351,37 +337,34 @@
       <div class="sub" id="subline">Loading…</div>
     </div>
     <div class="actions">
-      <a class="btn" href="./daily_brief.html" target="_blank" rel="noopener noreferrer">Open Daily Brief (HTML)</a>
-      <a class="btn" href="./daily_brief.md" target="_blank" rel="noopener noreferrer">Open Brief (MD)</a>
-      <button class="btn" id="copyDebugBtn" title="Copy a safe debug blob (no API keys)">Copy debug</button>
-      <button class="btn" id="reloadBtn">Reload</button>
+      <a class="btn" href="./daily_brief.html" target="_blank" rel="noopener noreferrer">Daily Brief (HTML)</a>
+      <a class="btn" href="./daily_brief.md" target="_blank" rel="noopener noreferrer">Daily Brief (MD)</a>
+      <button class="btn" id="reloadBtn">Refresh</button>
     </div>
   </div>
 
-  <div class="statusStrip" id="statusStrip">
-    <span class="badge" id="stState"><span class="dot"></span><b>State</b> —</span>
-    <span class="badge" id="stWorker"><span class="dot"></span><b>Worker</b> —</span>
-    <span class="badge" id="stPacks"><b>Packs</b> —</span>
-    <span class="badge" id="stTime"><b>As-of</b> —</span>
-    <span class="badge" id="stUi"><b>UI</b> —</span>
+  <div class="statusStrip">
+    <span class="badge" id="stSnapshot"><span class="dot" id="dotSnap"></span><b>Snapshot</b> —</span>
+    <span class="badge" id="stSentiment"><span class="dot" id="dotSent"></span><b>Sentiment</b> —</span>
+    <span class="badge" id="stLive"><span class="dot" id="dotLive"></span><b>Live quotes</b> —</span>
   </div>
 
   <div class="jump">
     <span class="small muted">Jump:</span>
     <a href="#liveCard">Live</a><span class="sep">•</span>
-    <a href="#postureCard">Posture</a><span class="sep">•</span>
+    <a href="#marketCard">Market</a><span class="sep">•</span>
     <a href="#runCard">Ticker</a><span class="sep">•</span>
     <a href="#highlightsCard">Highlights</a><span class="sep">•</span>
     <a href="#benchCard">Benchmarks</a><span class="sep">•</span>
     <a href="#newsCard">News</a><span class="sep">•</span>
-    <a href="#aiCard">AI</a>
+    <a href="#aiCard">Ask</a>
   </div>
 
   <!-- Live overlay -->
   <div class="card" id="liveCard" style="padding:12px; margin-bottom:12px;">
     <div class="sectionTitle">
-      <h2 style="margin:0">Live overlay</h2>
-      <div class="row" style="gap:8px; align-items:center">
+      <h2>Live</h2>
+      <div class="row" style="gap:8px">
         <div class="small" id="liveMeta">—</div>
         <button class="iconBtn" data-collapse="liveBody" title="Collapse/expand">–</button>
       </div>
@@ -390,80 +373,44 @@
     <div class="cardBody" id="liveBody">
       <div class="tape" id="liveChips"></div>
 
-      <!-- UI Preferences -->
-      <div class="drawer" id="uiPrefs" style="margin-top:10px">
+      <div class="detailsBox" style="margin-top:10px">
         <div class="sectionTitle">
-          <h3 style="margin:0; font-size:13px;">UI Preferences</h3>
-          <div class="small" id="uiPrefsStatus">—</div>
-        </div>
-
-        <div class="formRow">
-          <span class="small muted">Layout:</span>
-          <select class="sel" id="uiLayout">
-            <option value="market">Market-first (default)</option>
-            <option value="research">Research-first</option>
-          </select>
-
-          <label class="small muted">
-            <input type="checkbox" id="uiCompact" />
-            Compact mode
-          </label>
-
-          <label class="small muted">
-            <input type="checkbox" id="uiCollapseLiveSettings" />
-            Collapse Live Settings by default
-          </label>
-
-          <button class="btn" id="uiSaveBtn">Save</button>
-        </div>
-
-        <div class="hint" style="margin-top:10px">
-          Preferences are stored locally (this browser only). They do not affect pipeline outputs.
-        </div>
-      </div>
-
-      <!-- Live Settings -->
-      <div class="drawer" id="liveSettings" style="margin-top:10px">
-        <div class="sectionTitle">
-          <h3 style="margin:0; font-size:13px;">Live Data Settings (BYO key)</h3>
-          <div class="row" style="gap:8px; align-items:center">
-            <div class="small" id="liveSettingsStatus">—</div>
-            <button class="iconBtn" data-collapse="liveSettingsBody" title="Collapse/expand">–</button>
+          <div>
+            <div style="font-weight:700; margin-bottom:2px">Live quotes (optional)</div>
+            <div class="small">If you add keys, quotes refresh near-real-time during market hours. Keys stay on this device.</div>
           </div>
+          <button class="iconBtn" data-collapse="liveSettingsBody" title="Collapse/expand">–</button>
         </div>
 
         <div id="liveSettingsBody">
-          <div class="formRow">
+          <div class="row" style="gap:14px; margin-top:10px">
             <label class="small muted">
               <input type="checkbox" id="liveEnabled" />
-              Enable live overlay
+              Enable live quotes
             </label>
 
-            <span class="small muted">Provider:</span>
-            <select class="sel" id="liveProvider">
-              <option value="auto">Auto (Finnhub + Twelve Data)</option>
-              <option value="finnhub">Finnhub only</option>
-              <option value="twelvedata">Twelve Data only</option>
+            <span class="small muted">Source:</span>
+            <select class="btn" id="liveProvider" style="padding:9px 11px">
+              <option value="auto">Auto</option>
+              <option value="finnhub">Finnhub</option>
+              <option value="twelvedata">Twelve Data</option>
             </select>
 
             <button class="btn" id="liveSaveBtn">Save</button>
-            <button class="btn" id="liveClearBtn">Clear keys</button>
-            <button class="btn" id="liveTestBtn">Test now</button>
+            <button class="btn" id="liveClearBtn">Clear</button>
+            <button class="btn" id="liveTestBtn">Test</button>
+
+            <div class="small" id="liveSettingsStatus" style="margin-left:auto">—</div>
           </div>
 
-          <div class="formRow">
+          <div class="row" style="gap:10px; margin-top:10px; align-items:center">
             <span class="small muted" style="min-width:110px">Finnhub key</span>
-            <input class="keyInput mono" id="finnhubKey" type="password" placeholder="Stored locally (this browser only)" autocomplete="off" />
+            <input class="btn mono" id="finnhubKey" type="password" placeholder="Saved on this device" autocomplete="off" style="flex:1; text-align:left"/>
           </div>
 
-          <div class="formRow">
+          <div class="row" style="gap:10px; margin-top:10px; align-items:center">
             <span class="small muted" style="min-width:110px">Twelve Data key</span>
-            <input class="keyInput mono" id="twelveKey" type="password" placeholder="Stored locally (this browser only)" autocomplete="off" />
-          </div>
-
-          <div class="hint" style="margin-top:10px">
-            Keys are stored in <span class="mono">localStorage</span> on this device and sent only as request headers to the Worker (<span class="mono">/live</span>).
-            If keys are missing, the dashboard falls back to baseline analytics.
+            <input class="btn mono" id="twelveKey" type="password" placeholder="Saved on this device" autocomplete="off" style="flex:1; text-align:left"/>
           </div>
         </div>
       </div>
@@ -472,39 +419,63 @@
 
   <!-- Core grid -->
   <div class="grid">
-    <div class="card" id="postureCard">
+    <div class="card" id="marketCard">
       <div class="sectionTitle">
-        <h2 style="margin:0">Market Posture</h2>
-        <div class="row" style="gap:8px; align-items:center">
+        <h2>Market</h2>
+        <div class="row" style="gap:8px">
           <div class="small" id="asOf">—</div>
-          <button class="iconBtn" id="postureInfoBtn" title="How to read this">i</button>
-          <button class="iconBtn" data-collapse="postureBody" title="Collapse/expand">–</button>
+          <button class="iconBtn" id="marketInfoBtn" title="How to read this">i</button>
+          <button class="iconBtn" data-collapse="marketBody" title="Collapse/expand">–</button>
         </div>
       </div>
 
-      <div class="cardBody" id="postureBody">
-        <div class="row" id="postureRow"></div>
+      <div class="cardBody" id="marketBody">
+        <div class="row" id="marketTopRow"></div>
 
         <div style="height:10px"></div>
 
-        <div class="drawer" style="margin-top:0">
-          <div class="small muted" style="margin-bottom:6px">What this means (descriptive)</div>
-          <div class="small" id="postureExplain">—</div>
+        <div class="detailsBox">
+          <div class="small muted" style="margin-bottom:6px">In plain English</div>
+          <div id="marketPlain" style="font-size:14px">—</div>
         </div>
 
         <div style="height:10px"></div>
-        <div class="barwrap" id="bars"></div>
 
-        <div class="hint">
-          Bars show how common certain patterns are across the universe (relative breadth), not a forecast.
+        <div class="detailsBox">
+          <div class="small muted" style="margin-bottom:6px">What this suggests right now (descriptive)</div>
+          <div id="marketExplain" style="font-size:14px">—</div>
+          <div class="row" style="gap:8px; margin-top:10px">
+            <button class="btn" id="toggleMarketDetailsBtn">Show details</button>
+            <a class="btn" id="openNewsBtn" href="#newsCard" style="display:inline-flex; align-items:center; justify-content:center">More news</a>
+          </div>
+
+          <div id="marketDetails" class="hidden" style="margin-top:10px">
+            <div class="barwrap" id="bars"></div>
+            <div class="small muted" style="margin-top:10px">
+              These are cross-sectional pattern counts (how common certain behaviors are in the tracked set). They’re meant to be read as “how widespread,” not as a forecast.
+            </div>
+          </div>
+        </div>
+
+        <div style="height:10px"></div>
+
+        <div class="detailsBox">
+          <div class="sectionTitle">
+            <div>
+              <div style="font-weight:700; margin-bottom:2px">Top headlines</div>
+              <div class="small">A few items from today’s feed. Expand in the News section for more.</div>
+            </div>
+            <button class="btn" id="headlinesExpandBtn">Show more</button>
+          </div>
+          <div id="topHeadlines" style="margin-top:10px"></div>
         </div>
       </div>
     </div>
 
     <div class="card" id="runCard">
       <div class="sectionTitle">
-        <h2 style="margin:0">Run Snapshot</h2>
-        <div class="row" style="gap:8px; align-items:center">
+        <h2>Ticker</h2>
+        <div class="row" style="gap:8px">
           <div class="small" id="runMeta">—</div>
           <button class="iconBtn" data-collapse="runBody" title="Collapse/expand">–</button>
         </div>
@@ -515,79 +486,70 @@
 
         <div style="height:12px"></div>
 
-        <h2 style="margin-top:0">Find a Ticker</h2>
+        <div style="font-weight:700; margin-bottom:6px">Look up a ticker</div>
         <div class="search">
           <span class="muted mono">⌕</span>
           <input id="tickerInput" type="text" placeholder="Type a ticker (e.g., AMZN, SPY, BTC-USD) and press Enter" />
           <button class="btn" id="loadTickerBtn">Load</button>
         </div>
-        <div class="hint">
-          Loads evidence via Worker (<span class="mono">/pack</span>) with stale fallback when current-run packs are missing.
-        </div>
 
-        <div class="drawer" id="drawer" style="display:none"></div>
+        <div class="detailsBox" id="drawer" style="display:none; margin-top:12px"></div>
       </div>
     </div>
   </div>
 
   <div style="height:12px"></div>
 
-  <!-- Below grid: more dashboard feel -->
   <div class="belowGrid" id="belowGrid">
+    <!-- Highlights -->
     <div class="card" id="highlightsCard">
       <div class="sectionTitle">
-        <h2 style="margin:0">Highlights</h2>
-        <div class="row" style="gap:8px; align-items:center">
+        <h2>Highlights</h2>
+        <div class="row" style="gap:8px">
           <div class="small" id="hlMeta">—</div>
-          <button class="iconBtn" id="hlInfoBtn" title="Why these show up">i</button>
+          <button class="iconBtn" id="hlInfoBtn" title="What these mean">i</button>
           <button class="iconBtn" data-collapse="highlightsBody" title="Collapse/expand">–</button>
         </div>
       </div>
 
       <div class="cardBody" id="highlightsBody">
-        <div class="small muted" style="margin-bottom:8px">
-          Shortlists are diagnostic samples from <span class="mono">state.tables</span>. Click <span class="mono">[pack]</span> for evidence JSON (may be stale).
+        <div class="small muted">
+          These are examples surfaced by the scan. They’re meant to be a short list to review, not a recommendation.
         </div>
 
-        <div class="row" style="gap:8px; margin-bottom:10px">
-          <span class="badge"><b>Setups</b> pulled-back + stabilizing traits</span>
-          <span class="badge"><b>Risk</b> persistent breakdown + fragility traits</span>
-          <span class="badge"><b>Mixed</b> cross-currents</span>
+        <div class="tabs">
+          <button class="tabBtn active" id="tabSetups">Setups</button>
+          <button class="tabBtn" id="tabRisk">Risk</button>
+          <button class="tabBtn" id="tabMixed">Mixed</button>
         </div>
 
-        <div id="hlSetups"></div>
-        <div style="height:10px"></div>
-        <div id="hlRisk"></div>
-        <div style="height:10px"></div>
-        <div id="hlMixed"></div>
-
-        <div class="hint" style="margin-top:10px">
-          Want the full logic? Open methodology: <a id="methodLink" href="#" target="_blank" rel="noopener noreferrer">methodology.md</a>
-        </div>
+        <div id="hlTableHost"></div>
       </div>
     </div>
 
+    <!-- Benchmarks -->
     <div class="card" id="benchCard">
       <div class="sectionTitle">
-        <h2 style="margin:0">Benchmarks (Context)</h2>
-        <div class="row" style="gap:8px; align-items:center">
-          <div class="small" id="benchStatus">—</div>
+        <h2>Benchmarks</h2>
+        <div class="row" style="gap:8px">
+          <div class="small" id="benchStatus">Collapsed</div>
           <button class="iconBtn" data-collapse="benchBody" title="Collapse/expand">+</button>
         </div>
       </div>
 
       <div class="cardBody hidden" id="benchBody">
-        <div class="small muted" style="margin-bottom:8px">
-          Click tickers for quotes. <span class="mono">[pack]</span> opens evidence JSON (best available; may be stale).
+        <div class="small muted" style="margin-bottom:10px">
+          Context tickers used as reference points.
         </div>
         <div id="benchTables"></div>
       </div>
     </div>
 
+    <!-- News -->
     <div class="card" id="newsCard">
       <div class="sectionTitle">
-        <h2 style="margin:0">News (cached)</h2>
-        <div class="row" style="gap:8px; align-items:center">
+        <h2>News</h2>
+        <div class="row" style="gap:8px">
           <div class="small" id="newsMeta">—</div>
           <button class="iconBtn" data-collapse="newsBody" title="Collapse/expand">+</button>
         </div>
@@ -596,115 +558,108 @@
       <div class="cardBody hidden" id="newsBody">
         <div class="row" style="gap:8px; margin-bottom:10px">
           <button class="btn" id="newsMoreBtn">Show more</button>
-          <button class="btn" id="newsLessBtn">Show less</button>
-          <span class="small muted">Default shows top 5 per column.</span>
+          <button class="btn" id="newsLessBtn">Show fewer</button>
+          <span class="small muted">Default shows a small set.</span>
         </div>
 
         <div class="cols">
           <div>
             <div class="small muted" style="margin-bottom:6px">Market</div>
-            <div id="newsMarket" class="list"></div>
+            <div class="newsScroll">
+              <div id="newsMarket" class="list"></div>
+            </div>
           </div>
           <div>
             <div class="small muted" style="margin-bottom:6px">Selected ticker</div>
-            <div id="newsTicker" class="list"></div>
+            <div class="newsScroll">
+              <div id="newsTicker" class="list"></div>
+            </div>
           </div>
         </div>
 
-        <div class="hint" style="margin-top:10px">
-          Headlines via Worker (<span class="mono">/news</span>) from RSS/official feeds. Click-through only.
+        <div class="small muted" style="margin-top:10px">
+          Headlines are from a small set of sources; click to open the article.
         </div>
       </div>
     </div>
 
+    <!-- Ask -->
     <div class="card span2" id="aiCard">
       <div class="sectionTitle">
-        <h2 style="margin:0">Ask HMoney (AI)</h2>
-        <div class="row" style="gap:8px; align-items:center">
+        <h2>Ask</h2>
+        <div class="row" style="gap:8px">
           <div class="small" id="aiStatus">Ready</div>
           <button class="iconBtn" data-collapse="aiBody" title="Collapse/expand">–</button>
         </div>
       </div>
 
       <div class="cardBody" id="aiBody">
-        <div class="small muted" style="margin-bottom:8px">
-          Mention tickers to pull packs (current or stale) + use live/news context when available.
-        </div>
-
-        <div class="drawer" style="margin-top:0">
-          <div style="display:flex; gap:8px; align-items:stretch">
-            <textarea id="aiQuestion" placeholder="Try: 'Compare IRWD vs AMD' or 'Summarize today's market + what to watch'"></textarea>
+        <div class="detailsBox">
+          <div style="display:flex; gap:10px; align-items:stretch">
+            <textarea id="aiQuestion" placeholder="Try: 'Compare IRWD vs AMD' or 'What looks interesting right now?'"></textarea>
             <button class="btn" id="aiAskBtn">Ask</button>
           </div>
 
-          <div class="row" style="margin-top:8px">
+          <div class="row" style="margin-top:10px">
             <label class="small muted">
               <input type="checkbox" id="aiIncludeTicker" checked />
-              Include last loaded pack + (optional) live quotes
+              Include details for tickers mentioned
             </label>
 
             <label class="small muted">
               <input type="checkbox" id="aiRemember" checked />
-              Remember this chat (local)
+              Remember this chat (on this device)
             </label>
 
-            <button class="btn" id="aiClearMemoryBtn">Clear memory</button>
+            <button class="btn" id="aiClearMemoryBtn">Clear</button>
 
             <div class="small muted" style="margin-left:auto">
-              Tip: press <span class="mono">Ctrl+Enter</span>
+              Tip: <span class="mono">Ctrl+Enter</span>
             </div>
           </div>
 
-          <div class="small muted" id="aiMemoryMeta" style="margin-top:6px">Memory: —</div>
+          <div class="small muted" id="aiMemoryMeta" style="margin-top:8px">Memory: —</div>
         </div>
 
-        <div class="drawer" id="aiAnswer" style="display:none"></div>
+        <div class="detailsBox" id="aiAnswer" style="display:none; margin-top:12px"></div>
       </div>
     </div>
   </div>
 
-  <div class="footer" id="footer"></div>
+  <div class="footer" id="footer">
+    HMoney is diagnostic decision support. Not financial advice.
+  </div>
 </div>
-
-<div class="toast" id="toast"></div>
 
 <!-- Modal -->
 <div class="modalBack" id="modalBack">
   <div class="modal">
     <div class="sectionTitle">
       <h3 id="modalTitle">Info</h3>
-      <button class="iconBtn x" id="modalClose">×</button>
+      <button class="iconBtn" id="modalClose">×</button>
     </div>
     <div class="body" id="modalBody"></div>
   </div>
 </div>
 
 <script>
-  // ----------------------------
-  // CONFIG (Worker endpoints)
-  // ----------------------------
+  // Endpoints (kept in code; UI does not reference them)
   const HMONEY_WORKER_BASE = "https://bearingbullishballs.htgamein.workers.dev";
   const HMONEY_AI_ENDPOINT = `${HMONEY_WORKER_BASE}/ai`;
+  const HMONEY_MARKET_ENDPOINT = `${HMONEY_WORKER_BASE}/market`;
 
   window.__HMONEY_V = Date.now();
-
   function withCacheBust(path){
     const v = encodeURIComponent(window.__HMONEY_V || Date.now());
     const sep = path.includes("?") ? "&" : "?";
     return `${path}${sep}v=${v}`;
   }
 
-  // LocalStorage keys (Live overlay BYO)
+  // Local settings (not mentioned in UI)
   const LS_LIVE_ENABLED = "hmoney_live_enabled_v1";
   const LS_LIVE_PROVIDER = "hmoney_live_provider_v1";
   const LS_FINNHUB_KEY  = "hmoney_finnhub_key_v1";
   const LS_TWELVE_KEY   = "hmoney_twelvedata_key_v1";
-
-  // UI prefs
-  const LS_UI_LAYOUT = "hmoney_ui_layout_v1";
-  const LS_UI_COMPACT = "hmoney_ui_compact_v1";
-  const LS_UI_COLLAPSE_LIVESETTINGS = "hmoney_ui_collapse_livesettings_v1";
-  const LS_UI_COLLAPSE_PREFIX = "hmoney_ui_collapse_";
 
   // AI memory
   const AI_HISTORY_STORAGE_KEY = "hmoney_ai_history_v1";
@@ -712,7 +667,6 @@
   const AI_HISTORY_MAX_MESSAGES = 12;
   const AI_HISTORY_MAX_CHARS = 12000;
 
-  // Helpers / constants
   const LIVE_DEFAULT_SYMBOLS = ["SPY","QQQ","DIA","IWM","VXX","TLT","UUP","BTC-USD"];
 
   const BENCHMARK_GROUPS = [
@@ -724,36 +678,30 @@
   ];
 
   const BENCHMARK_META = {
-    "SPY": "S&P 500 (US large-cap)",
-    "QQQ": "Nasdaq 100 (US growth/tech tilt)",
-    "DIA": "Dow 30 (US large-cap)",
-    "IWM": "US small-cap (Russell 2000)",
+    "SPY": "S&P 500",
+    "QQQ": "Nasdaq 100",
+    "DIA": "Dow 30",
+    "IWM": "US small-cap",
     "VTI": "US total market",
-    "VT": "Total world (US + Intl)",
-    "VXUS": "International ex-US",
-    "VEA": "Developed markets ex-US",
+    "VT": "World",
+    "VXUS": "Intl ex-US",
+    "VEA": "Developed ex-US",
     "VWO": "Emerging markets",
-    "BND": "US total bond market",
-    "TLT": "Long-duration US Treasuries",
-    "UUP": "US dollar strength proxy",
-    "VXX": "VIX futures ETF (vol proxy)",
+    "BND": "US bonds",
+    "TLT": "Long Treasuries",
+    "UUP": "US dollar proxy",
+    "VXX": "Volatility proxy",
     "GLD": "Gold",
     "SLV": "Silver",
-    "USO": "Oil (WTI proxy)",
-    "BTC-USD": "Bitcoin (risk appetite proxy)",
+    "USO": "Oil proxy",
+    "BTC-USD": "Bitcoin",
   };
 
-  const METHODOLOGY_BASE = "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md";
-
-  // News display count (toggle)
+  // News display counts
   let __NEWS_SHOW = 5;
 
-  function toast(msg, ms=2200){
-    const t = document.getElementById("toast");
-    t.textContent = msg;
-    t.style.display = "block";
-    setTimeout(() => { t.style.display = "none"; }, ms);
-  }
+  // Market details collapsed by default
+  let __MARKET_DETAILS_OPEN = false;
 
   function fmt(x, digits=1){
     if (x === null || x === undefined) return "—";
@@ -773,12 +721,6 @@
     if (!Number.isFinite(n)) return "—";
     return `${n.toFixed(1)}%`;
   }
-  function fmtPctRatio(x){
-    if (x === null || x === undefined) return "—";
-    const n = Number(x);
-    if (!Number.isFinite(n)) return "—";
-    return `${(n*100).toFixed(1)}%`;
-  }
   function fmtPctChange1d(x){
     if (x === null || x === undefined) return "—";
     let v = Number(x);
@@ -796,21 +738,6 @@
     return `https://finance.yahoo.com/quote/${encodeURIComponent(sym)}`;
   }
 
-  function normalizeBasePath(p){
-    if (!p) return "";
-    let s = String(p).trim();
-    if (s.startsWith("public/")) s = s.slice("public/".length);
-    if (s.startsWith("/")) s = s.slice(1);
-    s = s.replace(/\/+$/, "");
-    return s;
-  }
-
-  async function fetchJson(path){
-    const r = await fetch(withCacheBust(path), {cache:"no-store"});
-    if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
-    return await r.json();
-  }
-
   function el(tag, attrs={}, children=[]){
     const e = document.createElement(tag);
     for (const [k,v] of Object.entries(attrs)){
@@ -824,34 +751,30 @@
     }
     return e;
   }
-
   function link(href, text, extraAttrs={}){
-    const safeHref = href ? href : "#";
-    return el("a", {href:safeHref, target:"_blank", rel:"noopener noreferrer", ...extraAttrs}, [text]);
+    return el("a", {href, target:"_blank", rel:"noopener noreferrer", ...extraAttrs}, [text]);
   }
 
-  function setBadge(id, kind, label, value){
-    const b = document.getElementById(id);
+  function setDot(dotId, kind){
+    const d = document.getElementById(dotId);
+    if (!d) return;
+    d.classList.remove("good","warn","bad");
+    if (kind) d.classList.add(kind);
+  }
+  function setBadgeText(badgeId, html){
+    const b = document.getElementById(badgeId);
     if (!b) return;
-
-    b.classList.remove("good","warn","bad");
-    if (kind) b.classList.add(kind);
-
+    // Keep dot + label bold, update the trailing text area by rewriting fully
     const dot = b.querySelector(".dot");
-    if (dot){
-      dot.classList.remove("good","warn","bad");
-      if (kind) dot.classList.add(kind);
-    }
-
+    const bold = b.querySelector("b");
+    const label = bold ? bold.textContent : "";
     b.innerHTML = "";
     if (dot) b.appendChild(dot.cloneNode(true));
     b.appendChild(el("b", {}, [label]));
-    b.appendChild(document.createTextNode(" " + value));
+    b.insertAdjacentHTML("beforeend", " " + html);
   }
 
-  // ----------------------------
   // Modal
-  // ----------------------------
   function showModal(title, html){
     document.getElementById("modalTitle").textContent = title || "Info";
     document.getElementById("modalBody").innerHTML = html || "";
@@ -861,97 +784,42 @@
     document.getElementById("modalBack").style.display = "none";
   }
 
-  // ----------------------------
   // Collapsibles
-  // ----------------------------
   function applyCollapse(panelId, collapsed){
     const body = document.getElementById(panelId);
     if (!body) return;
     body.classList.toggle("hidden", !!collapsed);
-    // Update any buttons pointing to this panel
     document.querySelectorAll(`[data-collapse="${panelId}"]`).forEach(btn => {
       btn.textContent = collapsed ? "+" : "–";
     });
   }
-
-  function loadCollapsePref(panelId, defaultCollapsed=false){
-    const v = localStorage.getItem(LS_UI_COLLAPSE_PREFIX + panelId);
-    if (v === null) return defaultCollapsed;
-    return v === "true";
-  }
-
-  function saveCollapsePref(panelId, collapsed){
-    localStorage.setItem(LS_UI_COLLAPSE_PREFIX + panelId, collapsed ? "true" : "false");
-  }
-
   function initCollapseButtons(){
-    const defaults = new Set(["newsBody","benchBody","liveSettingsBody"]); // reduce bloat by default
-    const btns = document.querySelectorAll("[data-collapse]");
-    btns.forEach(btn => {
+    const defaults = new Set(["newsBody","benchBody","liveSettingsBody"]);
+    document.querySelectorAll("[data-collapse]").forEach(btn => {
       const panelId = btn.getAttribute("data-collapse");
-      const collapsed = loadCollapsePref(panelId, defaults.has(panelId));
+      const collapsed = defaults.has(panelId);
       applyCollapse(panelId, collapsed);
       btn.addEventListener("click", () => {
         const nowCollapsed = !document.getElementById(panelId).classList.contains("hidden");
         applyCollapse(panelId, nowCollapsed);
-        saveCollapsePref(panelId, nowCollapsed);
       });
     });
   }
 
-  // ----------------------------
-  // UI Preferences
-  // ----------------------------
-  function loadUiPrefs(){
-    const layout = localStorage.getItem(LS_UI_LAYOUT) || "market";
-    const compact = (localStorage.getItem(LS_UI_COMPACT) || "false") === "true";
-    const collapseLiveSettings = (localStorage.getItem(LS_UI_COLLAPSE_LIVESETTINGS) || "false") === "true";
-    return { layout, compact, collapseLiveSettings };
+  // Fetch helpers
+  async function fetchJson(path){
+    const r = await fetch(withCacheBust(path), {cache:"no-store"});
+    if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
+    return await r.json();
+  }
+  async function fetchWorkerJson(fullUrl, headersObj=null){
+    const init = { cache:"no-store", headers: headersObj || undefined };
+    const r = await fetch(fullUrl, init);
+    if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
+    return await r.json();
   }
 
-  function saveUiPrefs(p){
-    localStorage.setItem(LS_UI_LAYOUT, p.layout || "market");
-    localStorage.setItem(LS_UI_COMPACT, p.compact ? "true" : "false");
-    localStorage.setItem(LS_UI_COLLAPSE_LIVESETTINGS, p.collapseLiveSettings ? "true" : "false");
-  }
-
-  function applyUiPrefs(){
-    const p = loadUiPrefs();
-    document.body.classList.toggle("compact", !!p.compact);
-    setBadge("stUi", null, "UI", `${p.layout}${p.compact ? " • compact" : ""}`);
-  }
-
-  // ----------------------------
-  // Market hours (PT) – polling cadence
-  // ----------------------------
-  function getPTParts(){
-    const parts = new Intl.DateTimeFormat("en-US", {
-      timeZone: "America/Los_Angeles",
-      weekday: "short",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    }).formatToParts(new Date());
-
-    const out = {};
-    for (const p of parts) out[p.type] = p.value;
-    return {
-      weekday: out.weekday || "",
-      hour: Number(out.hour || "0"),
-      minute: Number(out.minute || "0"),
-    };
-  }
-
-  function isMarketHoursPT(){
-    const {weekday, hour, minute} = getPTParts();
-    const isWeekday = ["Mon","Tue","Wed","Thu","Fri"].includes(weekday);
-    const mins = hour*60 + minute;
-    return isWeekday && mins >= (6*60+30) && mins <= (13*60+0);
-  }
-
-  // ----------------------------
-  // Live settings
-  // ----------------------------
+  // Live prefs
   function loadLivePrefs(){
     const enabled = (localStorage.getItem(LS_LIVE_ENABLED) ?? "false") === "true";
     const provider = localStorage.getItem(LS_LIVE_PROVIDER) || "auto";
@@ -959,14 +827,12 @@
     const twelveKey  = localStorage.getItem(LS_TWELVE_KEY) || "";
     return { enabled, provider, finnhubKey, twelveKey };
   }
-
   function saveLivePrefs(p){
     localStorage.setItem(LS_LIVE_ENABLED, p.enabled ? "true" : "false");
     localStorage.setItem(LS_LIVE_PROVIDER, p.provider || "auto");
     localStorage.setItem(LS_FINNHUB_KEY, p.finnhubKey || "");
     localStorage.setItem(LS_TWELVE_KEY, p.twelveKey || "");
   }
-
   function applyLivePrefsToUI(){
     const p = loadLivePrefs();
     document.getElementById("liveEnabled").checked = !!p.enabled;
@@ -975,69 +841,60 @@
     document.getElementById("twelveKey").value = p.twelveKey || "";
     updateLiveSettingsStatus();
   }
-
   function updateLiveSettingsStatus(extra=""){
     const p = loadLivePrefs();
-    const status = document.getElementById("liveSettingsStatus");
-
     const hasFH = !!(p.finnhubKey && p.finnhubKey.trim());
     const hasTD = !!(p.twelveKey && p.twelveKey.trim());
-
-    let msg = p.enabled ? "Enabled" : "Disabled";
-    msg += ` • provider: ${p.provider || "auto"}`;
-    msg += ` • keys: Finnhub ${hasFH ? "✓" : "—"} | Twelve ${hasTD ? "✓" : "—"}`;
+    let msg = p.enabled ? "On" : "Off";
+    msg += ` • source: ${p.provider || "auto"}`;
+    msg += ` • keys: ${hasFH ? "Finnhub" : ""}${hasFH && hasTD ? " + " : ""}${hasTD ? "Twelve" : ""}${(!hasFH && !hasTD) ? "none" : ""}`;
     if (extra) msg += ` • ${extra}`;
-    status.textContent = msg;
+    document.getElementById("liveSettingsStatus").textContent = msg;
   }
 
-  // Worker fetch helper
-  async function fetchWorkerJson(fullUrl, headersObj=null){
-    const init = { cache:"no-store", headers: headersObj || undefined };
-    const r = await fetch(fullUrl, init);
-    if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
-    return await r.json();
+  function buildLiveHeaders(){
+    const p = loadLivePrefs();
+    const headers = {};
+    if (p.finnhubKey && p.finnhubKey.trim()) headers["X-Finnhub-Key"] = p.finnhubKey.trim();
+    if (p.twelveKey && p.twelveKey.trim()) headers["X-TwelveData-Key"] = p.twelveKey.trim();
+    return headers;
   }
 
-  // Worker health
-  let __WORKER_HEALTH = { ok:false, as_of:null, err:null };
-  async function refreshWorkerHealth(){
-    try{
-      const r = await fetch(`${HMONEY_WORKER_BASE}/`, {cache:"no-store"});
-      __WORKER_HEALTH = { ok: r.ok, as_of: new Date().toISOString(), err: r.ok ? null : String(r.status) };
-      setBadge("stWorker", r.ok ? "good" : "warn", "Worker", r.ok ? "OK" : "Degraded");
-    }catch(e){
-      __WORKER_HEALTH = { ok:false, as_of: new Date().toISOString(), err: String(e) };
-      setBadge("stWorker", "bad", "Worker", "Down");
-    }
+  function badgeForDelta(n){
+    if (n === null || n === undefined) return "";
+    const v = Number(n);
+    if (!Number.isFinite(v)) return "";
+    if (v > 0) return "pos";
+    if (v >= -10) return "mildneg";
+    return "neg";
   }
 
-  // Evidence pack
-  function normalizeTicker(sym){
-    return String(sym || "").trim().toUpperCase().replace(/\s+/g, "");
+  function providerTag(q){
+    const prov = (q?.provider || "").toString().toLowerCase();
+    if (!prov) return null;
+    if (prov.includes("finn")) return el("span", {class:"tag tiny"}, ["FH"]);
+    if (prov.includes("twelve")) return el("span", {class:"tag tiny"}, ["12D"]);
+    return el("span", {class:"tag tiny"}, [prov.slice(0,6).toUpperCase()]);
   }
-  async function loadPackSmart(symbol){
-    const sym = normalizeTicker(symbol);
-    const u = `${HMONEY_WORKER_BASE}/pack?ticker=${encodeURIComponent(sym)}`;
-    const data = await fetchWorkerJson(u);
-    if (!data || !data.ok || !data.found || !data.pack){
-      throw new Error(data?.reason || "pack_not_found");
-    }
-    return data;
-  }
+
+  // State cache
+  let __HMONEY_STATE = null;
+  let __LAST_SYMBOL = null;
+  let __LAST_PACK = null;
+  let __LAST_PACK_META = null;
+  let __AI_HISTORY = [];
+  let __BENCH_LOADED = false;
+  let __HL_TAB = "setups";
 
   // AI memory
-  let __AI_HISTORY = [];
-
   function loadRememberPref(){
     const v = localStorage.getItem(AI_REMEMBER_PREF_KEY);
     if (v === null) return true;
     return v === "true";
   }
-
   function saveRememberPref(on){
     localStorage.setItem(AI_REMEMBER_PREF_KEY, on ? "true" : "false");
   }
-
   function loadHistoryFromStorage(){
     try{
       const raw = localStorage.getItem(AI_HISTORY_STORAGE_KEY);
@@ -1051,17 +908,14 @@
       return [];
     }
   }
-
   function saveHistoryToStorage(history){
     try{ localStorage.setItem(AI_HISTORY_STORAGE_KEY, JSON.stringify(history)); }catch{}
   }
-
   function clearHistory(){
     __AI_HISTORY = [];
     try{ localStorage.removeItem(AI_HISTORY_STORAGE_KEY); }catch{}
     updateMemoryMeta();
   }
-
   function trimHistory(history){
     let h = Array.isArray(history) ? history.slice() : [];
     if (h.length > AI_HISTORY_MAX_MESSAGES) h = h.slice(h.length - AI_HISTORY_MAX_MESSAGES);
@@ -1076,17 +930,15 @@
     }
     return h;
   }
-
   function updateMemoryMeta(){
     const meta = document.getElementById("aiMemoryMeta");
     const remember = document.getElementById("aiRemember")?.checked;
     const count = __AI_HISTORY.length;
     const shown = trimHistory(__AI_HISTORY).length;
     meta.textContent = remember
-      ? `Memory: ON • stored turns: ${count} • sending: ${shown} (local only)`
-      : `Memory: OFF (stateless)`;
+      ? `Memory: ON • stored turns: ${count} • sending: ${shown}`
+      : `Memory: OFF`;
   }
-
   function appendToHistory(role, content){
     if (!content) return;
     __AI_HISTORY.push({ role, content: String(content) });
@@ -1096,185 +948,71 @@
     updateMemoryMeta();
   }
 
-  // State cache
-  let __HMONEY_STATE = null;
-  let __LAST_PACK = null;
-  let __LAST_PACK_META = null;
-  let __LAST_SYMBOL = null;
-  let __TICKER_SET = null;
-
   function slimStateForAI(state){
     return {
-      schema_version: state.schema_version,
-      generated_at_utc: state.generated_at_utc,
-      as_of_utc: state.as_of_utc,
-      run: state?.run ?? null,
+      generated_at_utc: state?.generated_at_utc ?? null,
+      as_of_utc: state?.as_of_utc ?? null,
       posture: state?.posture ?? null,
       breadth: state?.breadth ?? null,
       tables: state?.tables ?? null,
-      evidence_pack_index: state?.evidence_pack_index ?? null,
       quality: state?.quality ?? null,
-      disclaimer: state?.disclaimer ?? null,
+      universe: state?.universe ?? null,
     };
   }
-
   function slimPackForAI(pack){
     if (!pack) return null;
     return {
       run_id: pack.run_id ?? null,
-      schema_version: pack.schema_version ?? null,
       as_of_utc: pack.as_of_utc ?? null,
       asset: pack.asset ?? null,
       market: pack.market ?? null,
       scores: pack.scores ?? null,
       classification: pack.classification ?? null,
-      explainability: { reason_codes: pack?.explainability?.reason_codes ?? [] },
+      explainability: pack.explainability ?? null,
       links: pack.links ?? null,
       field_links: pack.field_links ?? null,
       deployment_bias: pack.deployment_bias ?? null,
     };
   }
 
-  function buildTickerSetFromState(state){
-    const s = new Set();
-    const lists = state?.universe?.lists || {};
-    const keys = ["panel_tickers","sentinel_tickers","forced_movers_tickers","rolling_shard_tickers"];
-    for (const k of keys){
-      const arr = lists[k];
-      if (Array.isArray(arr)){
-        for (const t of arr){
-          if (typeof t === "string" && t.trim()) s.add(t.trim().toUpperCase());
-        }
-      }
-    }
-    const tables = state?.tables || {};
-    for (const tn of ["pulled_back","fragile","mixed"]){
-      const rows = tables?.[tn]?.rows;
-      if (Array.isArray(rows)){
-        for (const r of rows){
-          const t = (r && r.ticker) ? String(r.ticker).toUpperCase() : null;
-          if (t) s.add(t);
-        }
-      }
-    }
-    return s;
-  }
-
   function extractTickersFromText(text){
     const raw = (text || "").toUpperCase();
     const tokens = raw.match(/[A-Z^][A-Z0-9^.-]{0,14}/g) || [];
-    const stop = new Set([
-      "A","AN","AND","ARE","AS","AT","BE","BUT","BY","CAN","DID","DO","FOR","FROM","HAVE","HOW","I","IN","IS","IT",
-      "ME","MY","NO","NOT","OF","ON","OR","PUT","RED","SELL","BUY","HOLD","SHOULD","THE","THIS","THAT","TO","UP",
-      "WHAT","WHEN","WHERE","WHY","WITH","YOU","YOLO","LOL","LMAO","AI","HMONEY"
-    ]);
-
+    const stop = new Set(["A","AN","AND","ARE","AS","AT","BE","BUT","BY","CAN","DID","DO","FOR","FROM","HAVE","HOW","I","IN","IS","IT",
+      "ME","MY","NO","NOT","OF","ON","OR","THE","THIS","THAT","TO","UP","WHAT","WHEN","WHERE","WHY","WITH","YOU","AI","HMONEY"]);
     const out = [];
     const seen = new Set();
-
     for (let tok of tokens){
       tok = tok.replace(/^[^A-Z^]+/, "").replace(/[^A-Z0-9^.-]+$/, "");
       if (!tok) continue;
       tok = tok.replace(/\.+$/g, "");
       if (stop.has(tok)) continue;
       if (!/[A-Z]/.test(tok)) continue;
-
-      const inUniverse = (__TICKER_SET && __TICKER_SET.has(tok));
-      const looksLikeCrypto = /-USD$/.test(tok);
-      const looksLikeCaret = /^\^[A-Z0-9]{1,8}$/.test(tok);
-
-      if (!(inUniverse || looksLikeCrypto || looksLikeCaret)) continue;
-
       if (!seen.has(tok)){
         seen.add(tok);
         out.push(tok);
       }
     }
-    return out;
+    return out.slice(0, 6);
   }
 
-  function findTickerRowsInTables(state, sym){
-    const tables = state?.tables || {};
-    const results = [];
-    const defs = ["pulled_back","fragile","mixed"];
-    for (const key of defs){
-      const rows = tables?.[key]?.rows;
-      if (!Array.isArray(rows)) continue;
-      for (const r of rows){
-        if (!r || !r.ticker) continue;
-        if (String(r.ticker).toUpperCase() === sym){
-          results.push({ table: key, row: r });
-        }
-      }
-    }
-    return results;
-  }
-
-  // Live overlay
-  function badgeForDelta(n){
-    if (n === null || n === undefined) return "";
-    const v = Number(n);
-    if (!Number.isFinite(v)) return "";
-    if (v > 0) return "pos";
-    if (v >= -10) return "mildneg";
-    return "neg";
-  }
-
-  function buildLiveHeaders(){
-    const p = loadLivePrefs();
-    const headers = {};
-    if (p.finnhubKey && p.finnhubKey.trim()) headers["X-Finnhub-Key"] = p.finnhubKey.trim();
-    if (p.twelveKey && p.twelveKey.trim()) headers["X-TwelveData-Key"] = p.twelveKey.trim();
-    return headers;
-  }
-
-  function providerTag(q){
-    const prov = (q?.provider || q?.source || q?.vendor || "").toString().toLowerCase();
-    if (!prov) return null;
-    if (prov.includes("finn")) return el("span", {class:"tag tiny"}, ["FH"]);
-    if (prov.includes("twelve") || prov.includes("12")) return el("span", {class:"tag tiny"}, ["12D"]);
-    return el("span", {class:"tag tiny"}, [prov.slice(0,6).toUpperCase()]);
-  }
-
-  function buildChipTitle(sym, q, payload, fetchedAtUtc, baselineTs){
-    const lines = [];
-    lines.push(`${sym}`);
-    if (q){
-      if (q.price !== undefined && q.price !== null) lines.push(`price: ${q.price}`);
-      if (q.pct !== undefined && q.pct !== null) lines.push(`pct: ${q.pct}`);
-      if (q.provider) lines.push(`provider: ${q.provider}`);
-      if (q.market_time_utc) lines.push(`provider_time_utc: ${q.market_time_utc}`);
-    }
-    if (payload?.as_of_utc) lines.push(`worker_as_of_utc: ${payload.as_of_utc}`);
-    if (payload?.cache_ttl_s !== undefined) lines.push(`worker_ttl_s: ${payload.cache_ttl_s}`);
-    if (payload?.cache_hit !== undefined) lines.push(`worker_cache_hit: ${payload.cache_hit}`);
-    lines.push(`fetched_at_utc: ${fetchedAtUtc}`);
-    if (baselineTs) lines.push(`baseline_ts: ${baselineTs}`);
-    return lines.join("\n");
-  }
-
+  // --- Live render
   function renderLiveChips(payload){
     const chips = document.getElementById("liveChips");
     const meta = document.getElementById("liveMeta");
     chips.innerHTML = "";
 
-    const baselineTs = (__HMONEY_STATE?.generated_at_utc || __HMONEY_STATE?.as_of_utc || "—");
-    const fetchedAtUtc = new Date().toISOString();
-
     if (!payload || !payload.ok){
-      meta.textContent = "Live overlay unavailable";
-      chips.appendChild(el("span", {class:"badge"}, [el("span", {}, ["Baseline: "]), el("b", {}, [baselineTs])]));
-      chips.appendChild(el("span", {class:"badge"}, [el("b", {}, ["Tip"]), " Enable live overlay + keys."]));
+      meta.textContent = "Unavailable";
+      setDot("dotLive", "warn");
+      setBadgeText("stLive", `—`);
       return;
     }
 
     const asOf = payload.as_of_utc || "—";
-    const ttl = payload.cache_ttl_s ?? "?";
-    const used = Array.isArray(payload?.debug?.used)
-      ? payload.debug.used.map(x => x.provider).filter(Boolean).join(", ")
-      : "";
-
-    meta.textContent = `as of ${asOf} • ttl ${ttl}s${used ? " • " + used : ""}${payload.cache_hit ? " • cached" : ""}`;
+    meta.textContent = `Updated ${asOf}`;
+    setDot("dotLive", "good");
+    setBadgeText("stLive", `${payload.cache_hit ? "(recent)" : "On"} • ${asOf}`);
 
     const quotes = payload.quotes || {};
     for (const sym of LIVE_DEFAULT_SYMBOLS){
@@ -1288,34 +1026,31 @@
       const kids = [
         el("span", {class:"mono"}, [sym]),
         providerTag(q),
-        el("span", {class:"mono s"}, [(price === null || price === undefined) ? "—" : fmt(price, 2)]),
+        el("span", {class:"mono"}, [(price === null || price === undefined) ? "—" : fmt(price, 2)]),
         el("span", {class:`mono ${cls}`}, [pctText]),
         link(quoteUrl(sym), "↗", {class:"mono"})
       ].filter(Boolean);
 
-      const title = buildChipTitle(sym, q, payload, fetchedAtUtc, baselineTs);
-      chips.appendChild(el("span", {class:"chip", title}, kids));
+      chips.appendChild(el("span", {class:"chip", title:`${sym}\n${q?.provider ? "Source: " + q.provider : ""}\nTime: ${q?.market_time_utc || asOf}`}, kids));
     }
-
-    chips.appendChild(el("span", {class:"badge"}, [
-      el("span", {}, ["Baseline: "]),
-      el("b", {}, [baselineTs]),
-    ]));
   }
 
   let __LIVE_BACKOFF_UNTIL = 0;
-
   async function refreshLive(force=false){
     const p = loadLivePrefs();
+    const now = Date.now();
+
+    // Status badge
     if (!p.enabled){
+      setDot("dotLive", null);
+      setBadgeText("stLive", `Off`);
       renderLiveChips(null);
-      updateLiveSettingsStatus("disabled");
+      updateLiveSettingsStatus("off");
       return;
     }
 
-    const now = Date.now();
     if (!force && __LIVE_BACKOFF_UNTIL && now < __LIVE_BACKOFF_UNTIL){
-      updateLiveSettingsStatus(`backoff ${(Math.ceil((__LIVE_BACKOFF_UNTIL - now)/1000))}s`);
+      updateLiveSettingsStatus("waiting");
       return;
     }
 
@@ -1323,7 +1058,7 @@
     const u = `${HMONEY_WORKER_BASE}/live?symbols=${encodeURIComponent(symbols)}&provider=${encodeURIComponent(p.provider || "auto")}`;
 
     try{
-      updateLiveSettingsStatus("fetching…");
+      updateLiveSettingsStatus("updating…");
       const payload = await fetchWorkerJson(u, buildLiveHeaders());
       renderLiveChips(payload);
       updateLiveSettingsStatus("ok");
@@ -1331,10 +1066,12 @@
       const msg = String(e || "");
       if (msg.includes("429")){
         __LIVE_BACKOFF_UNTIL = Date.now() + 120000;
-        updateLiveSettingsStatus("rate limited (backing off)");
+        updateLiveSettingsStatus("rate limited");
       } else {
         updateLiveSettingsStatus("error");
       }
+      setDot("dotLive", "warn");
+      setBadgeText("stLive", `Issue`);
       renderLiveChips({ ok:false, error: msg });
     }
   }
@@ -1343,13 +1080,349 @@
     const tick = async () => {
       await refreshLive(false);
       const p = loadLivePrefs();
-      const ms = (p.enabled ? (isMarketHoursPT() ? 30000 : 300000) : 300000);
+      const ms = (p.enabled ? 30000 : 300000);
       setTimeout(tick, ms);
     };
     tick();
   }
 
-  // News
+  // --- Market sentiment (CNN Fear & Greed)
+  async function refreshMarketPulse(){
+    try{
+      const data = await fetchWorkerJson(HMONEY_MARKET_ENDPOINT);
+      if (!data || !data.ok){
+        setDot("dotSent", "warn");
+        setBadgeText("stSentiment", `Unavailable`);
+        return;
+      }
+      const fg = data.fear_greed || null;
+      if (!fg){
+        setDot("dotSent", "warn");
+        setBadgeText("stSentiment", `Unavailable`);
+        return;
+      }
+
+      const score = (fg.score !== null && fg.score !== undefined) ? Math.round(Number(fg.score)) : null;
+      const rating = (fg.rating || "").toString();
+      const when = fg.timestamp_utc || fg.timestamp || "";
+
+      // Dot color heuristic
+      let kind = null;
+      const r = rating.toLowerCase();
+      if (r.includes("fear")) kind = "warn";
+      if (r.includes("greed")) kind = "good";
+      if (r.includes("extreme")) kind = "bad"; // extreme fear/greed -> attention
+      setDot("dotSent", kind || "warn");
+
+      const label = score !== null ? `${rating} (${score})` : rating || "—";
+      setBadgeText("stSentiment", `${label}`);
+
+      // Also show inside Market card top row
+      const host = document.getElementById("marketTopRow");
+      const box = el("div", {class:"kv", style:"min-width:220px"}, [
+        el("div", {class:"k"}, ["Sentiment (CNN Fear & Greed)"]),
+        el("div", {class:"v"}, [
+          el("span", {class:"mono", style:"font-weight:700"}, [label]),
+          document.createTextNode(when ? ` • ${when}` : "")
+        ]),
+        el("div", {class:"small"}, [
+          link(fg.source_url || "https://production.dataviz.cnn.io/index/fearandgreed/graphdata", "Source", {})
+        ])
+      ]);
+
+      // Replace/insert only the first sentiment box
+      const existing = host.querySelector('[data-kind="sentiment"]');
+      box.setAttribute("data-kind","sentiment");
+      if (existing) existing.replaceWith(box);
+      else host.appendChild(box);
+
+    }catch{
+      setDot("dotSent", "warn");
+      setBadgeText("stSentiment", `Unavailable`);
+    }
+  }
+
+  // --- Baseline state render
+  function renderSnapshot(state){
+    const universe = state.universe || {};
+    const quality = state.quality || {};
+    const breadth = state.breadth || {};
+    const sample = breadth.sample || {};
+
+    const snap = document.getElementById("snapshotRow");
+    snap.innerHTML = "";
+
+    const actual = universe.actual_size ?? state.universe_size ?? null;
+    const target = universe.target_size ?? null;
+    snap.appendChild(el("div", {class:"kv"}, [
+      el("div", {class:"k"}, ["Coverage"]),
+      el("div", {class:"v mono"}, [
+        actual !== null ? `${fmtInt(actual)}` : "—",
+        target !== null ? ` (target ${fmtInt(target)})` : ""
+      ])
+    ]));
+
+    const success = quality.success_rate_pct ?? null;
+    const skipped = quality.skipped_tickers_count ?? null;
+    snap.appendChild(el("div", {class:"kv"}, [
+      el("div", {class:"k"}, ["Data quality"]),
+      el("div", {class:"v mono"}, [
+        (success !== null ? `${fmt(success,1)}%` : "—"),
+        (skipped !== null ? ` • skipped ${fmtInt(skipped)}` : "")
+      ])
+    ]));
+
+    const denom = sample.denom_used_for_presence ?? null;
+    snap.appendChild(el("div", {class:"kv"}, [
+      el("div", {class:"k"}, ["Breadth base"]),
+      el("div", {class:"v mono"}, [denom !== null ? fmtInt(denom) : "—"])
+    ]));
+  }
+
+  function renderMarket(state){
+    const asOf = state.generated_at_utc || state.as_of_utc || "";
+    document.getElementById("asOf").textContent = asOf ? `Updated ${asOf}` : "—";
+    setDot("dotSnap", "good");
+    setBadgeText("stSnapshot", asOf ? asOf : "Loaded");
+
+    const posture = state.posture || {};
+    const breadth = state.breadth || {};
+    const sample = breadth.sample || {};
+
+    const label = posture.label || "—";
+    const confidence = posture.confidence_tag || "";
+
+    const top = document.getElementById("marketTopRow");
+    top.innerHTML = "";
+
+    top.appendChild(el("div", {class:"kv", style:"min-width:200px"}, [
+      el("div", {class:"k"}, ["Condition"]),
+      el("div", {class:"v", style:"font-weight:700"}, [label]),
+      el("div", {class:"small"}, [confidence ? `Confidence: ${confidence}` : ""])
+    ]));
+
+    const pe = posture.plain_english || "";
+    document.getElementById("marketPlain").textContent = pe || "—";
+
+    const pullPct = sample.pullback_density_pct ?? null;
+    const fragPct = sample.fragility_presence_pct ?? null;
+    const tiltPts = sample.net_tilt_pct_points ?? null;
+
+    let explain = "—";
+    if (pullPct !== null && fragPct !== null){
+      if (pullPct > fragPct){
+        explain = "More of the tracked market is showing stabilizing pullback traits than breakdown traits. That’s often consistent with calmer, consolidating behavior rather than broad deterioration.";
+      } else if (fragPct > pullPct){
+        explain = "Breakdown/fragility traits are more common than stabilizing pullback traits. That’s consistent with more names behaving ‘risk-off’ than ‘resetting calmly.’";
+      } else {
+        explain = "Stabilization traits and breakdown traits look roughly balanced across the tracked set.";
+      }
+      if (tiltPts !== null && tiltPts !== undefined){
+        explain += " The balance line below summarizes the difference.";
+      }
+    }
+    document.getElementById("marketExplain").textContent = explain;
+
+    // Details bars (hidden by default)
+    const bars = document.getElementById("bars");
+    bars.innerHTML = "";
+
+    function barLine(name, pct, kind){
+      const width = pctToWidth(pct);
+      const pctText = (pct === null || pct === undefined) ? "—" : fmtPctAlready(pct);
+      return el("div", {class:"barline"}, [
+        el("div", {class:"barlabel"}, [name]),
+        el("div", {class:"bar"}, [ el("div", {class:`fill ${kind}`, style:`width:${width}%`}, []) ]),
+        el("div", {class:"pct mono"}, [pctText]),
+      ]);
+    }
+    bars.appendChild(barLine("Stabilizing pullbacks (how widespread)", pullPct, "good"));
+    bars.appendChild(barLine("Breakdowns (how widespread)", fragPct, "bad"));
+
+    let tiltMapped = null;
+    if (tiltPts !== null && tiltPts !== undefined){
+      const x = Math.max(-50, Math.min(50, Number(tiltPts)));
+      tiltMapped = x + 50;
+    }
+    bars.appendChild(el("div", {class:"barline"}, [
+      el("div", {class:"barlabel"}, ["Balance (stabilizing minus breakdowns)"]),
+      el("div", {class:"bar"}, [ el("div", {class:"fill warn", style:`width:${pctToWidth(tiltMapped)}%`}, []) ]),
+      el("div", {class:"pct mono"}, [(tiltPts === null || tiltPts === undefined) ? "—" : `${fmt(tiltPts,1)} pts`]),
+    ]));
+  }
+
+  // --- Highlights tabs
+  function setActiveTab(tab){
+    __HL_TAB = tab;
+    document.getElementById("tabSetups").classList.toggle("active", tab === "setups");
+    document.getElementById("tabRisk").classList.toggle("active", tab === "risk");
+    document.getElementById("tabMixed").classList.toggle("active", tab === "mixed");
+    renderHighlightsTable(__HMONEY_STATE);
+  }
+
+  function renderHighlightsTable(state){
+    if (!state) return;
+    const tables = state.tables || {};
+    const pulled = (tables.pulled_back && Array.isArray(tables.pulled_back.rows)) ? tables.pulled_back.rows : [];
+    const fragile = (tables.fragile && Array.isArray(tables.fragile.rows)) ? tables.fragile.rows : [];
+    const mixed = (tables.mixed && Array.isArray(tables.mixed.rows)) ? tables.mixed.rows : [];
+
+    const thr = state?.breadth?.thresholds || {};
+    const oppThr = (thr.opportunity_score_green ?? 60);
+    const riskThr = (thr.risk_score_red ?? 70);
+
+    const uni = state.universe_size ?? state?.universe?.actual_size ?? null;
+    document.getElementById("hlMeta").textContent =
+      `Opp≥${fmtInt(oppThr)} • Risk≥${fmtInt(riskThr)}${uni !== null ? ` • tracked ${fmtInt(uni)}` : ""}`;
+
+    let rows = pulled;
+    let title = "Setups";
+    if (__HL_TAB === "risk"){ rows = fragile; title = "Risk"; }
+    if (__HL_TAB === "mixed"){ rows = mixed; title = "Mixed"; }
+
+    const host = document.getElementById("hlTableHost");
+    host.innerHTML = "";
+
+    if (!rows || !rows.length){
+      host.appendChild(el("div", {class:"small muted", style:"margin-top:8px"}, [`No items in ${title} right now.`]));
+      return;
+    }
+
+    const tbl = el("table", {}, []);
+    const thead = el("thead", {}, [el("tr", {}, [
+      el("th", {}, ["Ticker"]),
+      el("th", {class:"num"}, ["Last"]),
+      el("th", {class:"num"}, ["%1D"]),
+      el("th", {class:"num"}, ["Opp"]),
+      el("th", {class:"num"}, ["Risk"]),
+      el("th", {}, ["Details"]),
+    ])]);
+    const tbody = el("tbody", {}, []);
+
+    for (const r of rows.slice(0, 10)){
+      const sym = r.ticker;
+      const quote = quoteUrl(sym);
+      const detailsUrl = `${HMONEY_WORKER_BASE}/pack?ticker=${encodeURIComponent(sym)}`;
+
+      const deltaClass = badgeForDelta((() => {
+        if (r.pct_change_1d === null || r.pct_change_1d === undefined) return null;
+        let v = Number(r.pct_change_1d);
+        if (!Number.isFinite(v)) return null;
+        if (Math.abs(v) <= 0.25) v *= 100;
+        return v;
+      })());
+
+      tbody.appendChild(el("tr", {}, [
+        el("td", {}, [link(quote, sym, {class:"mono"})]),
+        el("td", {class:"num"}, [el("span", {class:"mono"}, [(r.last === null || r.last === undefined) ? "—" : fmt(r.last, 2)])]),
+        el("td", {class:`num ${deltaClass}`}, [el("span", {class:"mono"}, [fmtPctChange1d(r.pct_change_1d)])]),
+        el("td", {class:"num"}, [el("span", {class:"mono"}, [fmtInt(r.opportunity_score)])]),
+        el("td", {class:"num"}, [el("span", {class:"mono"}, [fmtInt(r.risk_score)])]),
+        el("td", {}, [link(detailsUrl, "Details", {})]),
+      ]));
+    }
+
+    tbl.appendChild(thead);
+    tbl.appendChild(tbody);
+    host.appendChild(tbl);
+  }
+
+  // --- Benchmarks (lazy load on first expand)
+  async function renderBenchmarks(){
+    if (__BENCH_LOADED) return;
+    __BENCH_LOADED = true;
+
+    const benchTables = document.getElementById("benchTables");
+    benchTables.innerHTML = "";
+    document.getElementById("benchStatus").textContent = "Loading…";
+
+    let totalExpected = 0;
+    let totalFound = 0;
+
+    for (const entry of BENCHMARK_GROUPS){
+      if (!Array.isArray(entry) || entry.length !== 2) continue;
+      const [groupName, symbols] = entry;
+      if (!Array.isArray(symbols)) continue;
+
+      totalExpected += symbols.length;
+
+      const card = el("div", {class:"detailsBox", style:"margin-top:10px"}, [
+        el("div", {class:"sectionTitle"}, [
+          el("div", {style:"font-weight:700"}, [groupName]),
+          el("div", {class:"small muted", id:`bench_${groupName}`}, ["…"])
+        ])
+      ]);
+
+      const tbl = el("table", {}, []);
+      const thead = el("thead", {}, [el("tr", {}, [
+        el("th", {}, ["Ticker"]),
+        el("th", {}, ["Meaning"]),
+        el("th", {class:"num"}, ["Opp"]),
+        el("th", {class:"num"}, ["Risk"]),
+        el("th", {class:"num"}, ["%1D"]),
+      ])]);
+      const tbody = el("tbody", {}, []);
+      tbl.appendChild(thead);
+      tbl.appendChild(tbody);
+
+      const jobs = symbols.map(async (sym) => {
+        try{
+          const res = await fetchWorkerJson(`${HMONEY_WORKER_BASE}/pack?ticker=${encodeURIComponent(sym)}`);
+          if (!res || !res.ok || !res.found) return { sym, ok:false };
+          return { sym, ok:true, res };
+        }catch{
+          return { sym, ok:false };
+        }
+      });
+
+      const results = await Promise.all(jobs);
+      let found = 0;
+
+      for (const r of results){
+        const sym = r.sym;
+        const quote = quoteUrl(sym);
+
+        if (r.ok){
+          found += 1;
+          totalFound += 1;
+          const pack = r.res.pack || {};
+          const market = pack.market || {};
+          const scores = pack.scores || {};
+          const pctClass = badgeForDelta((() => {
+            let v = market.pct_change_1d;
+            if (v === null || v === undefined) return null;
+            v = Number(v);
+            if (!Number.isFinite(v)) return null;
+            if (Math.abs(v) <= 0.25) v *= 100;
+            return v;
+          })());
+
+          tbody.appendChild(el("tr", {}, [
+            el("td", {}, [link(quote, sym, {class:"mono"})]),
+            el("td", {}, [el("span", {class:"muted"}, [BENCHMARK_META[sym] || "—"])]),
+            el("td", {class:"num"}, [el("span", {class:"mono"}, [fmtInt(scores.opportunity_score)])]),
+            el("td", {class:"num"}, [el("span", {class:"mono"}, [fmtInt(scores.structural_risk_score)])]),
+            el("td", {class:`num ${pctClass}`}, [el("span", {class:"mono"}, [fmtPctChange1d(market.pct_change_1d)])]),
+          ]));
+        } else {
+          tbody.appendChild(el("tr", {}, [
+            el("td", {}, [link(quote, sym, {class:"mono"})]),
+            el("td", {}, [el("span", {class:"muted"}, [BENCHMARK_META[sym] || "—"])]),
+            el("td", {class:"num muted"}, ["—"]),
+            el("td", {class:"num muted"}, ["—"]),
+            el("td", {class:"num muted"}, ["—"]),
+          ]));
+        }
+      }
+
+      card.appendChild(tbl);
+      benchTables.appendChild(card);
+    }
+
+    document.getElementById("benchStatus").textContent = `Loaded ${totalFound}/${totalExpected}`;
+  }
+
+  // --- News
   function renderNewsList(host, items){
     host.innerHTML = "";
     if (!items || !items.length){
@@ -1366,30 +1439,44 @@
         el("div", {}, [
           link(url, title, {class:"newsTitle"}),
           el("div", {class:"newsMeta"}, [`${pub} • ${when}`]),
-        ]),
-      ]));
-    }
-    if (items.length > __NEWS_SHOW){
-      host.appendChild(el("div", {class:"small muted", style:"margin-top:6px"}, [
-        `Showing ${__NEWS_SHOW} of ${items.length}.`
+        ])
       ]));
     }
   }
 
+  function renderTopHeadlines(items){
+    const host = document.getElementById("topHeadlines");
+    host.innerHTML = "";
+    if (!items || !items.length){
+      host.appendChild(el("div", {class:"small muted"}, ["No headlines yet."]));
+      return;
+    }
+    const top = items.slice(0, 3);
+    for (const it of top){
+      host.appendChild(el("div", {style:"margin-bottom:10px"}, [
+        link(it.url || "#", it.title || "(untitled)", {style:"font-weight:600"}),
+        el("div", {class:"small"}, [`${it.publisher || "—"} • ${it.published_at || "—"}`])
+      ]));
+    }
+  }
+
+  let __LAST_MARKET_NEWS = [];
   async function refreshNewsMarket(){
     const u = `${HMONEY_WORKER_BASE}/news?scope=market`;
     const payload = await fetchWorkerJson(u);
     const meta = document.getElementById("newsMeta");
-    meta.textContent = payload?.generated_at_utc
-      ? `as of ${payload.generated_at_utc} • ttl ${payload.cache_ttl_s ?? "?"}s${payload.cache_hit ? " • cached" : ""}`
-      : "—";
-    renderNewsList(document.getElementById("newsMarket"), payload?.items || []);
+    meta.textContent = payload?.generated_at_utc ? `Updated ${payload.generated_at_utc}` : "—";
+
+    const items = payload?.items || [];
+    __LAST_MARKET_NEWS = items;
+    renderNewsList(document.getElementById("newsMarket"), items);
+    renderTopHeadlines(items);
   }
 
   async function refreshNewsTicker(sym){
     const host = document.getElementById("newsTicker");
     if (!sym){
-      host.innerHTML = `<div class="small muted">Load a ticker to see ticker-specific headlines.</div>`;
+      host.innerHTML = `<div class="small muted">Load a ticker to see ticker-related headlines.</div>`;
       return;
     }
     const u = `${HMONEY_WORKER_BASE}/news?tickers=${encodeURIComponent(sym)}`;
@@ -1403,13 +1490,50 @@
         await refreshNewsMarket();
         if (__LAST_SYMBOL) await refreshNewsTicker(__LAST_SYMBOL);
       }catch{}
-      const ms = isMarketHoursPT() ? 120000 : 600000;
-      setTimeout(tick, ms);
+      setTimeout(tick, 600000);
     };
     tick();
   }
 
-  // AI
+  // --- Pack lookup
+  function normalizeTicker(sym){
+    return String(sym || "").trim().toUpperCase().replace(/\s+/g, "");
+  }
+
+  async function doLoadTicker(sym){
+    const drawer = document.getElementById("drawer");
+    drawer.style.display = "block";
+    drawer.innerHTML = `<div class="small muted">Loading…</div>`;
+
+    try{
+      const res = await fetchWorkerJson(`${HMONEY_WORKER_BASE}/pack?ticker=${encodeURIComponent(sym)}`);
+      if (!res || !res.ok || !res.found || !res.pack) throw new Error("not_found");
+
+      __LAST_SYMBOL = sym;
+      __LAST_PACK = res.pack;
+      __LAST_PACK_META = { is_stale: !!res.is_stale, as_of: res.pack_as_of_utc || res.pack?.as_of_utc || null };
+
+      const tag = res.is_stale ? `<span class="tag warn">Older details</span>` : `<span class="tag good">Current details</span>`;
+
+      drawer.innerHTML = `
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
+          <div style="font-weight:800; font-size:14px">${sym}</div>
+          ${tag}
+          <a class="btn" href="${quoteUrl(sym)}" target="_blank" rel="noopener noreferrer">Open quote</a>
+          <a class="btn" href="${HMONEY_WORKER_BASE}/pack?ticker=${encodeURIComponent(sym)}" target="_blank" rel="noopener noreferrer">Open details</a>
+        </div>
+        <div class="small" style="margin-top:8px">
+          Details updated: <span class="mono">${__LAST_PACK_META.as_of || "—"}</span>
+        </div>
+      `;
+
+      await refreshNewsTicker(sym);
+    }catch{
+      drawer.innerHTML = `<div class="small muted">No detailed data found for <span class="mono">${sym}</span> right now.</div>`;
+    }
+  }
+
+  // --- AI
   async function askAI(question, autoInclude){
     const status = document.getElementById("aiStatus");
     const ans = document.getElementById("aiAnswer");
@@ -1421,43 +1545,16 @@
     const ctx = {
       state: __HMONEY_STATE ? slimStateForAI(__HMONEY_STATE) : null,
       chat_history: remember ? trimHistory(__AI_HISTORY) : [],
-      instruction: "Context-first: use ticker_packs (preferred), then ticker_table_rows. If you use stale packs, label staleness."
+      instruction: "Use provided context first. If something isn’t supported by context, say it’s unverified."
     };
 
-    const mentioned = extractTickersFromText(question);
-    const tickers = mentioned.slice(0, 6);
-
-    const tickerTableRows = {};
-    if (__HMONEY_STATE && tickers.length){
-      for (const sym of tickers){
-        const rows = findTickerRowsInTables(__HMONEY_STATE, sym);
-        if (rows && rows.length){
-          tickerTableRows[sym] = rows;
-        }
-      }
-    }
-    if (Object.keys(tickerTableRows).length) ctx.ticker_table_rows = tickerTableRows;
+    const tickers = extractTickersFromText(question);
 
     if (autoInclude && __LAST_PACK && __LAST_SYMBOL){
-      ctx.last_loaded = {
-        symbol: __LAST_SYMBOL,
-        pack: slimPackForAI(__LAST_PACK),
-        meta: __LAST_PACK_META || null,
-      };
+      ctx.last_loaded = { symbol: __LAST_SYMBOL, pack: slimPackForAI(__LAST_PACK), meta: __LAST_PACK_META || null };
     }
 
-    if (autoInclude && tickers.length){
-      const p = loadLivePrefs();
-      if (p.enabled){
-        try{
-          const u = `${HMONEY_WORKER_BASE}/live?symbols=${encodeURIComponent(tickers.join(","))}&provider=${encodeURIComponent(p.provider || "auto")}`;
-          const live = await fetchWorkerJson(u, buildLiveHeaders());
-          if (live && live.ok) ctx.live_quotes = live;
-        }catch{}
-      }
-    }
-
-    status.textContent = "Asking…";
+    status.textContent = "Working…";
     const payload = { question, tickers, context: ctx };
 
     try{
@@ -1471,9 +1568,8 @@
       const ok = !!(data && (data.ok === true || typeof data.answer === "string"));
 
       if (!r.ok || !data || !ok){
-        const detail = data ? JSON.stringify(data, null, 2) : "(no JSON returned)";
-        ans.innerHTML = `<div class="err">AI request failed.</div><pre class="small muted" style="white-space:pre-wrap">${detail}</pre>`;
-        status.textContent = "Error";
+        ans.innerHTML = `<div class="small muted">Couldn’t answer that right now.</div>`;
+        status.textContent = "Issue";
         return;
       }
 
@@ -1488,409 +1584,15 @@
         updateMemoryMeta();
       }
 
-    }catch(e){
-      ans.innerHTML = `<div class="err">AI request error: ${String(e)}</div>`;
-      status.textContent = "Error";
+    }catch{
+      ans.innerHTML = `<div class="small muted">Couldn’t answer that right now.</div>`;
+      status.textContent = "Issue";
     }
   }
 
-  // Rendering baseline state
-  function renderPosture(state){
-    const posture = state.posture || {};
-    const breadth = state.breadth || {};
-    const sample = (breadth.sample || {});
-    const label = posture.label || "Unknown";
-    const confidence = posture.confidence_tag || "";
-
-    const postureRow = document.getElementById("postureRow");
-    postureRow.innerHTML = "";
-
-    postureRow.appendChild(el("div", {class:"kv"}, [
-      el("div", {class:"k"}, ["Posture"]),
-      el("div", {class:"v mono"}, [label]),
-      el("div", {class:"small muted"}, [confidence ? `Confidence: ${confidence}` : ""]),
-    ]));
-
-    const pe = posture.plain_english || "";
-    postureRow.appendChild(el("div", {class:"kv", style:"flex:1"}, [
-      el("div", {class:"k"}, ["Plain English"]),
-      el("div", {class:"v"}, [pe || "—"]),
-    ]));
-
-    // Slightly clearer “what this means”
-    const pullPct = sample.pullback_density_pct ?? null;
-    const fragPct = sample.fragility_presence_pct ?? null;
-    const tiltPts = sample.net_tilt_pct_points ?? null;
-
-    let explain = "—";
-    if (pullPct !== null && fragPct !== null){
-      if (pullPct > fragPct) explain = "Setup-like characteristics are more common than fragility traits. That often means more things are pulled back/stabilizing than breaking down.";
-      else if (fragPct > pullPct) explain = "Fragility characteristics are more common than setup traits. That often means more persistent breakdown behavior than stabilization.";
-      else explain = "Setup and fragility characteristics appear balanced in breadth terms.";
-      if (tiltPts !== null && tiltPts !== undefined){
-        explain += " Net tilt captures the difference (setup minus fragility).";
-      }
-    }
-    document.getElementById("postureExplain").textContent = explain;
-
-    const bars = document.getElementById("bars");
-    bars.innerHTML = "";
-
-    function barLine(name, pct, kind){
-      const width = pctToWidth(pct);
-      const pctText = (pct === null || pct === undefined) ? "—" : fmtPctAlready(pct);
-      return el("div", {class:"barline"}, [
-        el("div", {class:"barlabel"}, [name]),
-        el("div", {class:"bar"}, [
-          el("div", {class:`fill ${kind}`, style:`width:${width}%`}, [])
-        ]),
-        el("div", {class:"pct mono"}, [pctText]),
-      ]);
-    }
-
-    bars.appendChild(barLine("Pullback/Stabilization presence", pullPct, "good"));
-    bars.appendChild(barLine("Breakdown/Fragility presence", fragPct, "bad"));
-
-    let tiltMapped = null;
-    if (tiltPts !== null && tiltPts !== undefined){
-      const x = Math.max(-50, Math.min(50, Number(tiltPts)));
-      tiltMapped = x + 50;
-    }
-    bars.appendChild(el("div", {class:"barline"}, [
-      el("div", {class:"barlabel"}, ["Net tilt (setup minus fragility)"]),
-      el("div", {class:"bar"}, [
-        el("div", {class:"fill warn", style:`width:${pctToWidth(tiltMapped)}%`}, [])
-      ]),
-      el("div", {class:"pct mono"}, [(tiltPts === null || tiltPts === undefined) ? "—" : `${fmt(tiltPts,1)} pts`]),
-    ]));
-  }
-
-  function renderSnapshot(state){
-    const universe = state.universe || {};
-    const quality = state.quality || {};
-    const breadth = state.breadth || {};
-    const sample = breadth.sample || {};
-
-    const snap = document.getElementById("snapshotRow");
-    snap.innerHTML = "";
-
-    const actual = universe.actual_size ?? state.universe_size ?? null;
-    const target = universe.target_size ?? null;
-
-    snap.appendChild(el("div", {class:"kv"}, [
-      el("div", {class:"k"}, ["Universe"]),
-      el("div", {class:"v mono"}, [
-        actual !== null ? `${fmtInt(actual)}` : "—",
-        target !== null ? ` (target ${fmtInt(target)})` : ""
-      ])
-    ]));
-
-    const success = quality.success_rate_pct ?? null;
-    const skipped = quality.skipped_tickers_count ?? null;
-
-    snap.appendChild(el("div", {class:"kv"}, [
-      el("div", {class:"k"}, ["Coverage"]),
-      el("div", {class:"v mono"}, [
-        (success !== null ? `${fmt(success,1)}% success` : "—"),
-        (skipped !== null ? ` | skipped ${fmtInt(skipped)}` : "")
-      ])
-    ]));
-
-    const denom = sample.denom_used_for_presence ?? null;
-    snap.appendChild(el("div", {class:"kv"}, [
-      el("div", {class:"k"}, ["Presence denom"]),
-      el("div", {class:"v mono"}, [denom !== null ? fmtInt(denom) : "—"])
-    ]));
-  }
-
-  function setHeaderMeta(state){
-    const asOf = state.generated_at_utc || state.as_of_utc || "";
-    document.getElementById("asOf").textContent = asOf ? `as of ${asOf}` : "—";
-
-    const basePathRaw = state?.evidence_pack_index?.base_path || "";
-    const basePath = normalizeBasePath(basePathRaw);
-
-    const mode = (state?.run?.mode || state.mode || state.HMONEY_MODE || "").toString();
-    const packsWritten = state?.evidence_pack_index?.n_packs_written ?? null;
-
-    const shardCount = state?.run?.shards?.count ?? null;
-    const shardIndex = state?.run?.shards?.index ?? null;
-    const shardText = (shardCount !== null && shardIndex !== null) ? ` • shard ${Number(shardIndex)+1}/${shardCount}` : "";
-
-    document.getElementById("subline").textContent =
-      `State loaded • packs_dir: ${basePath || "—"}${(packsWritten !== null ? ` • packs_written: ${fmtInt(packsWritten)}` : "")}${mode ? ` • mode: ${mode}` : ""}${shardText}`;
-
-    document.getElementById("methodLink").href = METHODOLOGY_BASE;
-
-    document.getElementById("footer").innerHTML =
-      `Baseline analytics: GitHub Actions → /docs. Live/news/AI: Cloudflare Worker. Live overlay uses BYO keys stored locally (this browser).`;
-
-    setBadge("stState", "good", "State", "Loaded");
-    setBadge("stPacks", null, "Packs", `${basePath || "—"}${packsWritten !== null ? ` • written ${fmtInt(packsWritten)}` : ""}`);
-    setBadge("stTime", null, "As-of", asOf || "—");
-
-    return basePath;
-  }
-
-  function methodologyHrefForHeader(header){
-    const h = header.toLowerCase().trim();
-    if (h === "state") return `${METHODOLOGY_BASE}#classifications`;
-    if (h === "opp") return `${METHODOLOGY_BASE}#opportunity-score`;
-    if (h === "risk") return `${METHODOLOGY_BASE}#structural-risk-score`;
-    return METHODOLOGY_BASE;
-  }
-
-  // Highlights (briefer)
-  function renderHighlights(state){
-    const tables = state.tables || {};
-    const pulled = (tables.pulled_back && Array.isArray(tables.pulled_back.rows)) ? tables.pulled_back.rows : [];
-    const fragile = (tables.fragile && Array.isArray(tables.fragile.rows)) ? tables.fragile.rows : [];
-    const mixed = (tables.mixed && Array.isArray(tables.mixed.rows)) ? tables.mixed.rows : [];
-
-    const thr = state?.breadth?.thresholds || {};
-    const oppThr = (thr.opportunity_score_green ?? 60);
-    const riskThr = (thr.risk_score_red ?? 70);
-
-    const shardCount = state?.run?.shards?.count ?? null;
-    const shardIndex = state?.run?.shards?.index ?? null;
-    const shardText = (shardCount !== null && shardIndex !== null) ? `shard ${Number(shardIndex)+1}/${shardCount}` : null;
-
-    const uni = state.universe_size ?? state?.universe?.actual_size ?? null;
-    const packsWritten = state?.evidence_pack_index?.n_packs_written ?? null;
-
-    const metaParts = [];
-    metaParts.push(`Opp≥${fmtInt(oppThr)} • Risk≥${fmtInt(riskThr)}`);
-    if (uni !== null) metaParts.push(`universe ${fmtInt(uni)}`);
-    if (packsWritten !== null) metaParts.push(`packs ${fmtInt(packsWritten)}`);
-    if (shardText) metaParts.push(shardText);
-
-    document.getElementById("hlMeta").textContent = metaParts.join(" • ");
-
-    function packLink(sym){
-      const href = `${HMONEY_WORKER_BASE}/pack?ticker=${encodeURIComponent(sym)}`;
-      return link(href, "pack", {class:"mono"});
-    }
-
-    function renderList(hostId, title, rows, emptyMsg){
-      const host = document.getElementById(hostId);
-      host.innerHTML = "";
-
-      host.appendChild(el("div", {class:"small muted", style:"margin:0 0 6px"}, [title]));
-
-      if (!rows || !rows.length){
-        host.appendChild(el("div", {class:"small muted"}, [emptyMsg]));
-        return;
-      }
-
-      const tbl = el("table", {}, []);
-      const thead = el("thead", {}, [el("tr", {}, [
-        el("th", {}, ["Ticker"]),
-        el("th", {class:"num"}, ["Last"]),
-        el("th", {class:"num"}, ["%1D"]),
-        el("th", {class:"num"}, [link(methodologyHrefForHeader("opp"), "Opp", {class:"mono"})]),
-        el("th", {class:"num"}, [link(methodologyHrefForHeader("risk"), "Risk", {class:"mono"})]),
-      ])]);
-
-      const tbody = el("tbody", {}, []);
-
-      for (const r of rows.slice(0, 8)){
-        const sym = r.ticker;
-        const quote = quoteUrl(sym);
-        const packA = packLink(sym);
-
-        const tickerKids = [link(quote, sym, {class:"mono"})];
-        tickerKids.push(el("span", {class:"small muted", style:"margin-left:6px"}, ["[", packA, "]"]));
-
-        const deltaClass = badgeForDelta((() => {
-          if (r.pct_change_1d === null || r.pct_change_1d === undefined) return null;
-          let v = Number(r.pct_change_1d);
-          if (!Number.isFinite(v)) return null;
-          if (Math.abs(v) <= 0.25) v *= 100;
-          return v;
-        })());
-
-        const tr = el("tr", {}, [
-          el("td", {}, tickerKids),
-          el("td", {class:"num"}, [link(quote, (r.last === null || r.last === undefined) ? "—" : fmt(r.last, 2), {class:"mono"})]),
-          el("td", {class:`num ${deltaClass}`}, [link(quote, fmtPctChange1d(r.pct_change_1d), {class:"mono"})]),
-          el("td", {class:"num"}, [link(methodologyHrefForHeader("opp"), fmtInt(r.opportunity_score), {class:"mono"})]),
-          el("td", {class:"num"}, [link(methodologyHrefForHeader("risk"), fmtInt(r.risk_score), {class:"mono"})]),
-        ]);
-        tbody.appendChild(tr);
-      }
-
-      tbl.appendChild(thead);
-      tbl.appendChild(tbody);
-      host.appendChild(tbl);
-    }
-
-    renderList("hlSetups", "🟢 Top setups", pulled, "No setup shortlist in this run.");
-    renderList("hlRisk", "🔴 Structural risk", fragile, "No risk shortlist in this run.");
-    renderList("hlMixed", "🟡 Cross-currents", mixed, "No cross-currents shortlist in this run.");
-  }
-
-  async function renderBenchmarks(){
-    const benchTables = document.getElementById("benchTables");
-    benchTables.innerHTML = "";
-    document.getElementById("benchStatus").textContent = `Loading via Worker /pack…`;
-
-    let totalExpected = 0;
-    let totalFound = 0;
-
-    for (const entry of BENCHMARK_GROUPS){
-      if (!Array.isArray(entry) || entry.length !== 2) continue;
-      const [groupName, symbols] = entry;
-      if (!Array.isArray(symbols)) continue;
-
-      totalExpected += symbols.length;
-
-      const right = el("div", {class:"small muted"}, ["Loading…"]);
-      const card = el("div", {class:"drawer", style:"margin-top:10px"}, [
-        el("div", {class:"sectionTitle"}, [
-          el("h2", {style:"margin:0; font-size:13px"}, [groupName]),
-          right
-        ])
-      ]);
-
-      const tbl = el("table", {}, []);
-      const thead = el("thead", {}, [el("tr", {}, [
-        el("th", {}, ["Ticker"]),
-        el("th", {}, ["What it represents"]),
-        el("th", {class:"num"}, ["Opp"]),
-        el("th", {class:"num"}, ["Risk"]),
-        el("th", {class:"num"}, ["%1D"]),
-        el("th", {class:"num"}, ["% off High"]),
-      ])]);
-      const tbody = el("tbody", {}, []);
-      tbl.appendChild(thead);
-      tbl.appendChild(tbody);
-
-      const jobs = symbols.map(async (sym) => {
-        try{
-          const res = await loadPackSmart(sym);
-          return { sym, ok:true, res };
-        }catch(e){
-          return { sym, ok:false, err:String(e) };
-        }
-      });
-
-      const results = await Promise.all(jobs);
-      let found = 0;
-
-      for (const r of results){
-        const sym = r.sym;
-        const quote = quoteUrl(sym);
-
-        const packA = link(`${HMONEY_WORKER_BASE}/pack?ticker=${encodeURIComponent(sym)}`, "pack", {class:"mono"});
-        const tickerKids = [link(quote, sym, {class:"mono"})];
-        tickerKids.push(el("span", {class:"small muted", style:"margin-left:6px"}, ["[", packA, "]"]));
-
-        if (r.ok){
-          found += 1;
-          totalFound += 1;
-
-          const pack = r.res.pack || {};
-          const market = pack.market || {};
-          const scores = pack.scores || {};
-          const links = pack.links || {};
-          const quoteLink = links.quote || quoteUrl(sym);
-
-          const staleTag = r.res.is_stale
-            ? el("span", {class:"tag warn", style:"margin-left:8px"}, ["STALE"])
-            : el("span", {class:"tag good", style:"margin-left:8px"}, ["CURRENT"]);
-
-          const repKids = [el("span", {class:"muted"}, [BENCHMARK_META[sym] || "Benchmark"]), staleTag];
-
-          const pctClass = badgeForDelta((() => {
-            let v = market.pct_change_1d;
-            if (v === null || v === undefined) return null;
-            v = Number(v);
-            if (!Number.isFinite(v)) return null;
-            if (Math.abs(v) <= 0.25) v *= 100;
-            return v;
-          })());
-
-          const tr = el("tr", {}, [
-            el("td", {}, tickerKids),
-            el("td", {}, repKids),
-            el("td", {class:"num"}, [link(methodologyHrefForHeader("opp"), fmtInt(scores.opportunity_score), {class:"mono"})]),
-            el("td", {class:"num"}, [link(methodologyHrefForHeader("risk"), fmtInt(scores.structural_risk_score), {class:"mono"})]),
-            el("td", {class:`num ${pctClass}`}, [link(quoteLink, fmtPctChange1d(market.pct_change_1d), {class:"mono"})]),
-            el("td", {class:"num"}, [link(quoteLink, fmtPctRatio(market.pct_off_52w_high), {class:"mono"})]),
-          ]);
-          tbody.appendChild(tr);
-        } else {
-          const tr = el("tr", {}, [
-            el("td", {}, tickerKids),
-            el("td", {class:"muted"}, [`${BENCHMARK_META[sym] || "Benchmark"} • pack missing`]),
-            el("td", {class:"num muted"}, ["—"]),
-            el("td", {class:"num muted"}, ["—"]),
-            el("td", {class:"num muted"}, ["—"]),
-            el("td", {class:"num muted"}, ["—"]),
-          ]);
-          tbody.appendChild(tr);
-        }
-      }
-
-      right.innerHTML = "";
-      right.appendChild(el("span", {class:"small muted"}, [`packs: ${found}/${symbols.length}`]));
-
-      card.appendChild(tbl);
-      benchTables.appendChild(card);
-    }
-
-    const wrote = __HMONEY_STATE?.evidence_pack_index?.n_packs_written ?? null;
-    const uni = __HMONEY_STATE?.universe_size ?? __HMONEY_STATE?.universe?.actual_size ?? null;
-
-    const parts = [];
-    parts.push(`found ${totalFound}/${totalExpected}`);
-    if (wrote !== null) parts.push(`packs_written ${fmtInt(wrote)}`);
-    if (uni !== null) parts.push(`universe ${fmtInt(uni)}`);
-    document.getElementById("benchStatus").textContent = parts.join(" • ");
-  }
-
-  // Safe debug blob
-  function buildSafeDebugBlob(){
-    const live = loadLivePrefs();
-    const ui = loadUiPrefs();
-    const state = __HMONEY_STATE;
-    return {
-      ts_utc: new Date().toISOString(),
-      user_agent: navigator.userAgent,
-      state_loaded: !!state,
-      state_generated_at_utc: state?.generated_at_utc ?? null,
-      state_as_of_utc: state?.as_of_utc ?? null,
-      packs_base_path: state?.evidence_pack_index?.base_path ?? null,
-      packs_written: state?.evidence_pack_index?.n_packs_written ?? null,
-      run: state?.run ?? null,
-      worker: __WORKER_HEALTH,
-      live: {
-        enabled: live.enabled,
-        provider: live.provider,
-        has_finnhub_key: !!(live.finnhubKey && live.finnhubKey.trim()),
-        has_twelve_key: !!(live.twelveKey && live.twelveKey.trim()),
-      },
-      ui_prefs: ui,
-      last_loaded: {
-        symbol: __LAST_SYMBOL ?? null,
-        pack_meta: __LAST_PACK_META ?? null,
-      }
-    };
-  }
-
-  // Init
+  // --- Init
   async function init(){
     document.getElementById("reloadBtn").addEventListener("click", () => location.reload());
-
-    document.getElementById("copyDebugBtn").addEventListener("click", async () => {
-      try{
-        const blob = JSON.stringify(buildSafeDebugBlob(), null, 2);
-        await navigator.clipboard.writeText(blob);
-        toast("Debug copied to clipboard");
-      }catch{
-        toast("Could not copy debug (clipboard blocked)");
-      }
-    });
 
     document.getElementById("modalClose").addEventListener("click", hideModal);
     document.getElementById("modalBack").addEventListener("click", (e) => {
@@ -1898,91 +1600,60 @@
     });
 
     initCollapseButtons();
-    applyUiPrefs();
 
-    setBadge("stState", "warn", "State", "Loading…");
-    setBadge("stWorker", "warn", "Worker", "Checking…");
-    setBadge("stPacks", null, "Packs", "—");
-    setBadge("stTime", null, "As-of", "—");
-
-    await refreshWorkerHealth();
-
-    // News show more/less
-    document.getElementById("newsMoreBtn").addEventListener("click", async () => {
-      __NEWS_SHOW = 12;
-      toast("Showing more headlines");
-      await refreshNewsMarket();
-      if (__LAST_SYMBOL) await refreshNewsTicker(__LAST_SYMBOL);
-    });
-    document.getElementById("newsLessBtn").addEventListener("click", async () => {
-      __NEWS_SHOW = 5;
-      toast("Showing fewer headlines");
-      await refreshNewsMarket();
-      if (__LAST_SYMBOL) await refreshNewsTicker(__LAST_SYMBOL);
+    // Buttons
+    document.getElementById("toggleMarketDetailsBtn").addEventListener("click", () => {
+      __MARKET_DETAILS_OPEN = !__MARKET_DETAILS_OPEN;
+      document.getElementById("marketDetails").classList.toggle("hidden", !__MARKET_DETAILS_OPEN);
+      document.getElementById("toggleMarketDetailsBtn").textContent = __MARKET_DETAILS_OPEN ? "Hide details" : "Show details";
     });
 
-    // Info modals
-    document.getElementById("postureInfoBtn").addEventListener("click", () => {
-      const thr = __HMONEY_STATE?.breadth?.thresholds || {};
-      showModal("How to read Market Posture", `
+    document.getElementById("headlinesExpandBtn").addEventListener("click", () => {
+      // open News section and scroll
+      applyCollapse("newsBody", false);
+      document.querySelector('[data-collapse="newsBody"]').textContent = "–";
+      document.getElementById("newsCard").scrollIntoView({behavior:"smooth", block:"start"});
+    });
+
+    document.getElementById("marketInfoBtn").addEventListener("click", () => {
+      showModal("How to read this page", `
         <div class="body">
-          <p><b>Posture</b> is a descriptive label derived from cross-sectional patterns (relative-to-self scoring).</p>
+          <p><b>Market</b> summarizes what’s common across the tracked set (breadth), not a forecast.</p>
           <ul>
-            <li><b>Pullback/Stabilization presence</b>: % of tracked assets showing pullback + stabilization traits.</li>
-            <li><b>Breakdown/Fragility presence</b>: % showing persistent downtrend + fragility traits.</li>
-            <li><b>Net tilt</b>: setup presence minus fragility presence (in pct points).</li>
+            <li><b>Condition</b> is a descriptive label derived from how opportunity-like and risk-like behaviors distribute across the universe.</li>
+            <li><b>Details</b> are included for transparency, but the intended reading is “how widespread,” not “what will happen.”</li>
+            <li><b>Sentiment</b> shows CNN’s Fear &amp; Greed (external indicator).</li>
           </ul>
-          <p>Thresholds (from this run): Opp green ≥ <span class="mono">${thr.opportunity_score_green ?? 60}</span>,
-             Risk red ≥ <span class="mono">${thr.risk_score_red ?? 70}</span>.
-          </p>
-          <p><a href="${METHODOLOGY_BASE}" target="_blank" rel="noopener noreferrer">Open methodology.md</a></p>
         </div>
       `);
     });
 
     document.getElementById("hlInfoBtn").addEventListener("click", () => {
-      const thr = __HMONEY_STATE?.breadth?.thresholds || {};
-      showModal("Why these appear in Highlights", `
+      showModal("What the Highlights mean", `
         <div class="body">
-          <p><b>Top setups</b> are pulled-back assets showing stabilization traits (higher Opportunity, lower Structural Risk).</p>
-          <p><b>Structural risk</b> are assets with persistent breakdown/fragility traits (higher Risk).</p>
-          <p><b>Cross-currents</b> are mixed cases (signals not clean).</p>
-          <p>Run thresholds: Opp green ≥ <span class="mono">${thr.opportunity_score_green ?? 60}</span>,
-             Risk red ≥ <span class="mono">${thr.risk_score_red ?? 70}</span>.
-          </p>
-          <p><a href="${METHODOLOGY_BASE}" target="_blank" rel="noopener noreferrer">Open methodology.md</a></p>
+          <p><b>Setups</b>: pulled back and showing stabilization traits.</p>
+          <p><b>Risk</b>: persistent breakdown / fragility traits.</p>
+          <p><b>Mixed</b>: cross-currents (not a clean read).</p>
+          <p>These are examples to review—use details + context before drawing conclusions.</p>
         </div>
       `);
     });
 
-    // Load state
-    let state = null;
-    try{
-      state = await fetchJson("./state.json");
-      __HMONEY_STATE = state;
+    document.getElementById("tabSetups").addEventListener("click", () => setActiveTab("setups"));
+    document.getElementById("tabRisk").addEventListener("click", () => setActiveTab("risk"));
+    document.getElementById("tabMixed").addEventListener("click", () => setActiveTab("mixed"));
 
-      window.__HMONEY_V = normalizeBasePath(state?.evidence_pack_index?.base_path || "")
-        || state?.generated_at_utc
-        || Date.now();
-
-      __TICKER_SET = buildTickerSetFromState(state);
-
-      setHeaderMeta(state);
-      renderSnapshot(state);
-      renderPosture(state);
-      renderHighlights(state);
-
-    }catch(e){
-      document.getElementById("subline").textContent = "Failed to load state.json";
-      setBadge("stState", "bad", "State", "Failed");
-      document.getElementById("postureBody").innerHTML = `<div class="err">Error loading state: ${String(e)}</div>`;
-      return;
-    }
-
-    // Run meta
-    const basePathRaw = state?.evidence_pack_index?.base_path || "";
-    const basePathNorm = normalizeBasePath(basePathRaw);
-    document.getElementById("runMeta").textContent = basePathNorm ? `packs_dir: ${basePathNorm}` : "—";
+    // News controls
+    document.getElementById("newsMoreBtn").addEventListener("click", async () => {
+      __NEWS_SHOW = 12;
+      await refreshNewsMarket();
+      if (__LAST_SYMBOL) await refreshNewsTicker(__LAST_SYMBOL);
+    });
+    document.getElementById("newsLessBtn").addEventListener("click", async () => {
+      __NEWS_SHOW = 5;
+      await refreshNewsMarket();
+      if (__LAST_SYMBOL) await refreshNewsTicker(__LAST_SYMBOL);
+    });
 
     // Live settings wiring
     applyLivePrefsToUI();
@@ -1995,7 +1666,6 @@
       saveLivePrefs({ enabled, provider, finnhubKey, twelveKey });
       updateLiveSettingsStatus("saved");
       await refreshLive(true);
-      toast("Live settings saved");
     });
 
     document.getElementById("liveClearBtn").addEventListener("click", async () => {
@@ -2003,12 +1673,10 @@
       applyLivePrefsToUI();
       updateLiveSettingsStatus("cleared");
       await refreshLive(true);
-      toast("Live keys cleared");
     });
 
     document.getElementById("liveTestBtn").addEventListener("click", async () => {
       await refreshLive(true);
-      toast("Live test requested");
     });
 
     document.getElementById("liveEnabled").addEventListener("change", async () => {
@@ -2021,72 +1689,37 @@
     document.getElementById("liveProvider").addEventListener("change", async () => {
       const p = loadLivePrefs();
       saveLivePrefs({ ...p, provider: document.getElementById("liveProvider").value || "auto" });
-      updateLiveSettingsStatus("provider");
+      updateLiveSettingsStatus("source");
       await refreshLive(true);
     });
 
-    // Find-a-ticker
-    const input = document.getElementById("tickerInput");
-    const btn = document.getElementById("loadTickerBtn");
-
-    async function doLoad(){
-      const sym = normalizeTicker(input.value);
-      if (!sym) return;
-
-      const drawer = document.getElementById("drawer");
-      drawer.style.display = "block";
-      drawer.innerHTML = "<div class='small muted'>Loading…</div>";
-
-      try{
-        const res = await loadPackSmart(sym);
-        const pack = res.pack;
-
-        __LAST_PACK = pack;
-        __LAST_SYMBOL = sym;
-        __LAST_PACK_META = {
-          is_stale: !!res.is_stale,
-          source: res.source || null,
-          pack_url: res.pack_url || null,
-          pack_as_of_utc: res.pack_as_of_utc || pack?.as_of_utc || null,
-          pack_run_id: res.pack_run_id || pack?.run_id || null,
-        };
-
-        const tag = res.is_stale
-          ? `<span class="tag warn">STALE</span>`
-          : `<span class="tag good">CURRENT</span>`;
-
-        const packUrl = res.pack_url ? res.pack_url : `${HMONEY_WORKER_BASE}/pack?ticker=${encodeURIComponent(sym)}`;
-
-        drawer.innerHTML = `
-          <div class="ok">Loaded evidence for <span class="mono">${sym}</span> ${tag}</div>
-          <div class="hint" style="margin-top:6px">
-            Open: <a href="${packUrl}" target="_blank" rel="noopener noreferrer" class="mono">[pack]</a>
-            • Quote: <a href="${quoteUrl(sym)}" target="_blank" rel="noopener noreferrer" class="mono">[yahoo]</a>
-            • Tip: ask “Explain ${sym}” in the AI box.
-          </div>
-          <div class="small muted" style="margin-top:8px">
-            Pack as_of: <span class="mono">${__LAST_PACK_META.pack_as_of_utc || "—"}</span>
-            ${__LAST_PACK_META.is_stale ? ` • <span class="mildneg">stale fallback</span>` : ""}
-          </div>
-        `;
-
-        await refreshNewsTicker(sym);
-      }catch(e){
-        drawer.innerHTML = `
-          <div class="err">Could not load evidence for <span class="mono">${sym}</span>.</div>
-          <div class="hint">
-            Tried: <a href="${HMONEY_WORKER_BASE}/pack?ticker=${encodeURIComponent(sym)}" target="_blank" rel="noopener noreferrer" class="mono">/pack?ticker=${sym}</a>
-          </div>
-        `;
+    // Lazy load benchmarks on first expand
+    document.querySelector('[data-collapse="benchBody"]').addEventListener("click", async () => {
+      const isNowOpen = !document.getElementById("benchBody").classList.contains("hidden");
+      if (isNowOpen) {
+        document.getElementById("benchStatus").textContent = "Loading…";
+        await renderBenchmarks();
+      } else {
+        document.getElementById("benchStatus").textContent = "Collapsed";
       }
-    }
-
-    btn.addEventListener("click", doLoad);
-    input.addEventListener("keydown", (ev) => {
-      if (ev.key === "Enter") doLoad();
     });
 
-    // AI wiring
+    // Ticker load
+    const input = document.getElementById("tickerInput");
+    document.getElementById("loadTickerBtn").addEventListener("click", async () => {
+      const sym = normalizeTicker(input.value);
+      if (!sym) return;
+      await doLoadTicker(sym);
+    });
+    input.addEventListener("keydown", async (ev) => {
+      if (ev.key === "Enter") {
+        const sym = normalizeTicker(input.value);
+        if (!sym) return;
+        await doLoadTicker(sym);
+      }
+    });
+
+    // AI
     const aiBtn = document.getElementById("aiAskBtn");
     const aiQ = document.getElementById("aiQuestion");
     const aiInclude = document.getElementById("aiIncludeTicker");
@@ -2101,14 +1734,10 @@
     aiRemember.addEventListener("change", () => {
       const on = !!aiRemember.checked;
       saveRememberPref(on);
-      if (on){
-        __AI_HISTORY = trimHistory(loadHistoryFromStorage());
-      } else {
-        clearHistory();
-      }
+      if (on) __AI_HISTORY = trimHistory(loadHistoryFromStorage());
+      else clearHistory();
       updateMemoryMeta();
     });
-
     aiClear.addEventListener("click", () => clearHistory());
 
     async function doAsk(){
@@ -2116,7 +1745,6 @@
       if (!q) return;
       await askAI(q, !!aiInclude.checked);
     }
-
     aiBtn.addEventListener("click", doAsk);
     aiQ.addEventListener("keydown", (ev) => {
       if (ev.key === "Enter" && (ev.ctrlKey || ev.metaKey)) {
@@ -2125,19 +1753,35 @@
       }
     });
 
-    // Benchmarks (loaded but section collapsed by default)
-    renderBenchmarks().catch(()=>{});
+    // Load baseline state
+    try{
+      const state = await fetchJson("./state.json");
+      __HMONEY_STATE = state;
+
+      const asOf = state.generated_at_utc || state.as_of_utc || "";
+      document.getElementById("subline").textContent = asOf ? `Updated ${asOf}` : "Updated";
+
+      renderSnapshot(state);
+      renderMarket(state);
+      setActiveTab("setups");
+
+    }catch(e){
+      document.getElementById("subline").textContent = "Couldn’t load the latest snapshot.";
+      setDot("dotSnap", "bad");
+      setBadgeText("stSnapshot", "Unavailable");
+    }
+
+    // Load market pulse + news
+    await refreshMarketPulse();
+    await refreshNewsMarket();
+    await refreshNewsTicker(__LAST_SYMBOL);
 
     // Start loops
     scheduleLiveLoop();
     scheduleNewsLoop();
 
-    // Initial paint
+    // Initial live
     await refreshLive(true);
-    await refreshNewsMarket();
-    await refreshNewsTicker(__LAST_SYMBOL);
-
-    setInterval(() => { refreshWorkerHealth().catch(()=>{}); }, 300000);
   }
 
   init();
