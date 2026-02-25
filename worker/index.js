@@ -41,6 +41,10 @@ export default {
     const TTL_LIVE = 20;         // live overlay cache
     const TTL_NEWS = 120;        // RSS cache
 
+    // NEW: market indicators cache
+    const TTL_MARKET = 300;
+    const CNN_FGI_URL = "https://production.dataviz.cnn.io/index/fearandgreed/graphdata";
+
     const url = new URL(request.url);
     const path = (url.pathname || "/").replace(/\/+$/, "") || "/";
 
@@ -127,6 +131,82 @@ export default {
       }
 
       return { resp: wrapped, cacheHit: false };
+    }
+
+    // -------------------------
+    // NEW: /market endpoint (CNN Fear & Greed Index)
+    // -------------------------
+    async function handleMarket() {
+      const { resp, cacheHit } = await cachedFetch(CNN_FGI_URL, TTL_MARKET, { bypassCache: false });
+
+      if (!resp.ok) {
+        return okJson(
+          {
+            ok: false,
+            generated_at_utc: nowUtcIso(),
+            cache_ttl_s: TTL_MARKET,
+            cache_hit: cacheHit,
+            error: `FGI_FETCH_${resp.status}`,
+            source_url: CNN_FGI_URL,
+          },
+          200,
+          {
+            "Cache-Control": `public, max-age=${TTL_MARKET}, s-maxage=${TTL_MARKET}`,
+            "X-HMoney-Cache-Hit": cacheHit ? "1" : "0",
+            "X-HMoney-Cache-TTL": String(TTL_MARKET),
+          }
+        );
+      }
+
+      const j = await resp.json().catch(() => null);
+
+      // CNN shape is typically { fear_and_greed: { score, rating, timestamp, ... }, ... }
+      const fg =
+        (j && typeof j === "object" && (j.fear_and_greed || j.fearAndGreed)) ? (j.fear_and_greed || j.fearAndGreed) : null;
+
+      if (!fg || typeof fg !== "object") {
+        return okJson(
+          {
+            ok: false,
+            generated_at_utc: nowUtcIso(),
+            cache_ttl_s: TTL_MARKET,
+            cache_hit: cacheHit,
+            error: "FGI_PARSE_FAILED",
+            source_url: CNN_FGI_URL,
+          },
+          200,
+          {
+            "Cache-Control": `public, max-age=${TTL_MARKET}, s-maxage=${TTL_MARKET}`,
+            "X-HMoney-Cache-Hit": cacheHit ? "1" : "0",
+            "X-HMoney-Cache-TTL": String(TTL_MARKET),
+          }
+        );
+      }
+
+      return okJson(
+        {
+          ok: true,
+          generated_at_utc: nowUtcIso(),
+          cache_ttl_s: TTL_MARKET,
+          cache_hit: cacheHit,
+          source_url: CNN_FGI_URL,
+          fear_greed: {
+            score: fg.score ?? null,
+            rating: fg.rating ?? null,
+            timestamp_utc: fg.timestamp ?? null,
+            previous_close: fg.previous_close ?? null,
+            previous_1_week: fg.previous_1_week ?? null,
+            previous_1_month: fg.previous_1_month ?? null,
+            previous_1_year: fg.previous_1_year ?? null,
+          },
+        },
+        200,
+        {
+          "Cache-Control": `public, max-age=${TTL_MARKET}, s-maxage=${TTL_MARKET}`,
+          "X-HMoney-Cache-Hit": cacheHit ? "1" : "0",
+          "X-HMoney-Cache-TTL": String(TTL_MARKET),
+        }
+      );
     }
 
     // -------------------------
@@ -321,7 +401,6 @@ export default {
         pack_meta: res.pack_meta || null,
         pack_as_of_utc: res.pack?.as_of_utc || res.pack_meta?.as_of_utc || null,
         pack_run_id: res.pack?.run_id || res.pack_meta?.run_id || null,
-        // You can optionally return pack_slim for smaller payloads later;
         // keep full pack for now since dashboard uses it.
         pack: res.pack,
         debug: res.debug || null,
@@ -798,13 +877,15 @@ export default {
           name: "HMoney Worker",
           gh_pages_base: GH_PAGES_BASE,
           routes: {
-            "GET /live?symbols=...": "BYO-key live overlay (send X-Finnhub-Key and/or X-TwelveData-Key headers)",
-            "GET /pack?ticker=...": "evidence pack (current run; stale fallback via evidence_index.json)",
-            "GET /news?scope=market or /news?tickers=...": "RSS headlines (cached)",
+            "GET /live?symbols=...": "Live quotes",
+            "GET /pack?ticker=...": "Evidence pack",
+            "GET /news?scope=market or /news?tickers=...": "News headlines",
+            "GET /market": "Market indicators (CNN Fear & Greed)",
             "POST /ai (or POST /)": "AI assistant",
           },
         });
       }
+      if (path === "/market") return await handleMarket();  // NEW
       if (path === "/live") return await handleLive();
       if (path === "/pack") return await handlePack();
       if (path === "/news") return await handleNews();
