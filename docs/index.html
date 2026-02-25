@@ -20,6 +20,7 @@
       --shadow: 0 10px 30px rgba(0,0,0,0.18);
     }
     *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
     body{
       margin:0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
@@ -29,6 +30,7 @@
     a{color:var(--link); text-decoration: none}
     a:hover{text-decoration: underline}
     .wrap{max-width:1200px; margin:0 auto; padding:18px}
+
     .topbar{
       display:flex; gap:12px; align-items:center; justify-content:space-between;
       margin-bottom:10px;
@@ -37,6 +39,7 @@
     .brand h1{font-size:18px; margin:0}
     .brand .sub{color:var(--muted); font-size:12px}
     .actions{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+
     .btn{
       border:1px solid var(--line);
       background: linear-gradient(180deg, #17243a 0%, #121b2a 100%);
@@ -57,16 +60,12 @@
       font-size:12px;
       cursor:pointer;
       line-height:1;
+      min-width:36px;
+      text-align:center;
+      user-select:none;
     }
     .iconBtn:hover{filter:brightness(1.08)}
-    .grid{
-      display:grid;
-      grid-template-columns: 1.2fr 0.8fr;
-      gap:12px;
-    }
-    @media (max-width: 980px){
-      .grid{grid-template-columns:1fr}
-    }
+
     .card{
       background: linear-gradient(180deg, rgba(17,24,38,0.92) 0%, rgba(15,22,34,0.92) 100%);
       border:1px solid var(--line);
@@ -76,40 +75,44 @@
     }
     .card h2{font-size:14px; margin:0 0 10px}
     .sectionTitle{display:flex; align-items:center; justify-content:space-between; gap:8px}
+    .cardBody{margin-top:10px}
+    .hidden{display:none !important}
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap:12px;
+    }
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr}
+    }
+
     .small{font-size:11px; color:var(--muted)}
     .muted{color:var(--muted)}
     .mono{font-variant-numeric: tabular-nums; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}
+    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
 
-    /* Status strip */
+    /* Status strip + jump */
     .statusStrip{
       display:flex;
       gap:8px;
       flex-wrap:wrap;
       align-items:center;
-      margin:0 0 12px;
+      margin:0 0 8px;
     }
-
-    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
-    .kv{display:flex; flex-direction:column; gap:4px; padding:10px 12px; background:rgba(10,14,20,0.35); border:1px solid var(--line); border-radius:14px}
-    .k{color:var(--muted); font-size:11px}
-    .v{font-size:13px}
-
-    .chips{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
-    .chip{
-      background:var(--chip);
-      border:1px solid var(--line);
-      padding:6px 8px;
-      border-radius:999px;
-      font-size:12px;
-      color:var(--text);
-      display:inline-flex;
-      gap:8px;
+    .jump{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
       align-items:center;
-      max-width:100%;
+      margin:0 0 12px;
+      padding:8px 10px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background: rgba(10,14,20,0.28);
     }
-    .chip .m{color:var(--muted)}
-    .chip .t{color:var(--text)}
-    .chip .s{color:var(--muted); font-size:11px}
+    .jump a{font-size:12px}
+    .jump .sep{opacity:0.45}
 
     .badge{
       display:inline-flex;
@@ -132,6 +135,31 @@
     .dot.warn{background:rgba(255,176,32,0.85)}
     .dot.bad{background:rgba(255,90,103,0.85)}
 
+    /* Live tape */
+    .tape{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      overflow-x:auto;
+      padding-bottom:4px;
+      scrollbar-width: none;
+    }
+    .tape::-webkit-scrollbar{display:none}
+
+    .chip{
+      background:var(--chip);
+      border:1px solid var(--line);
+      padding:6px 8px;
+      border-radius:999px;
+      font-size:12px;
+      color:var(--text);
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      white-space:nowrap;
+    }
+    .chip .s{color:var(--muted); font-size:11px}
+
     .tag{
       display:inline-flex;
       align-items:center;
@@ -148,6 +176,11 @@
     .tag.bad{color:var(--bad)}
     .tag.tiny{font-size:10px; padding:1px 6px; opacity:0.95}
 
+    .kv{display:flex; flex-direction:column; gap:4px; padding:10px 12px; background:rgba(10,14,20,0.35); border:1px solid var(--line); border-radius:14px}
+    .k{color:var(--muted); font-size:11px}
+    .v{font-size:13px}
+
+    /* Bars */
     .barwrap{display:flex; flex-direction:column; gap:8px}
     .barline{display:flex; gap:10px; align-items:center; justify-content:space-between}
     .barlabel{font-size:12px; color:var(--muted)}
@@ -171,7 +204,6 @@
     th{color:var(--muted); font-weight:600; text-align:left}
     td.num{text-align:right; font-variant-numeric: tabular-nums}
 
-    /* Compact mode */
     body.compact table{font-size:11px}
     body.compact th, body.compact td{padding:6px 5px}
     body.compact .kv{padding:8px 10px}
@@ -181,6 +213,7 @@
     .neg{color:var(--bad)}
     .mildneg{color:var(--warn)}
 
+    /* Inputs */
     .search{
       display:flex; gap:8px; align-items:center; width:100%;
       padding:10px; background:rgba(10,14,20,0.35); border:1px solid var(--line); border-radius:14px;
@@ -199,7 +232,6 @@
       resize:vertical;
       min-height:60px;
     }
-    .hint{color:var(--muted); font-size:11px; margin-top:8px}
 
     .drawer{
       margin-top:12px;
@@ -207,34 +239,6 @@
       border-radius:16px;
       padding:12px;
       background: rgba(10,14,20,0.35);
-    }
-
-    .cols{display:grid; grid-template-columns: 1fr 1fr; gap:12px}
-    @media (max-width: 980px){ .cols{grid-template-columns:1fr} }
-
-    .cols3{display:grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap:12px}
-    @media (max-width: 980px){ .cols3{grid-template-columns:1fr} }
-
-    .list{display:flex; flex-direction:column; gap:8px}
-    .item{display:flex; justify-content:space-between; gap:10px; padding:8px 10px; border:1px solid rgba(34,48,71,0.7); border-radius:12px}
-
-    .miniCard{
-      border:1px solid var(--line);
-      border-radius:16px;
-      padding:12px;
-      background: rgba(10,14,20,0.35);
-    }
-    .miniCard h3{margin:0 0 10px; font-size:13px}
-
-    .aiBox{
-      display:flex;
-      gap:8px;
-      align-items:stretch;
-      width:100%;
-      padding:10px;
-      background:rgba(10,14,20,0.35);
-      border:1px solid var(--line);
-      border-radius:14px;
     }
 
     .formRow{
@@ -263,14 +267,38 @@
       outline: none;
       width: min(520px, 100%);
     }
-    .newsItemTitle{display:block; margin-bottom:2px}
-    .newsMeta{font-size:11px; color:var(--muted)}
+
+    /* News compact */
+    .cols{display:grid; grid-template-columns: 1fr 1fr; gap:12px}
+    @media (max-width: 980px){ .cols{grid-template-columns:1fr} }
+
+    .list{display:flex; flex-direction:column; gap:6px}
+    .newsRow{
+      display:flex;
+      gap:10px;
+      justify-content:space-between;
+      align-items:flex-start;
+      padding:8px 10px;
+      border:1px solid rgba(34,48,71,0.55);
+      border-radius:12px;
+      background: rgba(10,14,20,0.18);
+    }
+    .newsRow:hover{filter:brightness(1.06)}
+    .newsTitle{font-size:12px; line-height:1.25}
+    .newsMeta{font-size:11px; color:var(--muted); margin-top:4px}
+
+    /* Below grid layout (more dashboard-y) */
+    .belowGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    @media (max-width: 980px){ .belowGrid{grid-template-columns:1fr} }
+    .span2{grid-column: 1 / -1}
+
     .err{color:var(--bad); font-size:12px}
     .ok{color:var(--good); font-size:12px}
-
-    .cardBody{margin-top:10px}
-    .hidden{display:none !important}
-
+    .hint{color:var(--muted); font-size:11px; margin-top:8px}
     .footer{margin-top:14px; color:var(--muted); font-size:11px}
 
     /* Toast */
@@ -289,6 +317,29 @@
       max-width: min(520px, calc(100vw - 28px));
       display:none;
     }
+
+    /* Modal */
+    .modalBack{
+      position:fixed;
+      inset:0;
+      background: rgba(0,0,0,0.55);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:9998;
+      padding:18px;
+    }
+    .modal{
+      width:min(760px, 100%);
+      background: linear-gradient(180deg, rgba(17,24,38,0.98) 0%, rgba(15,22,34,0.98) 100%);
+      border:1px solid var(--line);
+      border-radius:18px;
+      box-shadow: var(--shadow);
+      padding:14px;
+    }
+    .modal h3{margin:0 0 8px; font-size:14px}
+    .modal .body{color:var(--text); font-size:12px; line-height:1.35}
+    .modal .x{margin-left:auto}
   </style>
 </head>
 
@@ -307,7 +358,6 @@
     </div>
   </div>
 
-  <!-- Status strip -->
   <div class="statusStrip" id="statusStrip">
     <span class="badge" id="stState"><span class="dot"></span><b>State</b> —</span>
     <span class="badge" id="stWorker"><span class="dot"></span><b>Worker</b> —</span>
@@ -316,18 +366,29 @@
     <span class="badge" id="stUi"><b>UI</b> —</span>
   </div>
 
-  <!-- Live overlay tape + settings -->
+  <div class="jump">
+    <span class="small muted">Jump:</span>
+    <a href="#liveCard">Live</a><span class="sep">•</span>
+    <a href="#postureCard">Posture</a><span class="sep">•</span>
+    <a href="#runCard">Ticker</a><span class="sep">•</span>
+    <a href="#highlightsCard">Highlights</a><span class="sep">•</span>
+    <a href="#benchCard">Benchmarks</a><span class="sep">•</span>
+    <a href="#newsCard">News</a><span class="sep">•</span>
+    <a href="#aiCard">AI</a>
+  </div>
+
+  <!-- Live overlay -->
   <div class="card" id="liveCard" style="padding:12px; margin-bottom:12px;">
     <div class="sectionTitle">
       <h2 style="margin:0">Live overlay</h2>
       <div class="row" style="gap:8px; align-items:center">
         <div class="small" id="liveMeta">—</div>
-        <button class="iconBtn" data-collapse="liveBody" title="Collapse/expand">—</button>
+        <button class="iconBtn" data-collapse="liveBody" title="Collapse/expand">–</button>
       </div>
     </div>
 
     <div class="cardBody" id="liveBody">
-      <div class="chips" id="liveChips"></div>
+      <div class="tape" id="liveChips"></div>
 
       <!-- UI Preferences -->
       <div class="drawer" id="uiPrefs" style="margin-top:10px">
@@ -367,7 +428,7 @@
           <h3 style="margin:0; font-size:13px;">Live Data Settings (BYO key)</h3>
           <div class="row" style="gap:8px; align-items:center">
             <div class="small" id="liveSettingsStatus">—</div>
-            <button class="iconBtn" data-collapse="liveSettingsBody" title="Collapse/expand">—</button>
+            <button class="iconBtn" data-collapse="liveSettingsBody" title="Collapse/expand">–</button>
           </div>
         </div>
 
@@ -402,36 +463,50 @@
 
           <div class="hint" style="margin-top:10px">
             Keys are stored in <span class="mono">localStorage</span> on this device and sent only as request headers to the Worker (<span class="mono">/live</span>).
-            If keys are missing, the dashboard falls back to baseline analytics (still updating automatically).
+            If keys are missing, the dashboard falls back to baseline analytics.
           </div>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- Core grid -->
   <div class="grid">
     <div class="card" id="postureCard">
       <div class="sectionTitle">
-        <h2>Market Posture</h2>
+        <h2 style="margin:0">Market Posture</h2>
         <div class="row" style="gap:8px; align-items:center">
           <div class="small" id="asOf">—</div>
-          <button class="iconBtn" data-collapse="postureBody" title="Collapse/expand">—</button>
+          <button class="iconBtn" id="postureInfoBtn" title="How to read this">i</button>
+          <button class="iconBtn" data-collapse="postureBody" title="Collapse/expand">–</button>
         </div>
       </div>
+
       <div class="cardBody" id="postureBody">
         <div class="row" id="postureRow"></div>
+
+        <div style="height:10px"></div>
+
+        <div class="drawer" style="margin-top:0">
+          <div class="small muted" style="margin-bottom:6px">What this means (descriptive)</div>
+          <div class="small" id="postureExplain">—</div>
+        </div>
+
         <div style="height:10px"></div>
         <div class="barwrap" id="bars"></div>
-        <div class="hint">These summarize cross-sectional breadth and relative-to-self behavior. Not a forecast.</div>
+
+        <div class="hint">
+          Bars show how common certain patterns are across the universe (relative breadth), not a forecast.
+        </div>
       </div>
     </div>
 
     <div class="card" id="runCard">
       <div class="sectionTitle">
-        <h2>Run Snapshot</h2>
+        <h2 style="margin:0">Run Snapshot</h2>
         <div class="row" style="gap:8px; align-items:center">
           <div class="small" id="runMeta">—</div>
-          <button class="iconBtn" data-collapse="runBody" title="Collapse/expand">—</button>
+          <button class="iconBtn" data-collapse="runBody" title="Collapse/expand">–</button>
         </div>
       </div>
 
@@ -457,130 +532,131 @@
 
   <div style="height:12px"></div>
 
-  <div id="belowGrid">
-    <!-- Highlights -->
+  <!-- Below grid: more dashboard feel -->
+  <div class="belowGrid" id="belowGrid">
     <div class="card" id="highlightsCard">
       <div class="sectionTitle">
-        <h2>Highlights</h2>
+        <h2 style="margin:0">Highlights</h2>
         <div class="row" style="gap:8px; align-items:center">
           <div class="small" id="hlMeta">—</div>
-          <button class="iconBtn" data-collapse="highlightsBody" title="Collapse/expand">—</button>
+          <button class="iconBtn" id="hlInfoBtn" title="Why these show up">i</button>
+          <button class="iconBtn" data-collapse="highlightsBody" title="Collapse/expand">–</button>
         </div>
       </div>
 
       <div class="cardBody" id="highlightsBody">
         <div class="small muted" style="margin-bottom:8px">
-          Shortlists are diagnostic samples from the current run. Click tickers to open quote pages. Click <span class="mono">[pack]</span> to open the most recent available evidence JSON (may be stale). Click Opp/Risk to open methodology.
+          Shortlists are diagnostic samples from <span class="mono">state.tables</span>. Click <span class="mono">[pack]</span> for evidence JSON (may be stale).
         </div>
 
-        <div class="cols3">
-          <div class="miniCard">
-            <h3>🟢 Top setups</h3>
-            <div id="hlSetups"></div>
-          </div>
-          <div class="miniCard">
-            <h3>🔴 Structural risk</h3>
-            <div id="hlRisk"></div>
-          </div>
-          <div class="miniCard">
-            <h3>🟡 Cross-currents</h3>
-            <div id="hlMixed"></div>
-          </div>
+        <div class="row" style="gap:8px; margin-bottom:10px">
+          <span class="badge"><b>Setups</b> pulled-back + stabilizing traits</span>
+          <span class="badge"><b>Risk</b> persistent breakdown + fragility traits</span>
+          <span class="badge"><b>Mixed</b> cross-currents</span>
         </div>
+
+        <div id="hlSetups"></div>
+        <div style="height:10px"></div>
+        <div id="hlRisk"></div>
+        <div style="height:10px"></div>
+        <div id="hlMixed"></div>
 
         <div class="hint" style="margin-top:10px">
-          These lists come directly from <span class="mono">state.tables</span> (fast: no evidence-pack crawling on page load).
+          Want the full logic? Open methodology: <a id="methodLink" href="#" target="_blank" rel="noopener noreferrer">methodology.md</a>
         </div>
       </div>
     </div>
 
-    <div style="height:12px"></div>
-
-    <!-- Benchmarks -->
     <div class="card" id="benchCard">
       <div class="sectionTitle">
-        <h2>Benchmarks (Context)</h2>
+        <h2 style="margin:0">Benchmarks (Context)</h2>
         <div class="row" style="gap:8px; align-items:center">
           <div class="small" id="benchStatus">—</div>
-          <button class="iconBtn" data-collapse="benchBody" title="Collapse/expand">—</button>
+          <button class="iconBtn" data-collapse="benchBody" title="Collapse/expand">+</button>
         </div>
       </div>
-      <div class="cardBody" id="benchBody">
+
+      <div class="cardBody hidden" id="benchBody">
         <div class="small muted" style="margin-bottom:8px">
-          Click tickers to open quote pages. Click <span class="mono">[pack]</span> to open evidence JSON (best available; may be stale). Click Opp/Risk to open methodology.
+          Click tickers for quotes. <span class="mono">[pack]</span> opens evidence JSON (best available; may be stale).
         </div>
         <div id="benchTables"></div>
       </div>
     </div>
 
-    <div style="height:12px"></div>
-
-    <!-- News -->
     <div class="card" id="newsCard">
       <div class="sectionTitle">
-        <h2>News (cached)</h2>
+        <h2 style="margin:0">News (cached)</h2>
         <div class="row" style="gap:8px; align-items:center">
           <div class="small" id="newsMeta">—</div>
-          <button class="iconBtn" data-collapse="newsBody" title="Collapse/expand">—</button>
+          <button class="iconBtn" data-collapse="newsBody" title="Collapse/expand">+</button>
         </div>
       </div>
-      <div class="cardBody" id="newsBody">
+
+      <div class="cardBody hidden" id="newsBody">
+        <div class="row" style="gap:8px; margin-bottom:10px">
+          <button class="btn" id="newsMoreBtn">Show more</button>
+          <button class="btn" id="newsLessBtn">Show less</button>
+          <span class="small muted">Default shows top 5 per column.</span>
+        </div>
+
         <div class="cols">
           <div>
-            <div class="small muted" style="margin-bottom:8px">Market</div>
+            <div class="small muted" style="margin-bottom:6px">Market</div>
             <div id="newsMarket" class="list"></div>
           </div>
           <div>
-            <div class="small muted" style="margin-bottom:8px">Selected ticker</div>
+            <div class="small muted" style="margin-bottom:6px">Selected ticker</div>
             <div id="newsTicker" class="list"></div>
           </div>
         </div>
+
         <div class="hint" style="margin-top:10px">
-          Headlines are fetched via Worker (<span class="mono">/news</span>) from RSS/official feeds and deduped best-effort. Click-through only.
+          Headlines via Worker (<span class="mono">/news</span>) from RSS/official feeds. Click-through only.
         </div>
       </div>
     </div>
 
-    <div style="height:12px"></div>
-
-    <!-- AI -->
-    <div class="card" id="aiCard">
+    <div class="card span2" id="aiCard">
       <div class="sectionTitle">
-        <h2>Ask HMoney (AI)</h2>
+        <h2 style="margin:0">Ask HMoney (AI)</h2>
         <div class="row" style="gap:8px; align-items:center">
           <div class="small" id="aiStatus">Ready</div>
-          <button class="iconBtn" data-collapse="aiBody" title="Collapse/expand">—</button>
+          <button class="iconBtn" data-collapse="aiBody" title="Collapse/expand">–</button>
         </div>
       </div>
+
       <div class="cardBody" id="aiBody">
         <div class="small muted" style="margin-bottom:8px">
-          Ask anything. If you mention tickers, the Worker will try to auto-fetch their packs (current or stale) and use live/news context when available.
+          Mention tickers to pull packs (current or stale) + use live/news context when available.
         </div>
 
-        <div class="aiBox">
-          <textarea id="aiQuestion" placeholder="Try: 'Compare IRWD vs AMD' or 'Summarize today's market + what to watch'"></textarea>
-          <button class="btn" id="aiAskBtn">Ask</button>
-        </div>
-
-        <div class="row" style="margin-top:8px">
-          <label class="small muted">
-            <input type="checkbox" id="aiIncludeTicker" checked />
-            Include last loaded pack + (optional) live quotes for mentioned tickers
-          </label>
-
-          <label class="small muted">
-            <input type="checkbox" id="aiRemember" checked />
-            Remember this chat (local)
-          </label>
-
-          <button class="btn" id="aiClearMemoryBtn">Clear memory</button>
-
-          <div class="small muted" style="margin-left:auto">
-            Tip: press <span class="mono">Ctrl+Enter</span> to send
+        <div class="drawer" style="margin-top:0">
+          <div style="display:flex; gap:8px; align-items:stretch">
+            <textarea id="aiQuestion" placeholder="Try: 'Compare IRWD vs AMD' or 'Summarize today's market + what to watch'"></textarea>
+            <button class="btn" id="aiAskBtn">Ask</button>
           </div>
-        </div>
 
-        <div class="small muted" id="aiMemoryMeta" style="margin-top:6px">Memory: —</div>
+          <div class="row" style="margin-top:8px">
+            <label class="small muted">
+              <input type="checkbox" id="aiIncludeTicker" checked />
+              Include last loaded pack + (optional) live quotes
+            </label>
+
+            <label class="small muted">
+              <input type="checkbox" id="aiRemember" checked />
+              Remember this chat (local)
+            </label>
+
+            <button class="btn" id="aiClearMemoryBtn">Clear memory</button>
+
+            <div class="small muted" style="margin-left:auto">
+              Tip: press <span class="mono">Ctrl+Enter</span>
+            </div>
+          </div>
+
+          <div class="small muted" id="aiMemoryMeta" style="margin-top:6px">Memory: —</div>
+        </div>
 
         <div class="drawer" id="aiAnswer" style="display:none"></div>
       </div>
@@ -592,6 +668,17 @@
 
 <div class="toast" id="toast"></div>
 
+<!-- Modal -->
+<div class="modalBack" id="modalBack">
+  <div class="modal">
+    <div class="sectionTitle">
+      <h3 id="modalTitle">Info</h3>
+      <button class="iconBtn x" id="modalClose">×</button>
+    </div>
+    <div class="body" id="modalBody"></div>
+  </div>
+</div>
+
 <script>
   // ----------------------------
   // CONFIG (Worker endpoints)
@@ -599,7 +686,6 @@
   const HMONEY_WORKER_BASE = "https://bearingbullishballs.htgamein.workers.dev";
   const HMONEY_AI_ENDPOINT = `${HMONEY_WORKER_BASE}/ai`;
 
-  // Cache-bust token (set after state loads). Falls back to Date.now().
   window.__HMONEY_V = Date.now();
 
   function withCacheBust(path){
@@ -608,34 +694,27 @@
     return `${path}${sep}v=${v}`;
   }
 
-  // ----------------------------
   // LocalStorage keys (Live overlay BYO)
-  // ----------------------------
   const LS_LIVE_ENABLED = "hmoney_live_enabled_v1";
   const LS_LIVE_PROVIDER = "hmoney_live_provider_v1";
   const LS_FINNHUB_KEY  = "hmoney_finnhub_key_v1";
   const LS_TWELVE_KEY   = "hmoney_twelvedata_key_v1";
 
   // UI prefs
-  const LS_UI_LAYOUT = "hmoney_ui_layout_v1";            // "market" | "research"
-  const LS_UI_COMPACT = "hmoney_ui_compact_v1";          // "true" | "false"
-  const LS_UI_COLLAPSE_LIVESETTINGS = "hmoney_ui_collapse_livesettings_v1"; // "true" | "false"
-  const LS_UI_COLLAPSE_PREFIX = "hmoney_ui_collapse_";   // + panel id
+  const LS_UI_LAYOUT = "hmoney_ui_layout_v1";
+  const LS_UI_COMPACT = "hmoney_ui_compact_v1";
+  const LS_UI_COLLAPSE_LIVESETTINGS = "hmoney_ui_collapse_livesettings_v1";
+  const LS_UI_COLLAPSE_PREFIX = "hmoney_ui_collapse_";
 
-  // ----------------------------
-  // AI MEMORY CONFIG (client-side)
-  // ----------------------------
+  // AI memory
   const AI_HISTORY_STORAGE_KEY = "hmoney_ai_history_v1";
   const AI_REMEMBER_PREF_KEY = "hmoney_ai_remember_v1";
   const AI_HISTORY_MAX_MESSAGES = 12;
   const AI_HISTORY_MAX_CHARS = 12000;
 
-  // ----------------------------
   // Helpers / constants
-  // ----------------------------
   const LIVE_DEFAULT_SYMBOLS = ["SPY","QQQ","DIA","IWM","VXX","TLT","UUP","BTC-USD"];
 
-  // FIXED: removed accidental double-comma hole that caused "TypeError: .for is not iterable"
   const BENCHMARK_GROUPS = [
     ["US Equity", ["SPY", "QQQ", "DIA", "IWM", "VTI"]],
     ["Global Equity", ["VT", "VXUS", "VEA", "VWO"]],
@@ -665,6 +744,9 @@
   };
 
   const METHODOLOGY_BASE = "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md";
+
+  // News display count (toggle)
+  let __NEWS_SHOW = 5;
 
   function toast(msg, ms=2200){
     const t = document.getElementById("toast");
@@ -751,23 +833,32 @@
   function setBadge(id, kind, label, value){
     const b = document.getElementById(id);
     if (!b) return;
+
     b.classList.remove("good","warn","bad");
     if (kind) b.classList.add(kind);
-    // dot styling if present
+
     const dot = b.querySelector(".dot");
     if (dot){
       dot.classList.remove("good","warn","bad");
       if (kind) dot.classList.add(kind);
     }
-    b.innerHTML = b.innerHTML; // keep structure
-    // Rewrite content safely:
-    const pieces = [];
-    if (dot) pieces.push(dot.cloneNode(true));
-    pieces.push(el("b", {}, [label]));
-    pieces.push(document.createTextNode(" "));
-    pieces.push(document.createTextNode(value));
+
     b.innerHTML = "";
-    pieces.forEach(p => b.appendChild(p));
+    if (dot) b.appendChild(dot.cloneNode(true));
+    b.appendChild(el("b", {}, [label]));
+    b.appendChild(document.createTextNode(" " + value));
+  }
+
+  // ----------------------------
+  // Modal
+  // ----------------------------
+  function showModal(title, html){
+    document.getElementById("modalTitle").textContent = title || "Info";
+    document.getElementById("modalBody").innerHTML = html || "";
+    document.getElementById("modalBack").style.display = "flex";
+  }
+  function hideModal(){
+    document.getElementById("modalBack").style.display = "none";
   }
 
   // ----------------------------
@@ -777,6 +868,10 @@
     const body = document.getElementById(panelId);
     if (!body) return;
     body.classList.toggle("hidden", !!collapsed);
+    // Update any buttons pointing to this panel
+    document.querySelectorAll(`[data-collapse="${panelId}"]`).forEach(btn => {
+      btn.textContent = collapsed ? "+" : "–";
+    });
   }
 
   function loadCollapsePref(panelId, defaultCollapsed=false){
@@ -790,10 +885,11 @@
   }
 
   function initCollapseButtons(){
+    const defaults = new Set(["newsBody","benchBody","liveSettingsBody"]); // reduce bloat by default
     const btns = document.querySelectorAll("[data-collapse]");
     btns.forEach(btn => {
       const panelId = btn.getAttribute("data-collapse");
-      const collapsed = loadCollapsePref(panelId, false);
+      const collapsed = loadCollapsePref(panelId, defaults.has(panelId));
       applyCollapse(panelId, collapsed);
       btn.addEventListener("click", () => {
         const nowCollapsed = !document.getElementById(panelId).classList.contains("hidden");
@@ -822,50 +918,11 @@
   function applyUiPrefs(){
     const p = loadUiPrefs();
     document.body.classList.toggle("compact", !!p.compact);
-
-    // Reorder belowGrid sections
-    const below = document.getElementById("belowGrid");
-    const highlights = document.getElementById("highlightsCard");
-    const bench = document.getElementById("benchCard");
-    const news = document.getElementById("newsCard");
-    const ai = document.getElementById("aiCard");
-
-    if (below && highlights && bench && news && ai){
-      below.innerHTML = "";
-      if (p.layout === "research"){
-        below.appendChild(ai);
-        below.appendChild(el("div", {style:"height:12px"}));
-        below.appendChild(news);
-        below.appendChild(el("div", {style:"height:12px"}));
-        below.appendChild(bench);
-        below.appendChild(el("div", {style:"height:12px"}));
-        below.appendChild(highlights);
-      } else {
-        below.appendChild(highlights);
-        below.appendChild(el("div", {style:"height:12px"}));
-        below.appendChild(bench);
-        below.appendChild(el("div", {style:"height:12px"}));
-        below.appendChild(news);
-        below.appendChild(el("div", {style:"height:12px"}));
-        below.appendChild(ai);
-      }
-    }
-
-    // Live settings collapse preference
-    applyCollapse("liveSettingsBody", !!p.collapseLiveSettings);
-    saveCollapsePref("liveSettingsBody", !!p.collapseLiveSettings);
-
-    document.getElementById("uiLayout").value = p.layout;
-    document.getElementById("uiCompact").checked = !!p.compact;
-    document.getElementById("uiCollapseLiveSettings").checked = !!p.collapseLiveSettings;
-
-    document.getElementById("stUi").textContent = "";
     setBadge("stUi", null, "UI", `${p.layout}${p.compact ? " • compact" : ""}`);
-    document.getElementById("uiPrefsStatus").textContent = `${p.layout}${p.compact ? " • compact" : ""}${p.collapseLiveSettings ? " • live settings collapsed" : ""}`;
   }
 
   // ----------------------------
-  // Market hours (PT) – controls polling cadence
+  // Market hours (PT) – polling cadence
   // ----------------------------
   function getPTParts(){
     const parts = new Intl.DateTimeFormat("en-US", {
@@ -893,7 +950,7 @@
   }
 
   // ----------------------------
-  // Live settings (BYO keys)
+  // Live settings
   // ----------------------------
   function loadLivePrefs(){
     const enabled = (localStorage.getItem(LS_LIVE_ENABLED) ?? "false") === "true";
@@ -933,9 +990,7 @@
     status.textContent = msg;
   }
 
-  // ----------------------------
-  // Worker fetch helpers (with optional headers)
-  // ----------------------------
+  // Worker fetch helper
   async function fetchWorkerJson(fullUrl, headersObj=null){
     const init = { cache:"no-store", headers: headersObj || undefined };
     const r = await fetch(fullUrl, init);
@@ -943,16 +998,12 @@
     return await r.json();
   }
 
-  // ----------------------------
   // Worker health
-  // ----------------------------
   let __WORKER_HEALTH = { ok:false, as_of:null, err:null };
-
   async function refreshWorkerHealth(){
     try{
       const r = await fetch(`${HMONEY_WORKER_BASE}/`, {cache:"no-store"});
-      const txt = await r.text().catch(()=> "");
-      __WORKER_HEALTH = { ok: r.ok, as_of: new Date().toISOString(), err: r.ok ? null : (txt || `${r.status}`) };
+      __WORKER_HEALTH = { ok: r.ok, as_of: new Date().toISOString(), err: r.ok ? null : String(r.status) };
       setBadge("stWorker", r.ok ? "good" : "warn", "Worker", r.ok ? "OK" : "Degraded");
     }catch(e){
       __WORKER_HEALTH = { ok:false, as_of: new Date().toISOString(), err: String(e) };
@@ -960,13 +1011,10 @@
     }
   }
 
-  // ----------------------------
-  // Evidence pack (Worker /pack)
-  // ----------------------------
+  // Evidence pack
   function normalizeTicker(sym){
     return String(sym || "").trim().toUpperCase().replace(/\s+/g, "");
   }
-
   async function loadPackSmart(symbol){
     const sym = normalizeTicker(symbol);
     const u = `${HMONEY_WORKER_BASE}/pack?ticker=${encodeURIComponent(sym)}`;
@@ -977,9 +1025,7 @@
     return data;
   }
 
-  // ----------------------------
   // AI memory
-  // ----------------------------
   let __AI_HISTORY = [];
 
   function loadRememberPref(){
@@ -1050,9 +1096,7 @@
     updateMemoryMeta();
   }
 
-  // ----------------------------
   // State cache
-  // ----------------------------
   let __HMONEY_STATE = null;
   let __LAST_PACK = null;
   let __LAST_PACK_META = null;
@@ -1064,37 +1108,12 @@
       schema_version: state.schema_version,
       generated_at_utc: state.generated_at_utc,
       as_of_utc: state.as_of_utc,
-      run: {
-        mode: state?.run?.mode ?? null,
-        cadence_minutes: state?.run?.cadence_minutes ?? null,
-        time_bucket: state?.run?.time_bucket ?? null,
-        shards: state?.run?.shards ?? null,
-      },
-      market_bias: state.market_bias,
-      opportunity_score: state.opportunity_score,
-      structural_risk_score: state.structural_risk_score,
-      universe_size: state.universe_size,
-      counts_by_label: state.counts_by_label,
-      breadth: {
-        thresholds: state?.breadth?.thresholds ?? null,
-        sample: state?.breadth?.sample ?? null,
-      },
-      posture: {
-        label: state?.posture?.label ?? null,
-        plain_english: state?.posture?.plain_english ?? null,
-        confidence_tag: state?.posture?.confidence_tag ?? null,
-        key: state?.posture?.key ?? null,
-      },
+      run: state?.run ?? null,
+      posture: state?.posture ?? null,
+      breadth: state?.breadth ?? null,
       tables: state?.tables ?? null,
-      evidence_pack_index: {
-        base_path: state?.evidence_pack_index?.base_path ?? null,
-        n_packs_written: state?.evidence_pack_index?.n_packs_written ?? null,
-      },
-      quality: {
-        data_provider: state?.quality?.data_provider ?? null,
-        success_rate_pct: state?.quality?.success_rate_pct ?? null,
-        skipped_tickers_count: state?.quality?.skipped_tickers_count ?? null,
-      },
+      evidence_pack_index: state?.evidence_pack_index ?? null,
+      quality: state?.quality ?? null,
       disclaimer: state?.disclaimer ?? null,
     };
   }
@@ -1144,7 +1163,6 @@
   function extractTickersFromText(text){
     const raw = (text || "").toUpperCase();
     const tokens = raw.match(/[A-Z^][A-Z0-9^.-]{0,14}/g) || [];
-
     const stop = new Set([
       "A","AN","AND","ARE","AS","AT","BE","BUT","BY","CAN","DID","DO","FOR","FROM","HAVE","HOW","I","IN","IS","IT",
       "ME","MY","NO","NOT","OF","ON","OR","PUT","RED","SELL","BUY","HOLD","SHOULD","THE","THIS","THAT","TO","UP",
@@ -1172,7 +1190,6 @@
         out.push(tok);
       }
     }
-
     return out;
   }
 
@@ -1193,9 +1210,7 @@
     return results;
   }
 
-  // ----------------------------
-  // Live overlay (Worker /live with headers)
-  // ----------------------------
+  // Live overlay
   function badgeForDelta(n){
     if (n === null || n === undefined) return "";
     const v = Number(n);
@@ -1228,10 +1243,7 @@
       if (q.price !== undefined && q.price !== null) lines.push(`price: ${q.price}`);
       if (q.pct !== undefined && q.pct !== null) lines.push(`pct: ${q.pct}`);
       if (q.provider) lines.push(`provider: ${q.provider}`);
-      if (q.source && !q.provider) lines.push(`provider: ${q.source}`);
       if (q.market_time_utc) lines.push(`provider_time_utc: ${q.market_time_utc}`);
-      if (q.time_utc && !q.market_time_utc) lines.push(`provider_time_utc: ${q.time_utc}`);
-      if (q.ts_utc && !q.market_time_utc && !q.time_utc) lines.push(`provider_time_utc: ${q.ts_utc}`);
     }
     if (payload?.as_of_utc) lines.push(`worker_as_of_utc: ${payload.as_of_utc}`);
     if (payload?.cache_ttl_s !== undefined) lines.push(`worker_ttl_s: ${payload.cache_ttl_s}`);
@@ -1252,9 +1264,7 @@
     if (!payload || !payload.ok){
       meta.textContent = "Live overlay unavailable";
       chips.appendChild(el("span", {class:"badge"}, [el("span", {}, ["Baseline: "]), el("b", {}, [baselineTs])]));
-      chips.appendChild(el("div", {class:"small muted", style:"margin-top:6px"}, [
-        "Enable live overlay and provide provider key(s) to see near-live quotes.",
-      ]));
+      chips.appendChild(el("span", {class:"badge"}, [el("b", {}, ["Tip"]), " Enable live overlay + keys."]));
       return;
     }
 
@@ -1264,7 +1274,7 @@
       ? payload.debug.used.map(x => x.provider).filter(Boolean).join(", ")
       : "";
 
-    meta.textContent = `as of ${asOf} • ttl ${ttl}s${used ? " • " + used : ""}`;
+    meta.textContent = `as of ${asOf} • ttl ${ttl}s${used ? " • " + used : ""}${payload.cache_hit ? " • cached" : ""}`;
 
     const quotes = payload.quotes || {};
     for (const sym of LIVE_DEFAULT_SYMBOLS){
@@ -1276,11 +1286,11 @@
       const pctText = (pct === null || pct === undefined) ? "—" : `${Number(pct).toFixed(2)}%`;
 
       const kids = [
-        el("span", {class:"mono t"}, [sym]),
+        el("span", {class:"mono"}, [sym]),
         providerTag(q),
         el("span", {class:"mono s"}, [(price === null || price === undefined) ? "—" : fmt(price, 2)]),
         el("span", {class:`mono ${cls}`}, [pctText]),
-        link(quoteUrl(sym), "↗", {class:"mono", style:"margin-left:4px"})
+        link(quoteUrl(sym), "↗", {class:"mono"})
       ].filter(Boolean);
 
       const title = buildChipTitle(sym, q, payload, fetchedAtUtc, baselineTs);
@@ -1293,7 +1303,6 @@
     ]));
   }
 
-  // backoff if 429s happen
   let __LIVE_BACKOFF_UNTIL = 0;
 
   async function refreshLive(force=false){
@@ -1321,7 +1330,7 @@
     }catch(e){
       const msg = String(e || "");
       if (msg.includes("429")){
-        __LIVE_BACKOFF_UNTIL = Date.now() + 120000; // 2 minutes
+        __LIVE_BACKOFF_UNTIL = Date.now() + 120000;
         updateLiveSettingsStatus("rate limited (backing off)");
       } else {
         updateLiveSettingsStatus("error");
@@ -1340,23 +1349,29 @@
     tick();
   }
 
-  // ----------------------------
   // News
-  // ----------------------------
   function renderNewsList(host, items){
     host.innerHTML = "";
     if (!items || !items.length){
       host.appendChild(el("div", {class:"small muted"}, ["No items."]));
       return;
     }
-    for (const it of items.slice(0, 12)){
+    const n = Math.min(__NEWS_SHOW, items.length);
+    for (const it of items.slice(0, n)){
       const title = it.title || "(untitled)";
       const url = it.url || "#";
       const pub = it.publisher || "—";
       const when = it.published_at || "—";
-      host.appendChild(el("div", {class:"item", style:"flex-direction:column; align-items:stretch"}, [
-        link(url, title, {class:"newsItemTitle"}),
-        el("div", {class:"newsMeta"}, [`${pub} • ${when}`]),
+      host.appendChild(el("div", {class:"newsRow"}, [
+        el("div", {}, [
+          link(url, title, {class:"newsTitle"}),
+          el("div", {class:"newsMeta"}, [`${pub} • ${when}`]),
+        ]),
+      ]));
+    }
+    if (items.length > __NEWS_SHOW){
+      host.appendChild(el("div", {class:"small muted", style:"margin-top:6px"}, [
+        `Showing ${__NEWS_SHOW} of ${items.length}.`
       ]));
     }
   }
@@ -1365,7 +1380,9 @@
     const u = `${HMONEY_WORKER_BASE}/news?scope=market`;
     const payload = await fetchWorkerJson(u);
     const meta = document.getElementById("newsMeta");
-    meta.textContent = payload?.generated_at_utc ? `as of ${payload.generated_at_utc} • ttl ${payload.cache_ttl_s ?? "?"}s` : "—";
+    meta.textContent = payload?.generated_at_utc
+      ? `as of ${payload.generated_at_utc} • ttl ${payload.cache_ttl_s ?? "?"}s${payload.cache_hit ? " • cached" : ""}`
+      : "—";
     renderNewsList(document.getElementById("newsMarket"), payload?.items || []);
   }
 
@@ -1392,9 +1409,7 @@
     tick();
   }
 
-  // ----------------------------
   // AI
-  // ----------------------------
   async function askAI(question, autoInclude){
     const status = document.getElementById("aiStatus");
     const ans = document.getElementById("aiAnswer");
@@ -1463,22 +1478,7 @@
       }
 
       const text = (data.answer || "").toString().trim();
-      const dbg = data.debug || null;
-
-      let debugLine = "";
-      if (dbg && Array.isArray(dbg.packs) && dbg.packs.length){
-        const bits = dbg.packs.map(p => {
-          if (!p || !p.symbol) return null;
-          if (p.found) return `${p.symbol}${p.is_stale ? " (stale)" : ""}`;
-          return `${p.symbol} (missing)`;
-        }).filter(Boolean);
-        if (bits.length) debugLine = `Packs: ${bits.join(", ")}`;
-      }
-
-      ans.innerHTML = `
-        ${debugLine ? `<div class="small muted" style="margin-bottom:8px">${debugLine}</div>` : ""}
-        <div style="white-space:pre-wrap; line-height:1.35">${text || "(empty response)"}</div>
-      `;
+      ans.innerHTML = `<div style="white-space:pre-wrap; line-height:1.35">${text || "(empty response)"}</div>`;
       status.textContent = "Ready";
 
       if (remember){
@@ -1494,14 +1494,13 @@
     }
   }
 
-  // ----------------------------
   // Rendering baseline state
-  // ----------------------------
   function renderPosture(state){
     const posture = state.posture || {};
     const breadth = state.breadth || {};
     const sample = (breadth.sample || {});
     const label = posture.label || "Unknown";
+    const confidence = posture.confidence_tag || "";
 
     const postureRow = document.getElementById("postureRow");
     postureRow.innerHTML = "";
@@ -1509,6 +1508,7 @@
     postureRow.appendChild(el("div", {class:"kv"}, [
       el("div", {class:"k"}, ["Posture"]),
       el("div", {class:"v mono"}, [label]),
+      el("div", {class:"small muted"}, [confidence ? `Confidence: ${confidence}` : ""]),
     ]));
 
     const pe = posture.plain_english || "";
@@ -1517,12 +1517,24 @@
       el("div", {class:"v"}, [pe || "—"]),
     ]));
 
-    const bars = document.getElementById("bars");
-    bars.innerHTML = "";
-
+    // Slightly clearer “what this means”
     const pullPct = sample.pullback_density_pct ?? null;
     const fragPct = sample.fragility_presence_pct ?? null;
     const tiltPts = sample.net_tilt_pct_points ?? null;
+
+    let explain = "—";
+    if (pullPct !== null && fragPct !== null){
+      if (pullPct > fragPct) explain = "Setup-like characteristics are more common than fragility traits. That often means more things are pulled back/stabilizing than breaking down.";
+      else if (fragPct > pullPct) explain = "Fragility characteristics are more common than setup traits. That often means more persistent breakdown behavior than stabilization.";
+      else explain = "Setup and fragility characteristics appear balanced in breadth terms.";
+      if (tiltPts !== null && tiltPts !== undefined){
+        explain += " Net tilt captures the difference (setup minus fragility).";
+      }
+    }
+    document.getElementById("postureExplain").textContent = explain;
+
+    const bars = document.getElementById("bars");
+    bars.innerHTML = "";
 
     function barLine(name, pct, kind){
       const width = pctToWidth(pct);
@@ -1608,10 +1620,11 @@
     document.getElementById("subline").textContent =
       `State loaded • packs_dir: ${basePath || "—"}${(packsWritten !== null ? ` • packs_written: ${fmtInt(packsWritten)}` : "")}${mode ? ` • mode: ${mode}` : ""}${shardText}`;
 
+    document.getElementById("methodLink").href = METHODOLOGY_BASE;
+
     document.getElementById("footer").innerHTML =
       `Baseline analytics: GitHub Actions → /docs. Live/news/AI: Cloudflare Worker. Live overlay uses BYO keys stored locally (this browser).`;
 
-    // Status strip
     setBadge("stState", "good", "State", "Loaded");
     setBadge("stPacks", null, "Packs", `${basePath || "—"}${packsWritten !== null ? ` • written ${fmtInt(packsWritten)}` : ""}`);
     setBadge("stTime", null, "As-of", asOf || "—");
@@ -1624,13 +1637,10 @@
     if (h === "state") return `${METHODOLOGY_BASE}#classifications`;
     if (h === "opp") return `${METHODOLOGY_BASE}#opportunity-score`;
     if (h === "risk") return `${METHODOLOGY_BASE}#structural-risk-score`;
-    if (h === "discount") return `${METHODOLOGY_BASE}#discount-score`;
-    return null;
+    return METHODOLOGY_BASE;
   }
 
-  // ----------------------------
-  // Highlights (state.tables)
-  // ----------------------------
+  // Highlights (briefer)
   function renderHighlights(state){
     const tables = state.tables || {};
     const pulled = (tables.pulled_back && Array.isArray(tables.pulled_back.rows)) ? tables.pulled_back.rows : [];
@@ -1651,7 +1661,7 @@
     const metaParts = [];
     metaParts.push(`Opp≥${fmtInt(oppThr)} • Risk≥${fmtInt(riskThr)}`);
     if (uni !== null) metaParts.push(`universe ${fmtInt(uni)}`);
-    if (packsWritten !== null) metaParts.push(`packs written ${fmtInt(packsWritten)}`);
+    if (packsWritten !== null) metaParts.push(`packs ${fmtInt(packsWritten)}`);
     if (shardText) metaParts.push(shardText);
 
     document.getElementById("hlMeta").textContent = metaParts.join(" • ");
@@ -1661,9 +1671,11 @@
       return link(href, "pack", {class:"mono"});
     }
 
-    function renderList(targetId, rows, emptyMsg){
-      const host = document.getElementById(targetId);
+    function renderList(hostId, title, rows, emptyMsg){
+      const host = document.getElementById(hostId);
       host.innerHTML = "";
+
+      host.appendChild(el("div", {class:"small muted", style:"margin:0 0 6px"}, [title]));
 
       if (!rows || !rows.length){
         host.appendChild(el("div", {class:"small muted"}, [emptyMsg]));
@@ -1674,14 +1686,14 @@
       const thead = el("thead", {}, [el("tr", {}, [
         el("th", {}, ["Ticker"]),
         el("th", {class:"num"}, ["Last"]),
-        el("th", {class:"num"}, ["% Chg 1D"]),
+        el("th", {class:"num"}, ["%1D"]),
         el("th", {class:"num"}, [link(methodologyHrefForHeader("opp"), "Opp", {class:"mono"})]),
         el("th", {class:"num"}, [link(methodologyHrefForHeader("risk"), "Risk", {class:"mono"})]),
       ])]);
 
       const tbody = el("tbody", {}, []);
 
-      for (const r of rows.slice(0, 15)){
+      for (const r of rows.slice(0, 8)){
         const sym = r.ticker;
         const quote = quoteUrl(sym);
         const packA = packLink(sym);
@@ -1704,7 +1716,6 @@
           el("td", {class:"num"}, [link(methodologyHrefForHeader("opp"), fmtInt(r.opportunity_score), {class:"mono"})]),
           el("td", {class:"num"}, [link(methodologyHrefForHeader("risk"), fmtInt(r.risk_score), {class:"mono"})]),
         ]);
-
         tbody.appendChild(tr);
       }
 
@@ -1713,9 +1724,9 @@
       host.appendChild(tbl);
     }
 
-    renderList("hlSetups", pulled, "No setup shortlist in this run.");
-    renderList("hlRisk", fragile, "No risk shortlist in this run.");
-    renderList("hlMixed", mixed, "No cross-currents shortlist in this run (often empty).");
+    renderList("hlSetups", "🟢 Top setups", pulled, "No setup shortlist in this run.");
+    renderList("hlRisk", "🔴 Structural risk", fragile, "No risk shortlist in this run.");
+    renderList("hlMixed", "🟡 Cross-currents", mixed, "No cross-currents shortlist in this run.");
   }
 
   async function renderBenchmarks(){
@@ -1727,19 +1738,16 @@
     let totalFound = 0;
 
     for (const entry of BENCHMARK_GROUPS){
-      if (!Array.isArray(entry) || entry.length !== 2){
-        // fail-soft: skip invalid group entries
-        continue;
-      }
+      if (!Array.isArray(entry) || entry.length !== 2) continue;
       const [groupName, symbols] = entry;
       if (!Array.isArray(symbols)) continue;
 
       totalExpected += symbols.length;
 
       const right = el("div", {class:"small muted"}, ["Loading…"]);
-      const card = el("div", {class:"card", style:"padding:12px; border-radius:14px; margin-top:10px; background:rgba(10,14,20,0.22)"}, [
+      const card = el("div", {class:"drawer", style:"margin-top:10px"}, [
         el("div", {class:"sectionTitle"}, [
-          el("h2", {style:"margin:0"}, [groupName]),
+          el("h2", {style:"margin:0; font-size:13px"}, [groupName]),
           right
         ])
       ]);
@@ -1750,9 +1758,8 @@
         el("th", {}, ["What it represents"]),
         el("th", {class:"num"}, ["Opp"]),
         el("th", {class:"num"}, ["Risk"]),
-        el("th", {class:"num"}, ["% Chg 1D"]),
+        el("th", {class:"num"}, ["%1D"]),
         el("th", {class:"num"}, ["% off High"]),
-        el("th", {class:"num"}, ["Δ200DMA"]),
       ])]);
       const tbody = el("tbody", {}, []);
       tbl.appendChild(thead);
@@ -1768,7 +1775,6 @@
       });
 
       const results = await Promise.all(jobs);
-
       let found = 0;
 
       for (const r of results){
@@ -1788,13 +1794,6 @@
           const scores = pack.scores || {};
           const links = pack.links || {};
           const quoteLink = links.quote || quoteUrl(sym);
-
-          const last = market.last_price ?? null;
-          const ma200 = market.ma_200 ?? null;
-          let dist200 = null;
-          if (last !== null && ma200 !== null && Number(ma200) !== 0){
-            dist200 = (Number(last) / Number(ma200)) - 1;
-          }
 
           const staleTag = r.res.is_stale
             ? el("span", {class:"tag warn", style:"margin-left:8px"}, ["STALE"])
@@ -1818,15 +1817,12 @@
             el("td", {class:"num"}, [link(methodologyHrefForHeader("risk"), fmtInt(scores.structural_risk_score), {class:"mono"})]),
             el("td", {class:`num ${pctClass}`}, [link(quoteLink, fmtPctChange1d(market.pct_change_1d), {class:"mono"})]),
             el("td", {class:"num"}, [link(quoteLink, fmtPctRatio(market.pct_off_52w_high), {class:"mono"})]),
-            el("td", {class:"num"}, [link(quoteLink, fmtPctRatio(dist200), {class:"mono"})]),
           ]);
-
           tbody.appendChild(tr);
-        }else{
+        } else {
           const tr = el("tr", {}, [
             el("td", {}, tickerKids),
-            el("td", {class:"muted"}, [`${BENCHMARK_META[sym] || "Benchmark"} • pack missing (${r.err})`]),
-            el("td", {class:"num muted"}, ["—"]),
+            el("td", {class:"muted"}, [`${BENCHMARK_META[sym] || "Benchmark"} • pack missing`]),
             el("td", {class:"num muted"}, ["—"]),
             el("td", {class:"num muted"}, ["—"]),
             el("td", {class:"num muted"}, ["—"]),
@@ -1847,27 +1843,13 @@
     const uni = __HMONEY_STATE?.universe_size ?? __HMONEY_STATE?.universe?.actual_size ?? null;
 
     const parts = [];
-    parts.push(`Loaded benchmark table via Worker`);
-    parts.push(`found ${totalFound}/${totalExpected} packs`);
+    parts.push(`found ${totalFound}/${totalExpected}`);
     if (wrote !== null) parts.push(`packs_written ${fmtInt(wrote)}`);
     if (uni !== null) parts.push(`universe ${fmtInt(uni)}`);
     document.getElementById("benchStatus").textContent = parts.join(" • ");
   }
 
-  // ----------------------------
-  // Init / safe steps
-  // ----------------------------
-  async function safeStep(name, fn){
-    try{
-      await fn();
-      return true;
-    }catch(e){
-      console.error(`[HMoney] Step failed: ${name}`, e);
-      toast(`${name} failed (see console)`, 2800);
-      return false;
-    }
-  }
-
+  // Safe debug blob
   function buildSafeDebugBlob(){
     const live = loadLivePrefs();
     const ui = loadUiPrefs();
@@ -1896,19 +1878,9 @@
     };
   }
 
+  // Init
   async function init(){
-    // Always wire basics
     document.getElementById("reloadBtn").addEventListener("click", () => location.reload());
-
-    // UI prefs wiring
-    document.getElementById("uiSaveBtn").addEventListener("click", () => {
-      const layout = document.getElementById("uiLayout").value || "market";
-      const compact = !!document.getElementById("uiCompact").checked;
-      const collapseLiveSettings = !!document.getElementById("uiCollapseLiveSettings").checked;
-      saveUiPrefs({ layout, compact, collapseLiveSettings });
-      applyUiPrefs();
-      toast("UI prefs saved");
-    });
 
     document.getElementById("copyDebugBtn").addEventListener("click", async () => {
       try{
@@ -1920,16 +1892,68 @@
       }
     });
 
+    document.getElementById("modalClose").addEventListener("click", hideModal);
+    document.getElementById("modalBack").addEventListener("click", (e) => {
+      if (e.target && e.target.id === "modalBack") hideModal();
+    });
+
     initCollapseButtons();
     applyUiPrefs();
 
-    // Initial statuses (optimistic)
     setBadge("stState", "warn", "State", "Loading…");
     setBadge("stWorker", "warn", "Worker", "Checking…");
     setBadge("stPacks", null, "Packs", "—");
     setBadge("stTime", null, "As-of", "—");
 
-    await safeStep("Worker health", refreshWorkerHealth);
+    await refreshWorkerHealth();
+
+    // News show more/less
+    document.getElementById("newsMoreBtn").addEventListener("click", async () => {
+      __NEWS_SHOW = 12;
+      toast("Showing more headlines");
+      await refreshNewsMarket();
+      if (__LAST_SYMBOL) await refreshNewsTicker(__LAST_SYMBOL);
+    });
+    document.getElementById("newsLessBtn").addEventListener("click", async () => {
+      __NEWS_SHOW = 5;
+      toast("Showing fewer headlines");
+      await refreshNewsMarket();
+      if (__LAST_SYMBOL) await refreshNewsTicker(__LAST_SYMBOL);
+    });
+
+    // Info modals
+    document.getElementById("postureInfoBtn").addEventListener("click", () => {
+      const thr = __HMONEY_STATE?.breadth?.thresholds || {};
+      showModal("How to read Market Posture", `
+        <div class="body">
+          <p><b>Posture</b> is a descriptive label derived from cross-sectional patterns (relative-to-self scoring).</p>
+          <ul>
+            <li><b>Pullback/Stabilization presence</b>: % of tracked assets showing pullback + stabilization traits.</li>
+            <li><b>Breakdown/Fragility presence</b>: % showing persistent downtrend + fragility traits.</li>
+            <li><b>Net tilt</b>: setup presence minus fragility presence (in pct points).</li>
+          </ul>
+          <p>Thresholds (from this run): Opp green ≥ <span class="mono">${thr.opportunity_score_green ?? 60}</span>,
+             Risk red ≥ <span class="mono">${thr.risk_score_red ?? 70}</span>.
+          </p>
+          <p><a href="${METHODOLOGY_BASE}" target="_blank" rel="noopener noreferrer">Open methodology.md</a></p>
+        </div>
+      `);
+    });
+
+    document.getElementById("hlInfoBtn").addEventListener("click", () => {
+      const thr = __HMONEY_STATE?.breadth?.thresholds || {};
+      showModal("Why these appear in Highlights", `
+        <div class="body">
+          <p><b>Top setups</b> are pulled-back assets showing stabilization traits (higher Opportunity, lower Structural Risk).</p>
+          <p><b>Structural risk</b> are assets with persistent breakdown/fragility traits (higher Risk).</p>
+          <p><b>Cross-currents</b> are mixed cases (signals not clean).</p>
+          <p>Run thresholds: Opp green ≥ <span class="mono">${thr.opportunity_score_green ?? 60}</span>,
+             Risk red ≥ <span class="mono">${thr.risk_score_red ?? 70}</span>.
+          </p>
+          <p><a href="${METHODOLOGY_BASE}" target="_blank" rel="noopener noreferrer">Open methodology.md</a></p>
+        </div>
+      `);
+    });
 
     // Load state
     let state = null;
@@ -1942,6 +1966,7 @@
         || Date.now();
 
       __TICKER_SET = buildTickerSetFromState(state);
+
       setHeaderMeta(state);
       renderSnapshot(state);
       renderPosture(state);
@@ -1951,7 +1976,7 @@
       document.getElementById("subline").textContent = "Failed to load state.json";
       setBadge("stState", "bad", "State", "Failed");
       document.getElementById("postureBody").innerHTML = `<div class="err">Error loading state: ${String(e)}</div>`;
-      return; // baseline is required for the rest
+      return;
     }
 
     // Run meta
@@ -2000,7 +2025,7 @@
       await refreshLive(true);
     });
 
-    // Find-a-ticker drawer handlers
+    // Find-a-ticker
     const input = document.getElementById("tickerInput");
     const btn = document.getElementById("loadTickerBtn");
 
@@ -2032,31 +2057,6 @@
 
         const packUrl = res.pack_url ? res.pack_url : `${HMONEY_WORKER_BASE}/pack?ticker=${encodeURIComponent(sym)}`;
 
-        // Show live quote best-effort (only if enabled + keys)
-        let liveLine = "";
-        const p = loadLivePrefs();
-        if (p.enabled){
-          try{
-            const live = await fetchWorkerJson(
-              `${HMONEY_WORKER_BASE}/live?symbols=${encodeURIComponent(sym)}&provider=${encodeURIComponent(p.provider || "auto")}`,
-              buildLiveHeaders()
-            );
-            const q = live?.quotes?.[sym];
-            if (q && q.price !== null && q.price !== undefined){
-              const pct = (q.pct === null || q.pct === undefined) ? "—" : `${Number(q.pct).toFixed(2)}%`;
-              const cls = badgeForDelta(q.pct);
-              const prov = (q.provider || q.source || "").toString();
-              const ptime = q.market_time_utc || q.time_utc || q.ts_utc || "—";
-              liveLine = `<div class="small muted" style="margin-top:8px">
-                Live: <span class="mono">${fmt(q.price,2)}</span> • <span class="mono ${cls}">${pct}</span>
-                <span class="muted">(${live.as_of_utc || "—"})</span>
-                ${prov ? ` • <span class="muted">prov:</span> <span class="mono">${prov}</span>` : ""}
-                ${ptime ? ` • <span class="muted">prov_time:</span> <span class="mono">${ptime}</span>` : ""}
-              </div>`;
-            }
-          }catch{}
-        }
-
         drawer.innerHTML = `
           <div class="ok">Loaded evidence for <span class="mono">${sym}</span> ${tag}</div>
           <div class="hint" style="margin-top:6px">
@@ -2066,20 +2066,16 @@
           </div>
           <div class="small muted" style="margin-top:8px">
             Pack as_of: <span class="mono">${__LAST_PACK_META.pack_as_of_utc || "—"}</span>
-            ${__LAST_PACK_META.pack_run_id ? ` • run_id: <span class="mono">${__LAST_PACK_META.pack_run_id}</span>` : ""}
-            ${__LAST_PACK_META.source ? ` • source: <span class="mono">${__LAST_PACK_META.source}</span>` : ""}
             ${__LAST_PACK_META.is_stale ? ` • <span class="mildneg">stale fallback</span>` : ""}
           </div>
-          ${liveLine}
         `;
 
         await refreshNewsTicker(sym);
       }catch(e){
         drawer.innerHTML = `
-          <div class="err">Could not load evidence for <span class="mono">${sym}</span> via Worker.</div>
+          <div class="err">Could not load evidence for <span class="mono">${sym}</span>.</div>
           <div class="hint">
-            Tried: <a href="${HMONEY_WORKER_BASE}/pack?ticker=${encodeURIComponent(sym)}" target="_blank" rel="noopener noreferrer" class="mono">/pack?ticker=${sym}</a><br/>
-            If this symbol has never been written to evidence packs, there may be no historical fallback yet.
+            Tried: <a href="${HMONEY_WORKER_BASE}/pack?ticker=${encodeURIComponent(sym)}" target="_blank" rel="noopener noreferrer" class="mono">/pack?ticker=${sym}</a>
           </div>
         `;
       }
@@ -2090,7 +2086,7 @@
       if (ev.key === "Enter") doLoad();
     });
 
-    // AI handlers + memory wiring
+    // AI wiring
     const aiBtn = document.getElementById("aiAskBtn");
     const aiQ = document.getElementById("aiQuestion");
     const aiInclude = document.getElementById("aiIncludeTicker");
@@ -2129,19 +2125,18 @@
       }
     });
 
-    // Fail-soft: Benchmarks shouldn’t take the whole page down
-    await safeStep("Benchmarks", renderBenchmarks);
+    // Benchmarks (loaded but section collapsed by default)
+    renderBenchmarks().catch(()=>{});
 
     // Start loops
     scheduleLiveLoop();
     scheduleNewsLoop();
 
     // Initial paint
-    await safeStep("Live refresh", async () => refreshLive(true));
-    await safeStep("News market", refreshNewsMarket);
-    await safeStep("News ticker", async () => refreshNewsTicker(__LAST_SYMBOL));
+    await refreshLive(true);
+    await refreshNewsMarket();
+    await refreshNewsTicker(__LAST_SYMBOL);
 
-    // Refresh worker health periodically (slow)
     setInterval(() => { refreshWorkerHealth().catch(()=>{}); }, 300000);
   }
 
