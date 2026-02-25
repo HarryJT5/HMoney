@@ -462,12 +462,12 @@
   // ----------------------------
   // Helpers / constants
   // ----------------------------
-  const LIVE_DEFAULT_SYMBOLS = ["SPY","QQQ","DIA","IWM","^VIX","TLT","UUP","BTC-USD"];
+  const LIVE_DEFAULT_SYMBOLS = ["SPY","QQQ","DIA","IWM","VXX","TLT","UUP","BTC-USD"];
 
   const BENCHMARK_GROUPS = [
     ["US Equity", ["SPY", "QQQ", "DIA", "IWM", "VTI"]],
     ["Global Equity", ["VT", "VXUS", "VEA", "VWO"]],
-    ["Rates / USD / Vol", ["BND", "TLT", "UUP", "^VIX"]],
+    ["Rates / USD / Vol", ["BND", "TLT", "UUP", "VXX"]],,
     ["Real Assets", ["GLD", "SLV", "USO"]],
     ["Crypto (context)", ["BTC-USD"]],
   ];
@@ -485,7 +485,7 @@
     "BND": "US total bond market",
     "TLT": "Long-duration US Treasuries",
     "UUP": "US dollar strength proxy",
-    "^VIX": "Volatility index (VIX)",
+    "VXX": "VIX futures ETF (vol proxy)",,
     "GLD": "Gold",
     "SLV": "Silver",
     "USO": "Oil (WTI proxy)",
