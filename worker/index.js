@@ -1,3 +1,4 @@
+// worker/index.js
 export default {
   async fetch(request, env) {
     // -------------------------
@@ -138,7 +139,7 @@ export default {
       try { return await resp.json(); } catch { return null; }
     }
 
-    // Your state.json uses evidence_pack_index.base_path as FULL run folder:
+    // state.json uses evidence_pack_index.base_path as FULL run folder:
     // e.g. "evidence_packs/2026-02-24/2359"
     function computeCurrentPackPathFromState(state, ticker) {
       if (!state || typeof state !== "object") return null;
@@ -393,8 +394,7 @@ export default {
       const requested = raw.split(",").map(normalizeTicker).filter(Boolean).slice(0, 25);
       if (!requested.length) return errJson("Missing symbols= (comma-separated)", 400);
 
-      // ---- Reliability aliases ----
-      // If someone requests ^VIX, proxy to VXX under the hood.
+      // Reliability aliases: ^VIX -> VXX proxy (returned under requested key)
       const aliasTo = (sym) => {
         if (sym === "^VIX" || sym === "VIX") return "VXX";
         return sym;
@@ -431,7 +431,7 @@ export default {
       };
 
       // Route caret symbols + BTC-USD to Twelve Data.
-      // NOTE: ^VIX becomes VXX via alias, so it will route to Finnhub (more reliable).
+      // NOTE: ^VIX becomes VXX via alias, so it routes to Finnhub.
       const wantsTwelve = (s) => (s.startsWith("^") || s === "BTC-USD");
 
       const finnhubSyms = fetchSymbols.filter(s => !wantsTwelve(s));
@@ -443,6 +443,7 @@ export default {
           if (finnhubSyms.length) {
             if (!finnhubKey) throw new Error("missing_finnhub_key");
 
+            // Finnhub is single-symbol per call; keep concurrency moderate
             const CONC = 6;
             const results = [];
             for (let i = 0; i < finnhubSyms.length; i += CONC) {
@@ -470,7 +471,7 @@ export default {
           }
         }
 
-        // Rewrite to requested symbols (so client gets quotes keyed by what it asked for)
+        // Rewrite to requested symbols (client gets keys it asked for)
         const outputQuotes = {};
         for (const orig of requested) {
           const fetched = aliasMap[orig] || orig;
@@ -485,7 +486,6 @@ export default {
           if (fetched !== orig) out.proxy_for = fetched; // e.g. ^VIX -> VXX
           outputQuotes[orig] = out;
         }
-
         payload.quotes = outputQuotes;
 
       } catch (e) {
