@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>HMoney Dashboard</title>
 
-  <!-- Optional: modern font. If blocked, it falls back to system UI fonts. -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -35,8 +34,7 @@
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
       font-size: 15.5px;
       line-height: 1.35;
-      background:
-        radial-gradient(1200px 700px at 20% -10%, #e6f0ff 0%, var(--bg) 55%) fixed;
+      background: radial-gradient(1200px 700px at 20% -10%, #e6f0ff 0%, var(--bg) 55%) fixed;
       color:var(--text);
     }
 
@@ -45,10 +43,7 @@
 
     .wrap{max-width:1220px; margin:0 auto; padding:18px}
 
-    .topbar{
-      display:flex; gap:12px; align-items:center; justify-content:space-between;
-      margin-bottom:10px;
-    }
+    .topbar{display:flex; gap:12px; align-items:center; justify-content:space-between; margin-bottom:10px;}
     .brand{display:flex; gap:10px; align-items:baseline}
     .brand h1{font-size:20px; margin:0; letter-spacing:-0.01em}
     .brand .sub{color:var(--muted); font-size:12px}
@@ -98,22 +93,13 @@
     .muted{color:var(--muted)}
     .mono{font-variant-numeric: tabular-nums; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}
 
-    .statusStrip{
-      display:flex; gap:8px; flex-wrap:wrap; align-items:center;
-      margin:0 0 10px;
-    }
+    .statusStrip{display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin:0 0 10px;}
     .badge{
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      padding:6px 10px;
-      border:1px solid var(--line);
+      display:inline-flex; align-items:center; gap:6px;
+      padding:6px 10px; border:1px solid var(--line);
       background: rgba(255,255,255,0.78);
-      border-radius:999px;
-      font-size:12px;
-      color:var(--muted);
-      white-space:nowrap;
-      box-shadow: var(--shadow2);
+      border-radius:999px; font-size:12px; color:var(--muted);
+      white-space:nowrap; box-shadow: var(--shadow2);
     }
     .badge b{color:var(--text); font-weight:600}
     .dot{width:8px; height:8px; border-radius:999px; background:rgba(100,116,139,0.35); display:inline-block}
@@ -122,69 +108,37 @@
     .dot.bad{background:rgba(220,38,38,0.95)}
 
     .jump{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
-      margin:0 0 14px;
-      padding:10px 12px;
-      border:1px solid var(--line);
-      border-radius:16px;
-      background: rgba(255,255,255,0.6);
-      box-shadow: var(--shadow2);
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+      margin:0 0 14px; padding:10px 12px;
+      border:1px solid var(--line); border-radius:16px;
+      background: rgba(255,255,255,0.6); box-shadow: var(--shadow2);
     }
     .jump a{font-size:12px}
     .jump .sep{opacity:0.35}
 
-    .grid{
-      display:grid;
-      grid-template-columns: 1.15fr 0.85fr;
-      gap:12px;
-    }
+    .grid{display:grid; grid-template-columns: 1.15fr 0.85fr; gap:12px}
     @media (max-width: 980px){ .grid{grid-template-columns:1fr} }
 
     .belowGrid{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:12px;
-      align-items:start; /* fixes empty stretched column */
+      display:grid; grid-template-columns: 1fr 1fr; gap:12px;
+      align-items:start;
     }
     @media (max-width: 980px){ .belowGrid{grid-template-columns:1fr} }
     .span2{grid-column: 1 / -1}
 
-    /* Live tape */
-    .tape{
-      display:flex;
-      gap:8px;
-      align-items:center;
-      overflow-x:auto;
-      padding:4px 0;
-      scrollbar-width: none;
-    }
+    .tape{display:flex; gap:8px; align-items:center; overflow-x:auto; padding:4px 0; scrollbar-width:none}
     .tape::-webkit-scrollbar{display:none}
-
     .chip{
-      background:var(--chip);
-      border:1px solid var(--line);
-      padding:7px 10px;
-      border-radius:999px;
-      font-size:12px;
-      color:var(--text);
-      display:inline-flex;
-      gap:8px;
-      align-items:center;
-      white-space:nowrap;
+      background:var(--chip); border:1px solid var(--line);
+      padding:7px 10px; border-radius:999px;
+      font-size:12px; color:var(--text);
+      display:inline-flex; gap:8px; align-items:center; white-space:nowrap;
     }
     .tag{
-      display:inline-flex;
-      align-items:center;
-      padding:2px 8px;
-      border-radius:999px;
-      font-size:11px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,0.75);
-      color:var(--muted);
-      white-space:nowrap;
+      display:inline-flex; align-items:center;
+      padding:2px 8px; border-radius:999px; font-size:11px;
+      border:1px solid var(--line); background: rgba(255,255,255,0.75);
+      color:var(--muted); white-space:nowrap;
     }
     .tag.good{color:var(--good)}
     .tag.warn{color:var(--warn)}
@@ -194,15 +148,13 @@
     .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
     .kv{
       display:flex; flex-direction:column; gap:4px;
-      padding:12px 12px;
-      background: rgba(241,245,249,0.55);
-      border:1px solid var(--line);
-      border-radius:16px;
+      padding:12px; background: rgba(241,245,249,0.55);
+      border:1px solid var(--line); border-radius:16px;
+      min-width: 220px;
     }
     .k{color:var(--muted); font-size:12px}
     .v{font-size:14px}
 
-    /* “Human” details accordion */
     .detailsBox{
       border:1px solid var(--line);
       border-radius:16px;
@@ -211,13 +163,11 @@
       box-shadow: var(--shadow2);
     }
 
-    /* Bars (kept, but hidden behind Details by default) */
     .barwrap{display:flex; flex-direction:column; gap:10px}
     .barline{display:flex; gap:10px; align-items:center; justify-content:space-between}
     .barlabel{font-size:12px; color:var(--muted)}
     .bar{
-      flex:1;
-      height:10px;
+      flex:1; height:10px;
       border:1px solid var(--line);
       background:#eef2ff;
       border-radius:999px;
@@ -230,7 +180,6 @@
     .fill.warn{background: linear-gradient(90deg, rgba(245,158,11,0.18), rgba(245,158,11,0.9))}
     .pct{font-size:12px; min-width:72px; text-align:right; color:var(--text)}
 
-    /* Tables */
     table{width:100%; border-collapse:collapse; font-size:12.5px}
     th,td{border-bottom:1px solid rgba(226,232,240,0.95); padding:9px 7px; vertical-align:top}
     th{color:var(--muted); font-weight:600; text-align:left}
@@ -239,54 +188,34 @@
     .neg{color:var(--bad)}
     .mildneg{color:var(--warn)}
 
-    /* Inputs */
     .search{
       display:flex; gap:8px; align-items:center; width:100%;
-      padding:10px 12px;
-      background: rgba(241,245,249,0.55);
-      border:1px solid var(--line);
-      border-radius:16px;
+      padding:10px 12px; background: rgba(241,245,249,0.55);
+      border:1px solid var(--line); border-radius:16px;
     }
     input[type="text"]{
       flex:1; background:transparent; border:0; outline:none;
       color:var(--text); font-size:14px;
     }
     textarea{
-      flex:1;
-      background:transparent;
-      border:0;
-      outline:none;
-      color:var(--text);
-      font-size:14px;
-      resize:vertical;
-      min-height:70px;
+      flex:1; background:transparent; border:0; outline:none;
+      color:var(--text); font-size:14px;
+      resize:vertical; min-height:70px;
     }
 
-    /* News */
     .cols{display:grid; grid-template-columns: 1fr 1fr; gap:12px}
     @media (max-width: 980px){ .cols{grid-template-columns:1fr} }
     .list{display:flex; flex-direction:column; gap:8px}
     .newsRow{
-      display:flex;
-      gap:10px;
-      justify-content:space-between;
-      align-items:flex-start;
-      padding:10px 12px;
-      border:1px solid rgba(226,232,240,0.95);
-      border-radius:14px;
-      background: rgba(255,255,255,0.82);
+      display:flex; gap:10px; justify-content:space-between; align-items:flex-start;
+      padding:10px 12px; border:1px solid rgba(226,232,240,0.95);
+      border-radius:14px; background: rgba(255,255,255,0.82);
       box-shadow: var(--shadow2);
     }
-    .newsRow:hover{filter:brightness(1.01)}
     .newsTitle{font-size:13px; line-height:1.25}
     .newsMeta{font-size:11.5px; color:var(--muted); margin-top:4px}
-    .newsScroll{
-      max-height: 360px; /* prevents the section from taking over the page */
-      overflow:auto;
-      padding-right:4px;
-    }
+    .newsScroll{max-height: 360px; overflow:auto; padding-right:4px}
 
-    /* Highlights tabs */
     .tabs{display:flex; gap:8px; flex-wrap:wrap; margin:8px 0 10px}
     .tabBtn{
       border:1px solid var(--line);
@@ -304,16 +233,35 @@
       font-weight:600;
     }
 
+    /* Fear & Greed gauge */
+    .fgWrap{display:flex; gap:12px; align-items:center; flex-wrap:wrap}
+    .fgDial{
+      width: 240px;
+      max-width: 100%;
+      background: rgba(255,255,255,0.75);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 10px 10px 8px;
+      box-shadow: var(--shadow2);
+    }
+    .fgMeta{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      min-width: 220px;
+    }
+    .fgScoreLine{display:flex; gap:8px; align-items:baseline; flex-wrap:wrap}
+    .fgBig{font-size:20px; font-weight:800; letter-spacing:-0.01em}
+    .fgLabel{font-weight:700}
+    .fgSmall{font-size:12px; color:var(--muted)}
+    .fgScale{display:flex; justify-content:space-between; font-size:11px; color:var(--muted); margin-top:6px}
+
     /* Modal */
     .modalBack{
-      position:fixed;
-      inset:0;
+      position:fixed; inset:0;
       background: rgba(2,6,23,0.45);
-      display:none;
-      align-items:center;
-      justify-content:center;
-      z-index:9998;
-      padding:18px;
+      display:none; align-items:center; justify-content:center;
+      z-index:9998; padding:18px;
     }
     .modal{
       width:min(780px, 100%);
@@ -360,7 +308,7 @@
     <a href="#aiCard">Ask</a>
   </div>
 
-  <!-- Live overlay -->
+  <!-- Live -->
   <div class="card" id="liveCard" style="padding:12px; margin-bottom:12px;">
     <div class="sectionTitle">
       <h2>Live</h2>
@@ -377,7 +325,7 @@
         <div class="sectionTitle">
           <div>
             <div style="font-weight:700; margin-bottom:2px">Live quotes (optional)</div>
-            <div class="small">If you add keys, quotes refresh near-real-time during market hours. Keys stay on this device.</div>
+            <div class="small">If you connect a provider, prices update frequently during market hours.</div>
           </div>
           <button class="iconBtn" data-collapse="liveSettingsBody" title="Collapse/expand">–</button>
         </div>
@@ -404,12 +352,12 @@
           </div>
 
           <div class="row" style="gap:10px; margin-top:10px; align-items:center">
-            <span class="small muted" style="min-width:110px">Finnhub key</span>
+            <span class="small muted" style="min-width:120px">Finnhub token</span>
             <input class="btn mono" id="finnhubKey" type="password" placeholder="Saved on this device" autocomplete="off" style="flex:1; text-align:left"/>
           </div>
 
           <div class="row" style="gap:10px; margin-top:10px; align-items:center">
-            <span class="small muted" style="min-width:110px">Twelve Data key</span>
+            <span class="small muted" style="min-width:120px">Twelve Data token</span>
             <input class="btn mono" id="twelveKey" type="password" placeholder="Saved on this device" autocomplete="off" style="flex:1; text-align:left"/>
           </div>
         </div>
@@ -417,14 +365,14 @@
     </div>
   </div>
 
-  <!-- Core grid -->
+  <!-- Core -->
   <div class="grid">
     <div class="card" id="marketCard">
       <div class="sectionTitle">
         <h2>Market</h2>
         <div class="row" style="gap:8px">
           <div class="small" id="asOf">—</div>
-          <button class="iconBtn" id="marketInfoBtn" title="How to read this">i</button>
+          <button class="iconBtn" id="marketInfoBtn" title="Definitions">i</button>
           <button class="iconBtn" data-collapse="marketBody" title="Collapse/expand">–</button>
         </div>
       </div>
@@ -446,13 +394,13 @@
           <div id="marketExplain" style="font-size:14px">—</div>
           <div class="row" style="gap:8px; margin-top:10px">
             <button class="btn" id="toggleMarketDetailsBtn">Show details</button>
-            <a class="btn" id="openNewsBtn" href="#newsCard" style="display:inline-flex; align-items:center; justify-content:center">More news</a>
+            <a class="btn" href="#newsCard" style="display:inline-flex; align-items:center; justify-content:center">More news</a>
           </div>
 
           <div id="marketDetails" class="hidden" style="margin-top:10px">
             <div class="barwrap" id="bars"></div>
             <div class="small muted" style="margin-top:10px">
-              These are cross-sectional pattern counts (how common certain behaviors are in the tracked set). They’re meant to be read as “how widespread,” not as a forecast.
+              These details describe “how widespread” certain patterns are in the tracked set. They are not a forecast.
             </div>
           </div>
         </div>
@@ -463,9 +411,9 @@
           <div class="sectionTitle">
             <div>
               <div style="font-weight:700; margin-bottom:2px">Top headlines</div>
-              <div class="small">A few items from today’s feed. Expand in the News section for more.</div>
+              <div class="small">A few items from today’s feed.</div>
             </div>
-            <button class="btn" id="headlinesExpandBtn">Show more</button>
+            <button class="btn" id="headlinesExpandBtn">See more</button>
           </div>
           <div id="topHeadlines" style="margin-top:10px"></div>
         </div>
@@ -501,7 +449,6 @@
   <div style="height:12px"></div>
 
   <div class="belowGrid" id="belowGrid">
-    <!-- Highlights -->
     <div class="card" id="highlightsCard">
       <div class="sectionTitle">
         <h2>Highlights</h2>
@@ -514,12 +461,12 @@
 
       <div class="cardBody" id="highlightsBody">
         <div class="small muted">
-          These are examples surfaced by the scan. They’re meant to be a short list to review, not a recommendation.
+          Short list of examples to review. Use context + evidence before concluding anything.
         </div>
 
         <div class="tabs">
           <button class="tabBtn active" id="tabSetups">Setups</button>
-          <button class="tabBtn" id="tabRisk">Risk</button>
+          <button class="tabBtn" id="tabRisk">Fragility</button>
           <button class="tabBtn" id="tabMixed">Mixed</button>
         </div>
 
@@ -527,7 +474,6 @@
       </div>
     </div>
 
-    <!-- Benchmarks -->
     <div class="card" id="benchCard">
       <div class="sectionTitle">
         <h2>Benchmarks</h2>
@@ -538,14 +484,11 @@
       </div>
 
       <div class="cardBody hidden" id="benchBody">
-        <div class="small muted" style="margin-bottom:10px">
-          Context tickers used as reference points.
-        </div>
+        <div class="small muted" style="margin-bottom:10px">Reference points.</div>
         <div id="benchTables"></div>
       </div>
     </div>
 
-    <!-- News -->
     <div class="card" id="newsCard">
       <div class="sectionTitle">
         <h2>News</h2>
@@ -565,25 +508,20 @@
         <div class="cols">
           <div>
             <div class="small muted" style="margin-bottom:6px">Market</div>
-            <div class="newsScroll">
-              <div id="newsMarket" class="list"></div>
-            </div>
+            <div class="newsScroll"><div id="newsMarket" class="list"></div></div>
           </div>
           <div>
             <div class="small muted" style="margin-bottom:6px">Selected ticker</div>
-            <div class="newsScroll">
-              <div id="newsTicker" class="list"></div>
-            </div>
+            <div class="newsScroll"><div id="newsTicker" class="list"></div></div>
           </div>
         </div>
 
         <div class="small muted" style="margin-top:10px">
-          Headlines are from a small set of sources; click to open the article.
+          Click a headline to open the source.
         </div>
       </div>
     </div>
 
-    <!-- Ask -->
     <div class="card span2" id="aiCard">
       <div class="sectionTitle">
         <h2>Ask</h2>
@@ -603,7 +541,7 @@
           <div class="row" style="margin-top:10px">
             <label class="small muted">
               <input type="checkbox" id="aiIncludeTicker" checked />
-              Include details for tickers mentioned
+              Include ticker context
             </label>
 
             <label class="small muted">
@@ -626,12 +564,9 @@
     </div>
   </div>
 
-  <div class="footer" id="footer">
-    HMoney is diagnostic decision support. Not financial advice.
-  </div>
+  <div class="footer" id="footer">HMoney is diagnostic decision support. Not financial advice.</div>
 </div>
 
-<!-- Modal -->
 <div class="modalBack" id="modalBack">
   <div class="modal">
     <div class="sectionTitle">
@@ -643,7 +578,6 @@
 </div>
 
 <script>
-  // Endpoints (kept in code; UI does not reference them)
   const HMONEY_WORKER_BASE = "https://bearingbullishballs.htgamein.workers.dev";
   const HMONEY_AI_ENDPOINT = `${HMONEY_WORKER_BASE}/ai`;
   const HMONEY_MARKET_ENDPOINT = `${HMONEY_WORKER_BASE}/market`;
@@ -655,13 +589,11 @@
     return `${path}${sep}v=${v}`;
   }
 
-  // Local settings (not mentioned in UI)
   const LS_LIVE_ENABLED = "hmoney_live_enabled_v1";
   const LS_LIVE_PROVIDER = "hmoney_live_provider_v1";
   const LS_FINNHUB_KEY  = "hmoney_finnhub_key_v1";
   const LS_TWELVE_KEY   = "hmoney_twelvedata_key_v1";
 
-  // AI memory
   const AI_HISTORY_STORAGE_KEY = "hmoney_ai_history_v1";
   const AI_REMEMBER_PREF_KEY = "hmoney_ai_remember_v1";
   const AI_HISTORY_MAX_MESSAGES = 12;
@@ -674,33 +606,17 @@
     ["Global Equity", ["VT", "VXUS", "VEA", "VWO"]],
     ["Rates / USD / Vol", ["BND", "TLT", "UUP", "VXX"]],
     ["Real Assets", ["GLD", "SLV", "USO"]],
-    ["Crypto (context)", ["BTC-USD"]],
+    ["Crypto", ["BTC-USD"]],
   ];
 
   const BENCHMARK_META = {
-    "SPY": "S&P 500",
-    "QQQ": "Nasdaq 100",
-    "DIA": "Dow 30",
-    "IWM": "US small-cap",
-    "VTI": "US total market",
-    "VT": "World",
-    "VXUS": "Intl ex-US",
-    "VEA": "Developed ex-US",
-    "VWO": "Emerging markets",
-    "BND": "US bonds",
-    "TLT": "Long Treasuries",
-    "UUP": "US dollar proxy",
-    "VXX": "Volatility proxy",
-    "GLD": "Gold",
-    "SLV": "Silver",
-    "USO": "Oil proxy",
-    "BTC-USD": "Bitcoin",
+    "SPY":"S&P 500","QQQ":"Nasdaq 100","DIA":"Dow 30","IWM":"US small-cap","VTI":"US total market",
+    "VT":"World","VXUS":"Intl ex-US","VEA":"Developed ex-US","VWO":"Emerging markets",
+    "BND":"US bonds","TLT":"Long Treasuries","UUP":"US dollar proxy","VXX":"Volatility proxy",
+    "GLD":"Gold","SLV":"Silver","USO":"Oil proxy","BTC-USD":"Bitcoin",
   };
 
-  // News display counts
   let __NEWS_SHOW = 5;
-
-  // Market details collapsed by default
   let __MARKET_DETAILS_OPEN = false;
 
   function fmt(x, digits=1){
@@ -734,9 +650,7 @@
     if (!Number.isFinite(n)) return 0;
     return Math.max(0, Math.min(100, n));
   }
-  function quoteUrl(sym){
-    return `https://finance.yahoo.com/quote/${encodeURIComponent(sym)}`;
-  }
+  function quoteUrl(sym){ return `https://finance.yahoo.com/quote/${encodeURIComponent(sym)}`; }
 
   function el(tag, attrs={}, children=[]){
     const e = document.createElement(tag);
@@ -764,7 +678,6 @@
   function setBadgeText(badgeId, html){
     const b = document.getElementById(badgeId);
     if (!b) return;
-    // Keep dot + label bold, update the trailing text area by rewriting fully
     const dot = b.querySelector(".dot");
     const bold = b.querySelector("b");
     const label = bold ? bold.textContent : "";
@@ -774,17 +687,13 @@
     b.insertAdjacentHTML("beforeend", " " + html);
   }
 
-  // Modal
   function showModal(title, html){
     document.getElementById("modalTitle").textContent = title || "Info";
     document.getElementById("modalBody").innerHTML = html || "";
     document.getElementById("modalBack").style.display = "flex";
   }
-  function hideModal(){
-    document.getElementById("modalBack").style.display = "none";
-  }
+  function hideModal(){ document.getElementById("modalBack").style.display = "none"; }
 
-  // Collapsibles
   function applyCollapse(panelId, collapsed){
     const body = document.getElementById(panelId);
     if (!body) return;
@@ -806,7 +715,6 @@
     });
   }
 
-  // Fetch helpers
   async function fetchJson(path){
     const r = await fetch(withCacheBust(path), {cache:"no-store"});
     if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
@@ -819,7 +727,6 @@
     return await r.json();
   }
 
-  // Live prefs
   function loadLivePrefs(){
     const enabled = (localStorage.getItem(LS_LIVE_ENABLED) ?? "false") === "true";
     const provider = localStorage.getItem(LS_LIVE_PROVIDER) || "auto";
@@ -846,12 +753,11 @@
     const hasFH = !!(p.finnhubKey && p.finnhubKey.trim());
     const hasTD = !!(p.twelveKey && p.twelveKey.trim());
     let msg = p.enabled ? "On" : "Off";
-    msg += ` • source: ${p.provider || "auto"}`;
-    msg += ` • keys: ${hasFH ? "Finnhub" : ""}${hasFH && hasTD ? " + " : ""}${hasTD ? "Twelve" : ""}${(!hasFH && !hasTD) ? "none" : ""}`;
+    msg += ` • ${p.provider || "auto"}`;
+    msg += ` • ${hasFH || hasTD ? "connected" : "not connected"}`;
     if (extra) msg += ` • ${extra}`;
     document.getElementById("liveSettingsStatus").textContent = msg;
   }
-
   function buildLiveHeaders(){
     const p = loadLivePrefs();
     const headers = {};
@@ -868,7 +774,6 @@
     if (v >= -10) return "mildneg";
     return "neg";
   }
-
   function providerTag(q){
     const prov = (q?.provider || "").toString().toLowerCase();
     if (!prov) return null;
@@ -877,7 +782,116 @@
     return el("span", {class:"tag tiny"}, [prov.slice(0,6).toUpperCase()]);
   }
 
-  // State cache
+  function humanizeConfidenceTag(tag){
+    const t = String(tag || "").toLowerCase().trim();
+    const map = {
+      "mixed_evidence":"mixed",
+      "strong_evidence":"strong",
+      "medium_evidence":"moderate",
+      "low_evidence":"light",
+      "high_evidence":"strong"
+    };
+    if (map[t]) return map[t];
+    if (!t) return "";
+    return t.replace(/_evidence$/,"").replace(/_/g," ");
+  }
+
+  function titleCase(s){
+    return String(s || "").toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+  }
+
+  // ---- Fear & Greed gauge ----
+  function fearGreedBand(score){
+    const s = Number(score);
+    if (!Number.isFinite(s)) return { label:"—", kind:"warn" };
+    if (s < 25) return { label:"Extreme Fear", kind:"bad" };
+    if (s < 45) return { label:"Fear", kind:"warn" };
+    if (s < 55) return { label:"Neutral", kind:"warn" };
+    if (s < 75) return { label:"Greed", kind:"good" };
+    return { label:"Extreme Greed", kind:"bad" };
+  }
+
+  function formatET(iso){
+    if (!iso) return "—";
+    try{
+      const d = new Date(iso);
+      const fmt = new Intl.DateTimeFormat("en-US", {
+        timeZone: "America/New_York",
+        month: "short", day: "2-digit", year: "numeric",
+        hour: "numeric", minute: "2-digit", hour12: true
+      });
+      return `${fmt.format(d)} ET`;
+    }catch{
+      return String(iso);
+    }
+  }
+
+  function renderFearGreedGauge(score){
+    const s = Number(score);
+    if (!Number.isFinite(s)) return el("div", {class:"small muted"}, ["—"]);
+
+    const clamped = Math.max(0, Math.min(100, s));
+    const angle = -90 + (clamped / 100) * 180; // left -> right
+
+    const band = fearGreedBand(clamped);
+    const color = band.kind === "good" ? "var(--good)" : (band.kind === "bad" ? "var(--bad)" : "var(--warn)");
+
+    const w = 220, h = 130;
+    const cx = w/2, cy = 110;
+    const r = 90;
+
+    const svg = el("svg", {width:String(w), height:String(h), viewBox:`0 0 ${w} ${h}`}, []);
+    // base arc
+    svg.appendChild(el("path", {
+      d: `M ${cx-r} ${cy} A ${r} ${r} 0 0 1 ${cx+r} ${cy}`,
+      fill:"none",
+      stroke:"#e5e7eb",
+      "stroke-width":"10",
+      "stroke-linecap":"round"
+    }, []));
+
+    // indicator needle
+    const needle = el("line", {
+      x1: String(cx), y1: String(cy),
+      x2: String(cx), y2: String(cy - (r-8)),
+      stroke: color,
+      "stroke-width":"3",
+      "stroke-linecap":"round",
+      transform: `rotate(${angle} ${cx} ${cy})`
+    }, []);
+    svg.appendChild(needle);
+
+    // center dot
+    svg.appendChild(el("circle", {cx:String(cx), cy:String(cy), r:"5", fill: color}, []));
+
+    // score text
+    svg.appendChild(el("text", {
+      x:String(cx), y:String(68),
+      "text-anchor":"middle",
+      fill:"var(--text)",
+      style:"font-size:22px; font-weight:800;"
+    }, [String(Math.round(clamped))]));
+
+    // label text
+    svg.appendChild(el("text", {
+      x:String(cx), y:String(90),
+      "text-anchor":"middle",
+      fill:"var(--muted)",
+      style:"font-size:12px; font-weight:600;"
+    }, [band.label]));
+
+    const wrap = el("div", {class:"fgDial"}, [
+      svg,
+      el("div", {class:"fgScale"}, [
+        el("span", {}, ["0"]),
+        el("span", {}, ["50"]),
+        el("span", {}, ["100"])
+      ])
+    ]);
+    return wrap;
+  }
+
+  // ---------------- State / UI ----------------
   let __HMONEY_STATE = null;
   let __LAST_SYMBOL = null;
   let __LAST_PACK = null;
@@ -885,68 +899,7 @@
   let __AI_HISTORY = [];
   let __BENCH_LOADED = false;
   let __HL_TAB = "setups";
-
-  // AI memory
-  function loadRememberPref(){
-    const v = localStorage.getItem(AI_REMEMBER_PREF_KEY);
-    if (v === null) return true;
-    return v === "true";
-  }
-  function saveRememberPref(on){
-    localStorage.setItem(AI_REMEMBER_PREF_KEY, on ? "true" : "false");
-  }
-  function loadHistoryFromStorage(){
-    try{
-      const raw = localStorage.getItem(AI_HISTORY_STORAGE_KEY);
-      if (!raw) return [];
-      const arr = JSON.parse(raw);
-      if (!Array.isArray(arr)) return [];
-      return arr
-        .filter(m => m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string")
-        .map(m => ({ role: m.role, content: m.content }));
-    }catch{
-      return [];
-    }
-  }
-  function saveHistoryToStorage(history){
-    try{ localStorage.setItem(AI_HISTORY_STORAGE_KEY, JSON.stringify(history)); }catch{}
-  }
-  function clearHistory(){
-    __AI_HISTORY = [];
-    try{ localStorage.removeItem(AI_HISTORY_STORAGE_KEY); }catch{}
-    updateMemoryMeta();
-  }
-  function trimHistory(history){
-    let h = Array.isArray(history) ? history.slice() : [];
-    if (h.length > AI_HISTORY_MAX_MESSAGES) h = h.slice(h.length - AI_HISTORY_MAX_MESSAGES);
-
-    let s = JSON.stringify(h);
-    while (s.length > AI_HISTORY_MAX_CHARS && h.length > 2){
-      h = h.slice(2);
-      s = JSON.stringify(h);
-    }
-    if (s.length > AI_HISTORY_MAX_CHARS && h.length > 0){
-      h = h.slice(h.length - 2);
-    }
-    return h;
-  }
-  function updateMemoryMeta(){
-    const meta = document.getElementById("aiMemoryMeta");
-    const remember = document.getElementById("aiRemember")?.checked;
-    const count = __AI_HISTORY.length;
-    const shown = trimHistory(__AI_HISTORY).length;
-    meta.textContent = remember
-      ? `Memory: ON • stored turns: ${count} • sending: ${shown}`
-      : `Memory: OFF`;
-  }
-  function appendToHistory(role, content){
-    if (!content) return;
-    __AI_HISTORY.push({ role, content: String(content) });
-    __AI_HISTORY = trimHistory(__AI_HISTORY);
-    const remember = document.getElementById("aiRemember")?.checked;
-    if (remember) saveHistoryToStorage(__AI_HISTORY);
-    updateMemoryMeta();
-  }
+  let __LAST_MARKET_NEWS = [];
 
   function slimStateForAI(state){
     return {
@@ -988,31 +941,36 @@
       tok = tok.replace(/\.+$/g, "");
       if (stop.has(tok)) continue;
       if (!/[A-Z]/.test(tok)) continue;
-      if (!seen.has(tok)){
-        seen.add(tok);
-        out.push(tok);
-      }
+      if (!seen.has(tok)){ seen.add(tok); out.push(tok); }
     }
     return out.slice(0, 6);
   }
 
-  // --- Live render
+  // ---- Live ----
   function renderLiveChips(payload){
     const chips = document.getElementById("liveChips");
     const meta = document.getElementById("liveMeta");
     chips.innerHTML = "";
 
+    const p = loadLivePrefs();
+    if (!p.enabled){
+      meta.textContent = "Off";
+      setDot("dotLive", null);
+      setBadgeText("stLive", "Off");
+      return;
+    }
+
     if (!payload || !payload.ok){
-      meta.textContent = "Unavailable";
+      meta.textContent = "Issue";
       setDot("dotLive", "warn");
-      setBadgeText("stLive", `—`);
+      setBadgeText("stLive", "Issue");
       return;
     }
 
     const asOf = payload.as_of_utc || "—";
     meta.textContent = `Updated ${asOf}`;
     setDot("dotLive", "good");
-    setBadgeText("stLive", `${payload.cache_hit ? "(recent)" : "On"} • ${asOf}`);
+    setBadgeText("stLive", "On");
 
     const quotes = payload.quotes || {};
     for (const sym of LIVE_DEFAULT_SYMBOLS){
@@ -1031,26 +989,15 @@
         link(quoteUrl(sym), "↗", {class:"mono"})
       ].filter(Boolean);
 
-      chips.appendChild(el("span", {class:"chip", title:`${sym}\n${q?.provider ? "Source: " + q.provider : ""}\nTime: ${q?.market_time_utc || asOf}`}, kids));
+      chips.appendChild(el("span", {class:"chip", title:`${sym}\n${q?.provider ? "Source: "+q.provider : ""}\nTime: ${q?.market_time_utc || asOf}`}, kids));
     }
   }
 
-  let __LIVE_BACKOFF_UNTIL = 0;
   async function refreshLive(force=false){
     const p = loadLivePrefs();
-    const now = Date.now();
-
-    // Status badge
     if (!p.enabled){
-      setDot("dotLive", null);
-      setBadgeText("stLive", `Off`);
       renderLiveChips(null);
       updateLiveSettingsStatus("off");
-      return;
-    }
-
-    if (!force && __LIVE_BACKOFF_UNTIL && now < __LIVE_BACKOFF_UNTIL){
-      updateLiveSettingsStatus("waiting");
       return;
     }
 
@@ -1062,17 +1009,9 @@
       const payload = await fetchWorkerJson(u, buildLiveHeaders());
       renderLiveChips(payload);
       updateLiveSettingsStatus("ok");
-    }catch(e){
-      const msg = String(e || "");
-      if (msg.includes("429")){
-        __LIVE_BACKOFF_UNTIL = Date.now() + 120000;
-        updateLiveSettingsStatus("rate limited");
-      } else {
-        updateLiveSettingsStatus("error");
-      }
-      setDot("dotLive", "warn");
-      setBadgeText("stLive", `Issue`);
-      renderLiveChips({ ok:false, error: msg });
+    }catch{
+      updateLiveSettingsStatus("issue");
+      renderLiveChips({ok:false});
     }
   }
 
@@ -1086,63 +1025,58 @@
     tick();
   }
 
-  // --- Market sentiment (CNN Fear & Greed)
+  // ---- Market pulse ----
   async function refreshMarketPulse(){
     try{
       const data = await fetchWorkerJson(HMONEY_MARKET_ENDPOINT);
-      if (!data || !data.ok){
+
+      if (!data || !data.ok || !data.fear_greed){
         setDot("dotSent", "warn");
-        setBadgeText("stSentiment", `Unavailable`);
-        return;
-      }
-      const fg = data.fear_greed || null;
-      if (!fg){
-        setDot("dotSent", "warn");
-        setBadgeText("stSentiment", `Unavailable`);
+        setBadgeText("stSentiment", "Unavailable");
         return;
       }
 
-      const score = (fg.score !== null && fg.score !== undefined) ? Math.round(Number(fg.score)) : null;
-      const rating = (fg.rating || "").toString();
-      const when = fg.timestamp_utc || fg.timestamp || "";
+      const fg = data.fear_greed;
+      const score = (fg.score !== null && fg.score !== undefined) ? Number(fg.score) : null;
+      const rating = titleCase(fg.rating || "");
+      const band = fearGreedBand(score);
 
-      // Dot color heuristic
-      let kind = null;
-      const r = rating.toLowerCase();
-      if (r.includes("fear")) kind = "warn";
-      if (r.includes("greed")) kind = "good";
-      if (r.includes("extreme")) kind = "bad"; // extreme fear/greed -> attention
-      setDot("dotSent", kind || "warn");
+      setDot("dotSent", band.kind);
+      setBadgeText("stSentiment", `${rating || band.label}${Number.isFinite(score) ? ` (${Math.round(score)})` : ""}`);
 
-      const label = score !== null ? `${rating} (${score})` : rating || "—";
-      setBadgeText("stSentiment", `${label}`);
-
-      // Also show inside Market card top row
+      // Render inside Market top row (dial + text)
       const host = document.getElementById("marketTopRow");
-      const box = el("div", {class:"kv", style:"min-width:220px"}, [
+      const existing = host.querySelector('[data-kind="fgi"]');
+      const dial = renderFearGreedGauge(score);
+
+      const when = fg.timestamp_utc ? formatET(fg.timestamp_utc) : "—";
+
+      const meta = el("div", {class:"fgMeta"}, [
         el("div", {class:"k"}, ["Sentiment (CNN Fear & Greed)"]),
-        el("div", {class:"v"}, [
-          el("span", {class:"mono", style:"font-weight:700"}, [label]),
-          document.createTextNode(when ? ` • ${when}` : "")
+        el("div", {class:"fgScoreLine"}, [
+          el("span", {class:"fgBig"}, [Number.isFinite(score) ? String(Math.round(score)) : "—"]),
+          el("span", {class:`tag ${band.kind}`}, [band.label]),
+          el("span", {class:"fgSmall"}, [when])
         ]),
-        el("div", {class:"small"}, [
-          link(fg.source_url || "https://production.dataviz.cnn.io/index/fearandgreed/graphdata", "Source", {})
+        el("div", {class:"fgSmall"}, [
+          link(data.source_url || "https://cnn.com/markets/fear-and-greed", "Source", {})
         ])
       ]);
 
-      // Replace/insert only the first sentiment box
-      const existing = host.querySelector('[data-kind="sentiment"]');
-      box.setAttribute("data-kind","sentiment");
+      const box = el("div", {class:"kv", "data-kind":"fgi", style:"flex:1; min-width: 280px;"}, [
+        el("div", {class:"fgWrap"}, [dial, meta])
+      ]);
+
       if (existing) existing.replaceWith(box);
       else host.appendChild(box);
 
     }catch{
       setDot("dotSent", "warn");
-      setBadgeText("stSentiment", `Unavailable`);
+      setBadgeText("stSentiment", "Unavailable");
     }
   }
 
-  // --- Baseline state render
+  // ---- Baseline state render ----
   function renderSnapshot(state){
     const universe = state.universe || {};
     const quality = state.quality || {};
@@ -1154,6 +1088,7 @@
 
     const actual = universe.actual_size ?? state.universe_size ?? null;
     const target = universe.target_size ?? null;
+
     snap.appendChild(el("div", {class:"kv"}, [
       el("div", {class:"k"}, ["Coverage"]),
       el("div", {class:"v mono"}, [
@@ -1163,18 +1098,16 @@
     ]));
 
     const success = quality.success_rate_pct ?? null;
-    const skipped = quality.skipped_tickers_count ?? null;
     snap.appendChild(el("div", {class:"kv"}, [
-      el("div", {class:"k"}, ["Data quality"]),
+      el("div", {class:"k"}, ["Data coverage"]),
       el("div", {class:"v mono"}, [
-        (success !== null ? `${fmt(success,1)}%` : "—"),
-        (skipped !== null ? ` • skipped ${fmtInt(skipped)}` : "")
+        (success !== null ? `${fmt(success,1)}%` : "—")
       ])
     ]));
 
     const denom = sample.denom_used_for_presence ?? null;
     snap.appendChild(el("div", {class:"kv"}, [
-      el("div", {class:"k"}, ["Breadth base"]),
+      el("div", {class:"k"}, ["Breadth sample"]),
       el("div", {class:"v mono"}, [denom !== null ? fmtInt(denom) : "—"])
     ]));
   }
@@ -1190,15 +1123,15 @@
     const sample = breadth.sample || {};
 
     const label = posture.label || "—";
-    const confidence = posture.confidence_tag || "";
+    const conf = humanizeConfidenceTag(posture.confidence_tag || "");
 
-    const top = document.getElementById("marketTopRow");
-    top.innerHTML = "";
+    const host = document.getElementById("marketTopRow");
+    host.innerHTML = "";
 
-    top.appendChild(el("div", {class:"kv", style:"min-width:200px"}, [
+    host.appendChild(el("div", {class:"kv", style:"min-width:220px"}, [
       el("div", {class:"k"}, ["Condition"]),
-      el("div", {class:"v", style:"font-weight:700"}, [label]),
-      el("div", {class:"small"}, [confidence ? `Confidence: ${confidence}` : ""])
+      el("div", {class:"v", style:"font-weight:800"}, [label]),
+      el("div", {class:"small"}, [conf ? `Evidence strength: ${conf}` : ""])
     ]));
 
     const pe = posture.plain_english || "";
@@ -1211,19 +1144,18 @@
     let explain = "—";
     if (pullPct !== null && fragPct !== null){
       if (pullPct > fragPct){
-        explain = "More of the tracked market is showing stabilizing pullback traits than breakdown traits. That’s often consistent with calmer, consolidating behavior rather than broad deterioration.";
+        explain = "More of the tracked market is showing stabilizing pullback traits than breakdown traits — consistent with calmer behavior rather than broad deterioration.";
       } else if (fragPct > pullPct){
-        explain = "Breakdown/fragility traits are more common than stabilizing pullback traits. That’s consistent with more names behaving ‘risk-off’ than ‘resetting calmly.’";
+        explain = "Breakdown/fragility traits are more common than stabilizing pullback traits — consistent with more names behaving ‘risk-off’ than ‘resetting calmly.’";
       } else {
         explain = "Stabilization traits and breakdown traits look roughly balanced across the tracked set.";
       }
       if (tiltPts !== null && tiltPts !== undefined){
-        explain += " The balance line below summarizes the difference.";
+        explain += " The details view shows how widespread each bucket is.";
       }
     }
     document.getElementById("marketExplain").textContent = explain;
 
-    // Details bars (hidden by default)
     const bars = document.getElementById("bars");
     bars.innerHTML = "";
 
@@ -1236,6 +1168,7 @@
         el("div", {class:"pct mono"}, [pctText]),
       ]);
     }
+
     bars.appendChild(barLine("Stabilizing pullbacks (how widespread)", pullPct, "good"));
     bars.appendChild(barLine("Breakdowns (how widespread)", fragPct, "bad"));
 
@@ -1251,7 +1184,7 @@
     ]));
   }
 
-  // --- Highlights tabs
+  // ---- Highlights tabs ----
   function setActiveTab(tab){
     __HL_TAB = tab;
     document.getElementById("tabSetups").classList.toggle("active", tab === "setups");
@@ -1271,20 +1204,17 @@
     const oppThr = (thr.opportunity_score_green ?? 60);
     const riskThr = (thr.risk_score_red ?? 70);
 
-    const uni = state.universe_size ?? state?.universe?.actual_size ?? null;
-    document.getElementById("hlMeta").textContent =
-      `Opp≥${fmtInt(oppThr)} • Risk≥${fmtInt(riskThr)}${uni !== null ? ` • tracked ${fmtInt(uni)}` : ""}`;
+    document.getElementById("hlMeta").textContent = `Setup≥${fmtInt(oppThr)} • Fragility≥${fmtInt(riskThr)}`;
 
     let rows = pulled;
-    let title = "Setups";
-    if (__HL_TAB === "risk"){ rows = fragile; title = "Risk"; }
-    if (__HL_TAB === "mixed"){ rows = mixed; title = "Mixed"; }
+    if (__HL_TAB === "risk") rows = fragile;
+    if (__HL_TAB === "mixed") rows = mixed;
 
     const host = document.getElementById("hlTableHost");
     host.innerHTML = "";
 
     if (!rows || !rows.length){
-      host.appendChild(el("div", {class:"small muted", style:"margin-top:8px"}, [`No items in ${title} right now.`]));
+      host.appendChild(el("div", {class:"small muted", style:"margin-top:8px"}, ["No items right now."]));
       return;
     }
 
@@ -1293,17 +1223,14 @@
       el("th", {}, ["Ticker"]),
       el("th", {class:"num"}, ["Last"]),
       el("th", {class:"num"}, ["%1D"]),
-      el("th", {class:"num"}, ["Opp"]),
-      el("th", {class:"num"}, ["Risk"]),
-      el("th", {}, ["Details"]),
+      el("th", {class:"num"}, ["Setup"]),
+      el("th", {class:"num"}, ["Fragility"]),
+      el("th", {}, ["Evidence"]),
     ])]);
     const tbody = el("tbody", {}, []);
 
     for (const r of rows.slice(0, 10)){
       const sym = r.ticker;
-      const quote = quoteUrl(sym);
-      const detailsUrl = `${HMONEY_WORKER_BASE}/pack?ticker=${encodeURIComponent(sym)}`;
-
       const deltaClass = badgeForDelta((() => {
         if (r.pct_change_1d === null || r.pct_change_1d === undefined) return null;
         let v = Number(r.pct_change_1d);
@@ -1313,12 +1240,12 @@
       })());
 
       tbody.appendChild(el("tr", {}, [
-        el("td", {}, [link(quote, sym, {class:"mono"})]),
+        el("td", {}, [link(quoteUrl(sym), sym, {class:"mono"})]),
         el("td", {class:"num"}, [el("span", {class:"mono"}, [(r.last === null || r.last === undefined) ? "—" : fmt(r.last, 2)])]),
         el("td", {class:`num ${deltaClass}`}, [el("span", {class:"mono"}, [fmtPctChange1d(r.pct_change_1d)])]),
         el("td", {class:"num"}, [el("span", {class:"mono"}, [fmtInt(r.opportunity_score)])]),
         el("td", {class:"num"}, [el("span", {class:"mono"}, [fmtInt(r.risk_score)])]),
-        el("td", {}, [link(detailsUrl, "Details", {})]),
+        el("td", {}, [link(`${HMONEY_WORKER_BASE}/pack?ticker=${encodeURIComponent(sym)}`, "Open", {})]),
       ]));
     }
 
@@ -1327,7 +1254,7 @@
     host.appendChild(tbl);
   }
 
-  // --- Benchmarks (lazy load on first expand)
+  // ---- Benchmarks (lazy) ----
   async function renderBenchmarks(){
     if (__BENCH_LOADED) return;
     __BENCH_LOADED = true;
@@ -1340,16 +1267,13 @@
     let totalFound = 0;
 
     for (const entry of BENCHMARK_GROUPS){
-      if (!Array.isArray(entry) || entry.length !== 2) continue;
       const [groupName, symbols] = entry;
-      if (!Array.isArray(symbols)) continue;
-
       totalExpected += symbols.length;
 
       const card = el("div", {class:"detailsBox", style:"margin-top:10px"}, [
         el("div", {class:"sectionTitle"}, [
           el("div", {style:"font-weight:700"}, [groupName]),
-          el("div", {class:"small muted", id:`bench_${groupName}`}, ["…"])
+          el("div", {class:"small muted"}, [""])
         ])
       ]);
 
@@ -1357,8 +1281,8 @@
       const thead = el("thead", {}, [el("tr", {}, [
         el("th", {}, ["Ticker"]),
         el("th", {}, ["Meaning"]),
-        el("th", {class:"num"}, ["Opp"]),
-        el("th", {class:"num"}, ["Risk"]),
+        el("th", {class:"num"}, ["Setup"]),
+        el("th", {class:"num"}, ["Fragility"]),
         el("th", {class:"num"}, ["%1D"]),
       ])]);
       const tbody = el("tbody", {}, []);
@@ -1376,14 +1300,10 @@
       });
 
       const results = await Promise.all(jobs);
-      let found = 0;
 
       for (const r of results){
         const sym = r.sym;
-        const quote = quoteUrl(sym);
-
         if (r.ok){
-          found += 1;
           totalFound += 1;
           const pack = r.res.pack || {};
           const market = pack.market || {};
@@ -1398,7 +1318,7 @@
           })());
 
           tbody.appendChild(el("tr", {}, [
-            el("td", {}, [link(quote, sym, {class:"mono"})]),
+            el("td", {}, [link(quoteUrl(sym), sym, {class:"mono"})]),
             el("td", {}, [el("span", {class:"muted"}, [BENCHMARK_META[sym] || "—"])]),
             el("td", {class:"num"}, [el("span", {class:"mono"}, [fmtInt(scores.opportunity_score)])]),
             el("td", {class:"num"}, [el("span", {class:"mono"}, [fmtInt(scores.structural_risk_score)])]),
@@ -1406,7 +1326,7 @@
           ]));
         } else {
           tbody.appendChild(el("tr", {}, [
-            el("td", {}, [link(quote, sym, {class:"mono"})]),
+            el("td", {}, [link(quoteUrl(sym), sym, {class:"mono"})]),
             el("td", {}, [el("span", {class:"muted"}, [BENCHMARK_META[sym] || "—"])]),
             el("td", {class:"num muted"}, ["—"]),
             el("td", {class:"num muted"}, ["—"]),
@@ -1422,7 +1342,7 @@
     document.getElementById("benchStatus").textContent = `Loaded ${totalFound}/${totalExpected}`;
   }
 
-  // --- News
+  // ---- News ----
   function renderNewsList(host, items){
     host.innerHTML = "";
     if (!items || !items.length){
@@ -1431,14 +1351,10 @@
     }
     const n = Math.min(__NEWS_SHOW, items.length);
     for (const it of items.slice(0, n)){
-      const title = it.title || "(untitled)";
-      const url = it.url || "#";
-      const pub = it.publisher || "—";
-      const when = it.published_at || "—";
       host.appendChild(el("div", {class:"newsRow"}, [
         el("div", {}, [
-          link(url, title, {class:"newsTitle"}),
-          el("div", {class:"newsMeta"}, [`${pub} • ${when}`]),
+          link(it.url || "#", it.title || "(untitled)", {class:"newsTitle"}),
+          el("div", {class:"newsMeta"}, [`${it.publisher || "—"} • ${it.published_at || "—"}`]),
         ])
       ]));
     }
@@ -1451,8 +1367,7 @@
       host.appendChild(el("div", {class:"small muted"}, ["No headlines yet."]));
       return;
     }
-    const top = items.slice(0, 3);
-    for (const it of top){
+    for (const it of items.slice(0, 3)){
       host.appendChild(el("div", {style:"margin-bottom:10px"}, [
         link(it.url || "#", it.title || "(untitled)", {style:"font-weight:600"}),
         el("div", {class:"small"}, [`${it.publisher || "—"} • ${it.published_at || "—"}`])
@@ -1460,13 +1375,10 @@
     }
   }
 
-  let __LAST_MARKET_NEWS = [];
   async function refreshNewsMarket(){
     const u = `${HMONEY_WORKER_BASE}/news?scope=market`;
     const payload = await fetchWorkerJson(u);
-    const meta = document.getElementById("newsMeta");
-    meta.textContent = payload?.generated_at_utc ? `Updated ${payload.generated_at_utc}` : "—";
-
+    document.getElementById("newsMeta").textContent = payload?.generated_at_utc ? `Updated ${payload.generated_at_utc}` : "—";
     const items = payload?.items || [];
     __LAST_MARKET_NEWS = items;
     renderNewsList(document.getElementById("newsMarket"), items);
@@ -1495,10 +1407,8 @@
     tick();
   }
 
-  // --- Pack lookup
-  function normalizeTicker(sym){
-    return String(sym || "").trim().toUpperCase().replace(/\s+/g, "");
-  }
+  // ---- Ticker lookup ----
+  function normalizeTicker(sym){ return String(sym || "").trim().toUpperCase().replace(/\s+/g, ""); }
 
   async function doLoadTicker(sym){
     const drawer = document.getElementById("drawer");
@@ -1513,27 +1423,78 @@
       __LAST_PACK = res.pack;
       __LAST_PACK_META = { is_stale: !!res.is_stale, as_of: res.pack_as_of_utc || res.pack?.as_of_utc || null };
 
-      const tag = res.is_stale ? `<span class="tag warn">Older details</span>` : `<span class="tag good">Current details</span>`;
+      const tag = res.is_stale ? `<span class="tag warn">Older evidence</span>` : `<span class="tag good">Latest evidence</span>`;
 
       drawer.innerHTML = `
         <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
           <div style="font-weight:800; font-size:14px">${sym}</div>
           ${tag}
           <a class="btn" href="${quoteUrl(sym)}" target="_blank" rel="noopener noreferrer">Open quote</a>
-          <a class="btn" href="${HMONEY_WORKER_BASE}/pack?ticker=${encodeURIComponent(sym)}" target="_blank" rel="noopener noreferrer">Open details</a>
+          <a class="btn" href="${HMONEY_WORKER_BASE}/pack?ticker=${encodeURIComponent(sym)}" target="_blank" rel="noopener noreferrer">Open evidence</a>
         </div>
         <div class="small" style="margin-top:8px">
-          Details updated: <span class="mono">${__LAST_PACK_META.as_of || "—"}</span>
+          Evidence updated: <span class="mono">${__LAST_PACK_META.as_of || "—"}</span>
         </div>
       `;
 
       await refreshNewsTicker(sym);
     }catch{
-      drawer.innerHTML = `<div class="small muted">No detailed data found for <span class="mono">${sym}</span> right now.</div>`;
+      drawer.innerHTML = `<div class="small muted">No evidence found for <span class="mono">${sym}</span> right now.</div>`;
     }
   }
 
-  // --- AI
+  // ---- AI ----
+  function loadRememberPref(){
+    const v = localStorage.getItem(AI_REMEMBER_PREF_KEY);
+    if (v === null) return true;
+    return v === "true";
+  }
+  function saveRememberPref(on){ localStorage.setItem(AI_REMEMBER_PREF_KEY, on ? "true" : "false"); }
+  function loadHistoryFromStorage(){
+    try{
+      const raw = localStorage.getItem(AI_HISTORY_STORAGE_KEY);
+      if (!raw) return [];
+      const arr = JSON.parse(raw);
+      if (!Array.isArray(arr)) return [];
+      return arr.filter(m => m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string")
+                .map(m => ({ role: m.role, content: m.content }));
+    }catch{ return []; }
+  }
+  function saveHistoryToStorage(history){
+    try{ localStorage.setItem(AI_HISTORY_STORAGE_KEY, JSON.stringify(history)); }catch{}
+  }
+  function clearHistory(){
+    __AI_HISTORY = [];
+    try{ localStorage.removeItem(AI_HISTORY_STORAGE_KEY); }catch{}
+    updateMemoryMeta();
+  }
+  function trimHistory(history){
+    let h = Array.isArray(history) ? history.slice() : [];
+    if (h.length > AI_HISTORY_MAX_MESSAGES) h = h.slice(h.length - AI_HISTORY_MAX_MESSAGES);
+    let s = JSON.stringify(h);
+    while (s.length > AI_HISTORY_MAX_CHARS && h.length > 2){
+      h = h.slice(2);
+      s = JSON.stringify(h);
+    }
+    if (s.length > AI_HISTORY_MAX_CHARS && h.length > 0) h = h.slice(h.length - 2);
+    return h;
+  }
+  function updateMemoryMeta(){
+    const meta = document.getElementById("aiMemoryMeta");
+    const remember = document.getElementById("aiRemember")?.checked;
+    const count = __AI_HISTORY.length;
+    const shown = trimHistory(__AI_HISTORY).length;
+    meta.textContent = remember ? `Memory: ON • stored turns: ${count} • sending: ${shown}` : `Memory: OFF`;
+  }
+  function appendToHistory(role, content){
+    if (!content) return;
+    __AI_HISTORY.push({ role, content: String(content) });
+    __AI_HISTORY = trimHistory(__AI_HISTORY);
+    const remember = document.getElementById("aiRemember")?.checked;
+    if (remember) saveHistoryToStorage(__AI_HISTORY);
+    updateMemoryMeta();
+  }
+
   async function askAI(question, autoInclude){
     const status = document.getElementById("aiStatus");
     const ans = document.getElementById("aiAnswer");
@@ -1590,10 +1551,9 @@
     }
   }
 
-  // --- Init
+  // ---- Init ----
   async function init(){
     document.getElementById("reloadBtn").addEventListener("click", () => location.reload());
-
     document.getElementById("modalClose").addEventListener("click", hideModal);
     document.getElementById("modalBack").addEventListener("click", (e) => {
       if (e.target && e.target.id === "modalBack") hideModal();
@@ -1601,7 +1561,6 @@
 
     initCollapseButtons();
 
-    // Buttons
     document.getElementById("toggleMarketDetailsBtn").addEventListener("click", () => {
       __MARKET_DETAILS_OPEN = !__MARKET_DETAILS_OPEN;
       document.getElementById("marketDetails").classList.toggle("hidden", !__MARKET_DETAILS_OPEN);
@@ -1609,32 +1568,30 @@
     });
 
     document.getElementById("headlinesExpandBtn").addEventListener("click", () => {
-      // open News section and scroll
       applyCollapse("newsBody", false);
-      document.querySelector('[data-collapse="newsBody"]').textContent = "–";
       document.getElementById("newsCard").scrollIntoView({behavior:"smooth", block:"start"});
     });
 
     document.getElementById("marketInfoBtn").addEventListener("click", () => {
-      showModal("How to read this page", `
+      showModal("Definitions (HMoney)", `
         <div class="body">
-          <p><b>Market</b> summarizes what’s common across the tracked set (breadth), not a forecast.</p>
-          <ul>
-            <li><b>Condition</b> is a descriptive label derived from how opportunity-like and risk-like behaviors distribute across the universe.</li>
-            <li><b>Details</b> are included for transparency, but the intended reading is “how widespread,” not “what will happen.”</li>
-            <li><b>Sentiment</b> shows CNN’s Fear &amp; Greed (external indicator).</li>
-          </ul>
+          <p><b>Condition</b> is a descriptive label derived from how common “setup-like” vs “fragility-like” behavior is across the tracked set.</p>
+          <p><b>Setup score (0–100)</b>: how setup-like an asset looks <i>relative to its own history</i> (pullback + stabilization traits).</p>
+          <p><b>Fragility score (0–100)</b>: how breakdown-like an asset looks <i>relative to its own history</i> (persistent downtrend + volatility/drawdown traits).</p>
+          <p><b>Breadth / how widespread</b>: the details view shows what % of tracked names fall into each bucket.</p>
+          <hr/>
+          <p><b>Fear &amp; Greed</b> is an external sentiment indicator from CNN. We use their published score + label; the dial you see here is our visualization of those values.</p>
         </div>
       `);
     });
 
     document.getElementById("hlInfoBtn").addEventListener("click", () => {
-      showModal("What the Highlights mean", `
+      showModal("Highlights", `
         <div class="body">
-          <p><b>Setups</b>: pulled back and showing stabilization traits.</p>
-          <p><b>Risk</b>: persistent breakdown / fragility traits.</p>
+          <p><b>Setups</b>: pulled-back + stabilizing traits.</p>
+          <p><b>Fragility</b>: persistent breakdown traits.</p>
           <p><b>Mixed</b>: cross-currents (not a clean read).</p>
-          <p>These are examples to review—use details + context before drawing conclusions.</p>
+          <p>These are examples to review — not recommendations.</p>
         </div>
       `);
     });
@@ -1643,7 +1600,6 @@
     document.getElementById("tabRisk").addEventListener("click", () => setActiveTab("risk"));
     document.getElementById("tabMixed").addEventListener("click", () => setActiveTab("mixed"));
 
-    // News controls
     document.getElementById("newsMoreBtn").addEventListener("click", async () => {
       __NEWS_SHOW = 12;
       await refreshNewsMarket();
@@ -1655,7 +1611,6 @@
       if (__LAST_SYMBOL) await refreshNewsTicker(__LAST_SYMBOL);
     });
 
-    // Live settings wiring
     applyLivePrefsToUI();
 
     document.getElementById("liveSaveBtn").addEventListener("click", async () => {
@@ -1693,7 +1648,7 @@
       await refreshLive(true);
     });
 
-    // Lazy load benchmarks on first expand
+    // Benchmarks lazy load on open
     document.querySelector('[data-collapse="benchBody"]').addEventListener("click", async () => {
       const isNowOpen = !document.getElementById("benchBody").classList.contains("hidden");
       if (isNowOpen) {
@@ -1704,7 +1659,7 @@
       }
     });
 
-    // Ticker load
+    // Ticker
     const input = document.getElementById("tickerInput");
     document.getElementById("loadTickerBtn").addEventListener("click", async () => {
       const sym = normalizeTicker(input.value);
@@ -1757,15 +1712,12 @@
     try{
       const state = await fetchJson("./state.json");
       __HMONEY_STATE = state;
-
       const asOf = state.generated_at_utc || state.as_of_utc || "";
       document.getElementById("subline").textContent = asOf ? `Updated ${asOf}` : "Updated";
-
       renderSnapshot(state);
       renderMarket(state);
       setActiveTab("setups");
-
-    }catch(e){
+    }catch{
       document.getElementById("subline").textContent = "Couldn’t load the latest snapshot.";
       setDot("dotSnap", "bad");
       setBadgeText("stSnapshot", "Unavailable");
