@@ -16,7 +16,6 @@ export default {
       "Access-Control-Allow-Origin": allowOrigin,
       "Access-Control-Allow-Methods": "POST, OPTIONS, GET",
       "Access-Control-Allow-Headers": "Content-Type, X-Finnhub-Key, X-TwelveData-Key",
-      "Access-Control-Allow-Headers": "Content-Type, X-Finnhub-Key, X-TwelveData-Key",
       "Access-Control-Expose-Headers": "X-HMoney-Cache-Hit, X-HMoney-Cache-TTL",
       "Access-Control-Max-Age": "86400",
       "Vary": "Origin",
@@ -39,6 +38,7 @@ export default {
     const TTL_PACK = 300;
     const TTL_LIVE = 20;
     const TTL_NEWS = 120;
+    const TTL_MARKET = 300; // Fear & Greed cache
 
     const url = new URL(request.url);
     const path = (url.pathname || "/").replace(/\/+$/, "") || "/";
@@ -83,6 +83,27 @@ export default {
       } catch {
         return "nohash";
       }
+    }
+
+    function toIsoMaybe(x) {
+      if (x === null || x === undefined) return null;
+
+      // numeric epoch (seconds or ms)
+      if (typeof x === "number" && Number.isFinite(x)) {
+        const ms = (x > 2_000_000_000_000) ? x : (x > 2_000_000_000 ? x * 1000 : x);
+        const d = new Date(ms);
+        if (!isNaN(d.getTime())) return d.toISOString().replace(/\.\d{3}Z$/, "Z");
+        return null;
+      }
+
+      const s = String(x).trim();
+      if (!s) return null;
+
+      // parseable date string
+      const d = new Date(s);
+      if (!isNaN(d.getTime())) return d.toISOString().replace(/\.\d{3}Z$/, "Z");
+
+      return null;
     }
 
     // -------------------------
@@ -538,6 +559,96 @@ export default {
     }
 
     // -------------------------
+    // Market (/market) — Fear & Greed
+    // -------------------------
+    function parseFearGreed(json) {
+      // CNN feed tends to include: fear_and_greed { score, rating, timestamp }
+      const fg = json?.fear_and_greed ?? json?.fearAndGreed ?? json?.fear_greed ?? null;
+
+      // Try likely fields
+      const score =
+        fg?.score ?? fg?.now?.score ?? fg?.now?.value ?? json?.score ?? null;
+
+      const rating =
+        fg?.rating ?? fg?.now?.rating ?? json?.rating ?? null;
+
+      const ts =
+        fg?.timestamp_utc ?? fg?.timestamp ?? fg?.last_updated ?? json?.timestamp ?? json?.last_updated ?? null;
+
+      const scoreNum = (score === null || score === undefined) ? null : Number(score);
+      const scoreOut = Number.isFinite(scoreNum) ? scoreNum : null;
+
+      const ratingOut = (rating === null || rating === undefined) ? null : String(rating);
+
+      const tsIso = toIsoMaybe(ts);
+
+      return { score: scoreOut, rating: ratingOut, timestamp_utc: tsIso };
+    }
+
+    async function handleMarket() {
+      const cacheKeyUrl = "https://hmoney.local/market";
+      const hit = await caches.default.match(new Request(cacheKeyUrl));
+      if (hit) {
+        const j = await hit.json().catch(() => null);
+        if (j && typeof j === "object") {
+          j.cache_hit = true;
+          return okJson(j, 200, {
+            "Cache-Control": `public, max-age=${TTL_MARKET}, s-maxage=${TTL_MARKET}`,
+            "X-HMoney-Cache-Hit": "1",
+            "X-HMoney-Cache-TTL": String(TTL_MARKET),
+          });
+        }
+        return hit;
+      }
+
+      const sourceUrl = "https://production.dataviz.cnn.io/index/fearandgreed/graphdata";
+
+      try {
+        const r = await fetch(sourceUrl, {
+          method: "GET",
+          headers: {
+            "User-Agent": "HMoneyWorker/1.0",
+            "Accept": "application/json,*/*",
+          },
+        });
+
+        if (!r.ok) {
+          return errJson("Fear & Greed fetch failed", 502, { status: r.status, source_url: sourceUrl });
+        }
+
+        const j = await r.json().catch(() => null);
+        if (!j || typeof j !== "object") {
+          return errJson("Fear & Greed parse failed", 502, { source_url: sourceUrl });
+        }
+
+        const fg = parseFearGreed(j);
+        const payload = {
+          ok: true,
+          generated_at_utc: nowUtcIso(),
+          cache_ttl_s: TTL_MARKET,
+          cache_hit: false,
+          source_url: sourceUrl,
+          fear_greed: fg,
+          debug: {
+            top_keys: Object.keys(j).slice(0, 20),
+            has_fear_and_greed: !!(j.fear_and_greed || j.fearAndGreed || j.fear_greed),
+          },
+        };
+
+        const out = okJson(payload, 200, {
+          "Cache-Control": `public, max-age=${TTL_MARKET}, s-maxage=${TTL_MARKET}`,
+          "X-HMoney-Cache-Hit": "0",
+          "X-HMoney-Cache-TTL": String(TTL_MARKET),
+        });
+
+        await caches.default.put(new Request(cacheKeyUrl), out.clone());
+        return out;
+      } catch (e) {
+        return errJson("Fear & Greed error", 502, { details: String(e), source_url: sourceUrl });
+      }
+    }
+
+    // -------------------------
     // News (RSS, cached)
     // -------------------------
     function stripTags(s) {
@@ -655,7 +766,6 @@ export default {
         published_at: it.published_raw || null,
         tickers: it.tickers || [],
         snippet: it.snippet,
-        // NOTE: image_url not extracted here; UI can use favicon fallback.
       }));
 
       const payload = {
@@ -679,29 +789,25 @@ export default {
     }
 
     // -------------------------
-    // AI (Workers AI) — FIXED
+    // AI (Workers AI)
     // -------------------------
     function extractAiText(result) {
       if (typeof result === "string") return result;
 
       if (!result || typeof result !== "object") return "";
 
-      // Common CF shapes
       if (typeof result.response === "string") return result.response;
       if (typeof result.output_text === "string") return result.output_text;
       if (typeof result.generated_text === "string") return result.generated_text;
       if (typeof result.text === "string") return result.text;
 
-      // Nested
       if (result.result && typeof result.result === "string") return result.result;
       if (result.result && typeof result.result.response === "string") return result.result.response;
 
-      // OpenAI-ish shapes
       const c0 = Array.isArray(result.choices) ? result.choices[0] : null;
       if (c0?.message?.content && typeof c0.message.content === "string") return c0.message.content;
       if (typeof c0?.text === "string") return c0.text;
 
-      // Messages array
       if (Array.isArray(result.messages) && result.messages.length) {
         const last = result.messages[result.messages.length - 1];
         if (last?.content && typeof last.content === "string") return last.content;
@@ -779,7 +885,6 @@ export default {
       const answer = extractAiText(result).trim();
 
       if (!answer) {
-        // Important: NEVER silently succeed with an empty answer again.
         const keys = (result && typeof result === "object") ? Object.keys(result) : [];
         let preview = "";
         try {
@@ -807,6 +912,7 @@ export default {
           name: "HMoney Worker",
           gh_pages_base: GH_PAGES_BASE,
           routes: {
+            "GET /market": "Fear & Greed (CNN feed, cached)",
             "GET /live?symbols=...": "BYO-key live overlay (send X-Finnhub-Key and/or X-TwelveData-Key headers)",
             "GET /pack?ticker=...": "evidence pack (current run; stale fallback via evidence_index.json)",
             "GET /news?scope=market or /news?tickers=...": "RSS headlines (cached)",
@@ -814,6 +920,7 @@ export default {
           },
         });
       }
+      if (path === "/market") return await handleMarket();
       if (path === "/live") return await handleLive();
       if (path === "/pack") return await handlePack();
       if (path === "/news") return await handleNews();
