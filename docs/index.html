@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="light" data-layout="locked">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -83,6 +83,7 @@
       background: linear-gradient(180deg, rgba(23,36,58,0.92) 0%, rgba(18,27,42,0.92) 100%);
     }
     .btn:hover{filter:brightness(1.03)}
+
     .iconBtn{
       border:1px solid var(--line);
       background: rgba(255,255,255,0.85);
@@ -106,10 +107,26 @@
       border-radius:18px;
       padding:14px;
       box-shadow: var(--shadow);
+      position: relative;
     }
     html[data-theme="dark"] .card{
       background: linear-gradient(180deg, rgba(17,24,38,0.92) 0%, rgba(15,22,34,0.92) 100%);
     }
+
+    /* Drag/drop visuals */
+    html[data-layout="edit"] .card{
+      outline: 2px dashed rgba(100,116,139,0.25);
+      outline-offset: 2px;
+    }
+    .card.dragging{
+      opacity: 0.6;
+      transform: scale(0.995);
+    }
+    .card.dropTarget{
+      outline: 2px solid rgba(37,99,235,0.35);
+      outline-offset: 2px;
+    }
+
     .card h2{font-size:15px; margin:0}
     .sectionTitle{display:flex; align-items:center; justify-content:space-between; gap:8px}
     .cardBody{margin-top:10px}
@@ -144,7 +161,6 @@
     .jump a{font-size:12px}
     .jump .sep{opacity:0.35}
 
-    /* Grid modules */
     .moduleGrid{
       display:grid;
       grid-template-columns: 1fr 1fr;
@@ -173,7 +189,6 @@
     }
     html[data-theme="dark"] .detailsBox{ background: rgba(10,14,20,0.30); }
 
-    /* Live tape */
     .tape{display:flex; gap:8px; align-items:center; overflow-x:auto; padding:4px 0; scrollbar-width:none}
     .tape::-webkit-scrollbar{display:none}
     .chip{
@@ -195,7 +210,6 @@
     .tag.bad{color:var(--bad)}
     .tag.tiny{font-size:10px; padding:1px 7px}
 
-    /* Bars */
     .barwrap{display:flex; flex-direction:column; gap:10px}
     .barline{display:flex; gap:10px; align-items:center; justify-content:space-between}
     .barlabel{font-size:12px; color:var(--muted)}
@@ -214,7 +228,6 @@
     .fill.warn{background: linear-gradient(90deg, rgba(245,158,11,0.18), rgba(245,158,11,0.9))}
     .pct{font-size:12px; min-width:72px; text-align:right; color:var(--text)}
 
-    /* Tables */
     table{width:100%; border-collapse:collapse; font-size:12.5px}
     th,td{border-bottom:1px solid rgba(226,232,240,0.95); padding:9px 7px; vertical-align:top}
     html[data-theme="dark"] th, html[data-theme="dark"] td{border-bottom:1px solid rgba(34,48,71,0.65)}
@@ -224,7 +237,6 @@
     .neg{color:var(--bad)}
     .mildneg{color:var(--warn)}
 
-    /* Inputs */
     .search{
       display:flex; gap:8px; align-items:center; width:100%;
       padding:10px 12px; background: var(--soft);
@@ -240,7 +252,6 @@
       resize:vertical; min-height:70px;
     }
 
-    /* News */
     .cols{display:grid; grid-template-columns: 1fr 1fr; gap:12px}
     @media (max-width: 980px){ .cols{grid-template-columns:1fr} }
     .list{display:flex; flex-direction:column; gap:8px}
@@ -258,7 +269,6 @@
     .newsMeta{font-size:11.5px; color:var(--muted); margin-top:4px}
     .newsScroll{max-height: 320px; overflow:auto; padding-right:4px}
 
-    /* Highlights tabs */
     .tabs{display:flex; gap:8px; flex-wrap:wrap; margin:8px 0 10px}
     .tabBtn{
       border:1px solid var(--line);
@@ -277,7 +287,6 @@
       font-weight:700;
     }
 
-    /* Fear & Greed gauge */
     .fgWrap{display:flex; gap:12px; align-items:center; flex-wrap:wrap}
     .fgDial{
       width: 240px;
@@ -295,7 +304,6 @@
     .fgSmall{font-size:12px; color:var(--muted)}
     .fgScale{display:flex; justify-content:space-between; font-size:11px; color:var(--muted); margin-top:6px}
 
-    /* Modal */
     .modalBack{
       position:fixed; inset:0;
       background: rgba(2,6,23,0.45);
@@ -316,6 +324,41 @@
     .modal h3{margin:0 0 8px; font-size:15px}
     .modal .body{color:var(--text); font-size:13px; line-height:1.35}
     .footer{margin-top:14px; color:var(--muted); font-size:12px}
+
+    /* Drag handle (injected by JS) */
+    .dragHandle{
+      display:none;
+      align-items:center;
+      justify-content:center;
+      width:32px;
+      height:28px;
+      border-radius:10px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,0.75);
+      color: var(--muted);
+      cursor: grab;
+      user-select:none;
+      box-shadow: var(--shadow2);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    html[data-theme="dark"] .dragHandle{ background: rgba(10,14,20,0.25); }
+    html[data-layout="edit"] .dragHandle{ display:inline-flex; }
+    .dragHandle:active{ cursor: grabbing; }
+
+    .layoutHint{
+      display:none;
+      margin-top:10px;
+      padding:10px 12px;
+      border:1px solid var(--line);
+      border-radius:16px;
+      background: rgba(255,255,255,0.62);
+      box-shadow: var(--shadow2);
+      color: var(--muted);
+      font-size:12px;
+    }
+    html[data-theme="dark"] .layoutHint{ background: rgba(10,14,20,0.22); }
+    html[data-layout="edit"] .layoutHint{ display:block; }
   </style>
 </head>
 
@@ -328,6 +371,8 @@
     </div>
     <div class="actions">
       <button class="btn" id="themeBtn">Theme: Light</button>
+      <button class="btn" id="layoutBtn">Layout: Locked</button>
+      <button class="btn hidden" id="layoutResetBtn">Reset layout</button>
       <a class="btn" href="./daily_brief.html" target="_blank" rel="noopener noreferrer">Daily Brief (HTML)</a>
       <a class="btn" href="./daily_brief.md" target="_blank" rel="noopener noreferrer">Daily Brief (MD)</a>
       <button class="btn" id="reloadBtn">Refresh</button>
@@ -349,6 +394,10 @@
     <a href="#benchCard">Benchmarks</a><span class="sep">•</span>
     <a href="#newsCard">News</a><span class="sep">•</span>
     <a href="#aiCard">Ask</a>
+  </div>
+
+  <div class="layoutHint">
+    <b>Layout edit mode:</b> drag cards using the ⋮⋮ handle in each header. Your layout is saved on this device.
   </div>
 
   <div class="moduleGrid" id="moduleGrid">
@@ -649,7 +698,115 @@
     applyTheme(prefersDark ? "dark" : "light");
   }
 
-  // Time formatting: MM/DD/YYYY PST: HH:MM:SS (PST/PDT auto)
+  // Layout drag/drop
+  const LS_LAYOUT_ORDER = "hmoney_layout_order_v1";
+  let __LAYOUT_EDIT = false;
+  let __DRAGGING_CARD = null;
+
+  function setLayoutMode(edit){
+    __LAYOUT_EDIT = !!edit;
+    document.documentElement.setAttribute("data-layout", __LAYOUT_EDIT ? "edit" : "locked");
+    document.getElementById("layoutBtn").textContent = __LAYOUT_EDIT ? "Layout: Edit" : "Layout: Locked";
+    document.getElementById("layoutResetBtn").classList.toggle("hidden", !__LAYOUT_EDIT);
+  }
+
+  function getGridCards(){
+    const grid = document.getElementById("moduleGrid");
+    return Array.from(grid.querySelectorAll(".card[data-mod]"));
+  }
+
+  function saveLayoutOrder(){
+    const ids = getGridCards().map(c => c.getAttribute("data-mod")).filter(Boolean);
+    try{ localStorage.setItem(LS_LAYOUT_ORDER, JSON.stringify(ids)); }catch{}
+  }
+
+  function applySavedLayoutOrder(){
+    const grid = document.getElementById("moduleGrid");
+    let arr = null;
+    try{
+      const raw = localStorage.getItem(LS_LAYOUT_ORDER);
+      if (raw) arr = JSON.parse(raw);
+    }catch{}
+    if (!Array.isArray(arr) || !arr.length) return;
+
+    const map = new Map();
+    for (const c of getGridCards()) map.set(c.getAttribute("data-mod"), c);
+
+    // Move in saved order
+    for (const id of arr){
+      const node = map.get(id);
+      if (node) grid.appendChild(node);
+    }
+    // Append any new cards not in saved order
+    for (const [id, node] of map.entries()){
+      if (!arr.includes(id)) grid.appendChild(node);
+    }
+  }
+
+  function injectDragHandles(){
+    for (const card of getGridCards()){
+      const headerRow = card.querySelector(".sectionTitle .row");
+      if (!headerRow) continue;
+      if (headerRow.querySelector(".dragHandle")) continue;
+
+      const handle = document.createElement("div");
+      handle.className = "dragHandle";
+      handle.textContent = "⋮⋮";
+      handle.title = "Drag to reorder";
+      handle.setAttribute("draggable", "true");
+
+      handle.addEventListener("dragstart", (e) => {
+        if (!__LAYOUT_EDIT) { e.preventDefault(); return; }
+        __DRAGGING_CARD = card;
+        card.classList.add("dragging");
+        e.dataTransfer.effectAllowed = "move";
+        try{ e.dataTransfer.setData("text/plain", card.getAttribute("data-mod") || ""); }catch{}
+      });
+
+      handle.addEventListener("dragend", () => {
+        card.classList.remove("dragging");
+        __DRAGGING_CARD = null;
+        for (const c of getGridCards()) c.classList.remove("dropTarget");
+        saveLayoutOrder();
+      });
+
+      headerRow.insertBefore(handle, headerRow.firstChild);
+    }
+  }
+
+  function initDragDrop(){
+    const grid = document.getElementById("moduleGrid");
+
+    grid.addEventListener("dragover", (e) => {
+      if (!__LAYOUT_EDIT) return;
+      e.preventDefault();
+
+      const dragging = __DRAGGING_CARD;
+      if (!dragging) return;
+
+      const target = e.target.closest(".card[data-mod]");
+      for (const c of getGridCards()) c.classList.remove("dropTarget");
+
+      if (!target || target === dragging) return;
+
+      target.classList.add("dropTarget");
+
+      const rect = target.getBoundingClientRect();
+      const after = (e.clientY - rect.top) > (rect.height / 2);
+
+      if (after) target.after(dragging);
+      else target.before(dragging);
+    });
+
+    grid.addEventListener("drop", (e) => {
+      if (!__LAYOUT_EDIT) return;
+      e.preventDefault();
+      for (const c of getGridCards()) c.classList.remove("dropTarget");
+      saveLayoutOrder();
+    });
+  }
+
+  // Time formatting: MM/DD/YYYY PST/PDT: HH:MM:SS
   function formatLA(iso){
     if (!iso) return "—";
     const d = new Date(iso);
@@ -833,7 +990,7 @@
     return "neg";
   }
 
-  // Fear & Greed gauge
+  // Fear & Greed gauge (minimal; kept)
   function fearGreedBand(score){
     const s = Number(score);
     if (!Number.isFinite(s)) return { label:"—", kind:"warn" };
@@ -907,19 +1064,15 @@
     return String(s || "").toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
   }
 
-  // State cache
+  // State
   let __HMONEY_STATE = null;
   let __LAST_SYMBOL = null;
-  let __LAST_PACK = null;
-  let __LAST_PACK_META = null;
   let __BENCH_LOADED = false;
   let __HL_TAB = "setups";
   let __NEWS_SHOW = 5;
 
-  // Live symbols (keep condensed)
   const LIVE_DEFAULT_SYMBOLS = ["SPY","QQQ","DIA","IWM","VXX","TLT","UUP","BTC-USD"];
 
-  // Bench groups (expanded)
   const BENCHMARK_GROUPS = [
     ["US Equity", ["SPY", "QQQ", "DIA", "IWM", "VTI"]],
     ["Global Equity", ["VT", "VXUS", "VEA", "VWO"]],
@@ -935,9 +1088,7 @@
     "GLD":"Gold","SLV":"Silver","USO":"Oil proxy","BTC-USD":"Bitcoin",
   };
 
-  // ------------------------
   // News
-  // ------------------------
   function renderNewsList(host, items){
     host.innerHTML = "";
     if (!items || !items.length){
@@ -1000,9 +1151,7 @@
     tick();
   }
 
-  // ------------------------
-  // Live render
-  // ------------------------
+  // Live
   function renderLiveChips(payload){
     const chips = document.getElementById("liveChips");
     const meta = document.getElementById("liveMeta");
@@ -1037,7 +1186,6 @@
       const cls = badgeForDelta(pct);
       const pctText = (pct === null || pct === undefined) ? "—" : `${Number(pct).toFixed(2)}%`;
 
-      // BTC hint tag if missing
       let extraTag = null;
       if (sym === "BTC-USD" && (price === null || price === undefined)) {
         extraTag = el("span", {class:"tag tiny warn"}, ["needs 12D"]);
@@ -1085,9 +1233,7 @@
     tick();
   }
 
-  // ------------------------
-  // Market pulse + benchmarks tape
-  // ------------------------
+  // Market pulse + bench tape
   async function refreshMarketPulse(){
     try{
       const data = await fetchWorkerJson(HMONEY_MARKET_ENDPOINT);
@@ -1104,7 +1250,6 @@
       setDot("dotSent", band.kind);
       setBadgeText("stSentiment", `${rating}${Number.isFinite(score) ? ` (${Math.round(score)})` : ""}`);
 
-      // Put dial into Market top row (only once)
       const host = document.getElementById("marketTopRow");
       const existing = host.querySelector('[data-kind="fgi"]');
       const dial = renderFearGreedGauge(score);
@@ -1139,7 +1284,6 @@
     const host = document.getElementById("benchTape");
     host.innerHTML = "";
 
-    // Prefer live if enabled, otherwise use /pack for each symbol (few calls)
     const p = loadLivePrefs();
     if (p.enabled){
       try{
@@ -1162,31 +1306,16 @@
       }catch{}
     }
 
-    // Baseline fallback: pack-based (best effort)
     for (const sym of LIVE_DEFAULT_SYMBOLS){
-      try{
-        const res = await fetchWorkerJson(`${HMONEY_WORKER_BASE}/pack?ticker=${encodeURIComponent(sym)}`);
-        if (res && res.ok && res.found && res.pack){
-          const m = res.pack.market || {};
-          const pct = m.pct_change_1d;
-          const cls = badgeForDelta(pct);
-          host.appendChild(el("span", {class:"chip"}, [
-            el("span", {class:"mono"}, [sym]),
-            el("span", {class:`mono ${cls}`}, [fmtPctChange1d(pct)]),
-            link(quoteUrl(sym), "↗", {class:"mono"})
-          ]));
-        } else {
-          host.appendChild(el("span", {class:"chip"}, [el("span", {class:"mono"}, [sym]), el("span", {class:"mono"}, ["—"])]));
-        }
-      }catch{
-        host.appendChild(el("span", {class:"chip"}, [el("span", {class:"mono"}, [sym]), el("span", {class:"mono"}, ["—"])]));
-      }
+      host.appendChild(el("span", {class:"chip"}, [
+        el("span", {class:"mono"}, [sym]),
+        el("span", {class:"mono"}, ["—"]),
+        link(quoteUrl(sym), "↗", {class:"mono"})
+      ]));
     }
   }
 
-  // ------------------------
   // Baseline state render
-  // ------------------------
   function renderSnapshot(state){
     const universe = state.universe || {};
     const quality = state.quality || {};
@@ -1240,7 +1369,6 @@
     const label = posture.label || "—";
     const conf = String(posture.confidence_tag || "").replace(/_/g," ");
 
-    // Condition box
     const host = document.getElementById("marketTopRow");
     host.innerHTML = "";
     host.appendChild(el("div", {class:"kv", style:"min-width:220px"}, [
@@ -1264,7 +1392,7 @@
       } else {
         explain = "Stabilization traits and breakdown traits look roughly balanced across the tracked set.";
       }
-      explain += " (This is descriptive, not a forecast.)";
+      explain += " (Descriptive, not a forecast.)";
     }
     document.getElementById("marketExplain").textContent = explain;
 
@@ -1296,9 +1424,7 @@
     ]));
   }
 
-  // ------------------------
-  // Highlights tabs
-  // ------------------------
+  // Highlights
   function setActiveTab(tab){
     __HL_TAB = tab;
     document.getElementById("tabSetups").classList.toggle("active", tab === "setups");
@@ -1361,9 +1487,7 @@
     host.appendChild(tbl);
   }
 
-  // ------------------------
   // Benchmarks expanded (lazy)
-  // ------------------------
   async function renderBenchmarks(){
     if (__BENCH_LOADED) return;
     __BENCH_LOADED = true;
@@ -1443,279 +1567,27 @@
     document.getElementById("benchStatus").textContent = `Loaded ${totalFound}/${totalExpected}`;
   }
 
-  // ------------------------
-  // Ticker lookup (pack -> fallback live quote)
-  // ------------------------
-  function normalizeTicker(sym){ return String(sym || "").trim().toUpperCase().replace(/\s+/g, ""); }
-
-  function renderPackSummary(sym, pack, meta){
-    const m = pack.market || {};
-    const s = pack.scores || {};
-    const last = m.last_price ?? m.last ?? null;
-    const pct1d = m.pct_change_1d ?? null;
-    const offHigh = m.pct_off_52w_high ?? null;
-    const ma200 = m.ma_200 ?? null;
-    const atr = m.atr_pct ?? null;
-    const dv = m.dollar_volume_20d ?? null;
-
-    let dist200 = null;
-    if (last !== null && ma200 !== null && Number(ma200) !== 0){
-      dist200 = (Number(last)/Number(ma200) - 1) * 100;
-    }
-
-    const staleTag = meta?.is_stale ? `<span class="tag warn">Older evidence</span>` : `<span class="tag good">Latest evidence</span>`;
-    const when = meta?.as_of ? formatLA(meta.as_of) : "—";
-
-    return `
-      <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
-        <div style="font-weight:800; font-size:14px">${sym}</div>
-        ${staleTag}
-        <a class="btn" href="${quoteUrl(sym)}" target="_blank" rel="noopener noreferrer">Open quote</a>
-        <a class="btn" href="${HMONEY_WORKER_BASE}/pack?ticker=${encodeURIComponent(sym)}" target="_blank" rel="noopener noreferrer">Open evidence</a>
-      </div>
-
-      <div class="small" style="margin-top:8px">
-        Evidence updated: <span class="mono">${when}</span>
-      </div>
-
-      <div style="height:10px"></div>
-
-      <div class="detailsBox">
-        <div class="small muted" style="margin-bottom:6px">Numbers you can anchor to</div>
-        <div class="row" style="gap:10px">
-          <div class="kv" style="min-width:180px"><div class="k">Last</div><div class="v mono">${last !== null ? fmt(last,2) : "—"}</div></div>
-          <div class="kv" style="min-width:180px"><div class="k">% change (1D)</div><div class="v mono">${fmtPctChange1d(pct1d)}</div></div>
-          <div class="kv" style="min-width:180px"><div class="k">% off 52w high</div><div class="v mono">${offHigh !== null ? (offHigh*100).toFixed(1)+"%" : "—"}</div></div>
-          <div class="kv" style="min-width:180px"><div class="k">vs 200DMA</div><div class="v mono">${dist200 !== null ? dist200.toFixed(1)+"%" : "—"}</div></div>
-          <div class="kv" style="min-width:180px"><div class="k">Volatility (ATR%)</div><div class="v mono">${atr !== null ? (atr*100).toFixed(1)+"%" : "—"}</div></div>
-          <div class="kv" style="min-width:180px"><div class="k">Liquidity ($ vol 20d)</div><div class="v mono">${dv !== null ? dv.toExponential(2) : "—"}</div></div>
-        </div>
-
-        <div style="height:8px"></div>
-        <div class="small muted">
-          Setup score is a composite “pullback + stabilization” style read (relative to its own history). Fragility score is “breakdown + instability” style read.
-        </div>
-
-        <div style="height:8px"></div>
-        <div class="row" style="gap:10px">
-          <div class="kv" style="min-width:180px"><div class="k">Setup score</div><div class="v mono">${fmtInt(s.opportunity_score)}</div></div>
-          <div class="kv" style="min-width:180px"><div class="k">Fragility score</div><div class="v mono">${fmtInt(s.structural_risk_score)}</div></div>
-        </div>
-      </div>
-    `;
-  }
-
-  function renderLiveOnlySummary(sym, q){
-    const price = q?.price ?? null;
-    const pct = q?.pct ?? null;
-    const when = q?.market_time_utc ? formatLA(q.market_time_utc) : "—";
-    const pctText = (pct === null || pct === undefined) ? "—" : `${Number(pct).toFixed(2)}%`;
-    const cls = badgeForDelta(pct);
-
-    return `
-      <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
-        <div style="font-weight:800; font-size:14px">${sym}</div>
-        <span class="tag warn">No evidence in this snapshot</span>
-        <a class="btn" href="${quoteUrl(sym)}" target="_blank" rel="noopener noreferrer">Open quote</a>
-      </div>
-
-      <div style="height:10px"></div>
-
-      <div class="detailsBox">
-        <div class="small muted" style="margin-bottom:6px">Live quote snapshot</div>
-        <div class="row" style="gap:10px">
-          <div class="kv" style="min-width:180px"><div class="k">Price</div><div class="v mono">${price !== null ? fmt(price,2) : "—"}</div></div>
-          <div class="kv" style="min-width:180px"><div class="k">% change</div><div class="v mono ${cls}">${pctText}</div></div>
-          <div class="kv" style="min-width:260px"><div class="k">Time</div><div class="v mono">${when}</div></div>
-        </div>
-        <div class="small muted" style="margin-top:8px">
-          This usually means the ticker wasn’t included in the latest scan. Next step is to always include mega-caps like AMZN in the scan output.
-        </div>
-      </div>
-    `;
-  }
-
-  async function doLoadTicker(sym){
-    const drawer = document.getElementById("drawer");
-    drawer.style.display = "block";
-    drawer.innerHTML = `<div class="small muted">Loading…</div>`;
-
-    // Try evidence pack first
-    try{
-      const res = await fetchWorkerJson(`${HMONEY_WORKER_BASE}/pack?ticker=${encodeURIComponent(sym)}`);
-      if (res && res.ok && res.found && res.pack){
-        __LAST_SYMBOL = sym;
-        __LAST_PACK = res.pack;
-        __LAST_PACK_META = { is_stale: !!res.is_stale, as_of: res.pack_as_of_utc || res.pack?.as_of_utc || null };
-        drawer.innerHTML = renderPackSummary(sym, res.pack, __LAST_PACK_META);
-        await refreshNewsTicker(sym);
-        return;
-      }
-    }catch{}
-
-    // Fallback: live quote snapshot (if keys exist)
-    try{
-      const headers = buildLiveHeaders();
-      const hasAnyKey = Object.keys(headers).length > 0;
-      if (hasAnyKey){
-        const live = await fetchWorkerJson(
-          `${HMONEY_WORKER_BASE}/live?symbols=${encodeURIComponent(sym)}&provider=${encodeURIComponent(loadLivePrefs().provider || "auto")}`,
-          headers
-        );
-        const q = live?.quotes?.[sym] || null;
-        drawer.innerHTML = renderLiveOnlySummary(sym, q);
-        await refreshNewsTicker(sym);
-        return;
-      }
-    }catch{}
-
-    drawer.innerHTML = `<div class="small muted">No evidence found for <span class="mono">${sym}</span> in the latest snapshot.</div>`;
-  }
-
-  // ------------------------
-  // AI (unchanged; minimal)
-  // ------------------------
-  const AI_HISTORY_STORAGE_KEY = "hmoney_ai_history_v1";
-  const AI_REMEMBER_PREF_KEY = "hmoney_ai_remember_v1";
-  const AI_HISTORY_MAX_MESSAGES = 12;
-  const AI_HISTORY_MAX_CHARS = 12000;
-  let __AI_HISTORY = [];
-
-  function loadRememberPref(){
-    const v = localStorage.getItem(AI_REMEMBER_PREF_KEY);
-    if (v === null) return true;
-    return v === "true";
-  }
-  function saveRememberPref(on){ localStorage.setItem(AI_REMEMBER_PREF_KEY, on ? "true" : "false"); }
-  function loadHistoryFromStorage(){
-    try{
-      const raw = localStorage.getItem(AI_HISTORY_STORAGE_KEY);
-      if (!raw) return [];
-      const arr = JSON.parse(raw);
-      if (!Array.isArray(arr)) return [];
-      return arr.filter(m => m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string")
-                .map(m => ({ role: m.role, content: m.content }));
-    }catch{ return []; }
-  }
-  function saveHistoryToStorage(history){
-    try{ localStorage.setItem(AI_HISTORY_STORAGE_KEY, JSON.stringify(history)); }catch{}
-  }
-  function trimHistory(history){
-    let h = Array.isArray(history) ? history.slice() : [];
-    if (h.length > AI_HISTORY_MAX_MESSAGES) h = h.slice(h.length - AI_HISTORY_MAX_MESSAGES);
-    let s = JSON.stringify(h);
-    while (s.length > AI_HISTORY_MAX_CHARS && h.length > 2){
-      h = h.slice(2);
-      s = JSON.stringify(h);
-    }
-    if (s.length > AI_HISTORY_MAX_CHARS && h.length > 0) h = h.slice(h.length - 2);
-    return h;
-  }
-  function updateMemoryMeta(){
-    const meta = document.getElementById("aiMemoryMeta");
-    const remember = document.getElementById("aiRemember")?.checked;
-    const count = __AI_HISTORY.length;
-    const shown = trimHistory(__AI_HISTORY).length;
-    meta.textContent = remember ? `Memory: ON • stored turns: ${count} • sending: ${shown}` : `Memory: OFF`;
-  }
-  function appendToHistory(role, content){
-    if (!content) return;
-    __AI_HISTORY.push({ role, content: String(content) });
-    __AI_HISTORY = trimHistory(__AI_HISTORY);
-    const remember = document.getElementById("aiRemember")?.checked;
-    if (remember) saveHistoryToStorage(__AI_HISTORY);
-    updateMemoryMeta();
-  }
-
-  function extractTickersFromText(text){
-    const raw = (text || "").toUpperCase();
-    const tokens = raw.match(/[A-Z^][A-Z0-9^.-]{0,14}/g) || [];
-    const stop = new Set(["A","AN","AND","ARE","AS","AT","BE","BUT","BY","CAN","DID","DO","FOR","FROM","HAVE","HOW","I","IN","IS","IT",
-      "ME","MY","NO","NOT","OF","ON","OR","THE","THIS","THAT","TO","UP","WHAT","WHEN","WHERE","WHY","WITH","YOU","AI","HMONEY"]);
-    const out = [];
-    const seen = new Set();
-    for (let tok of tokens){
-      tok = tok.replace(/^[^A-Z^]+/, "").replace(/[^A-Z0-9^.-]+$/, "");
-      if (!tok) continue;
-      tok = tok.replace(/\.+$/g, "");
-      if (stop.has(tok)) continue;
-      if (!/[A-Z]/.test(tok)) continue;
-      if (!seen.has(tok)){ seen.add(tok); out.push(tok); }
-    }
-    return out.slice(0, 6);
-  }
-
-  function slimStateForAI(state){
-    return {
-      generated_at_utc: state?.generated_at_utc ?? null,
-      as_of_utc: state?.as_of_utc ?? null,
-      posture: state?.posture ?? null,
-      breadth: state?.breadth ?? null,
-      tables: state?.tables ?? null,
-      quality: state?.quality ?? null,
-      universe: state?.universe ?? null,
-    };
-  }
-
-  async function askAI(question, autoInclude){
-    const status = document.getElementById("aiStatus");
-    const ans = document.getElementById("aiAnswer");
-    ans.style.display = "block";
-    ans.innerHTML = `<div class="small muted">Thinking…</div>`;
-
-    const remember = document.getElementById("aiRemember")?.checked;
-
-    const ctx = {
-      state: __HMONEY_STATE ? slimStateForAI(__HMONEY_STATE) : null,
-      chat_history: remember ? trimHistory(__AI_HISTORY) : [],
-      instruction: "Use provided context first. If something isn’t supported by context, say it’s unverified."
-    };
-
-    const tickers = extractTickersFromText(question);
-    const payload = { question, tickers, context: ctx };
-
-    status.textContent = "Working…";
-
-    try{
-      const r = await fetch(HMONEY_AI_ENDPOINT, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await r.json().catch(() => null);
-      const ok = !!(data && (data.ok === true || typeof data.answer === "string"));
-
-      if (!r.ok || !data || !ok){
-        ans.innerHTML = `<div class="small muted">Couldn’t answer that right now.</div>`;
-        status.textContent = "Issue";
-        return;
-      }
-
-      const text = (data.answer || "").toString().trim();
-      ans.innerHTML = `<div style="white-space:pre-wrap; line-height:1.35">${text || "(empty response)"}</div>`;
-      status.textContent = "Ready";
-
-      if (remember){
-        appendToHistory("user", question);
-        appendToHistory("assistant", text || "(empty response)");
-      } else {
-        updateMemoryMeta();
-      }
-    }catch{
-      ans.innerHTML = `<div class="small muted">Couldn’t answer that right now.</div>`;
-      status.textContent = "Issue";
-    }
-  }
-
-  // ------------------------
   // Init
-  // ------------------------
   async function init(){
     initTheme();
+
+    // Apply saved layout before wiring drag
+    applySavedLayoutOrder();
+    injectDragHandles();
+    initDragDrop();
+
     document.getElementById("themeBtn").addEventListener("click", () => {
       const cur = document.documentElement.getAttribute("data-theme") || "light";
       applyTheme(cur === "light" ? "dark" : "light");
+    });
+
+    document.getElementById("layoutBtn").addEventListener("click", () => {
+      setLayoutMode(!__LAYOUT_EDIT);
+    });
+
+    document.getElementById("layoutResetBtn").addEventListener("click", () => {
+      localStorage.removeItem(LS_LAYOUT_ORDER);
+      location.reload();
     });
 
     document.getElementById("reloadBtn").addEventListener("click", () => location.reload());
@@ -1725,6 +1597,7 @@
     });
 
     initCollapseButtons();
+    setLayoutMode(false);
 
     document.getElementById("toggleMarketDetailsBtn").addEventListener("click", () => {
       const box = document.getElementById("marketDetails");
@@ -1741,12 +1614,9 @@
     document.getElementById("marketInfoBtn").addEventListener("click", () => {
       showModal("Definitions (human)", `
         <div class="body">
-          <p><b>Setup score (0–100)</b> is a composite “pullback + stabilization” read (relative to the asset’s own history). Think: “is it pulled back, and does it look like it’s starting to behave more calmly?”</p>
-          <p><b>Fragility score (0–100)</b> is a composite “breakdown + instability” read (relative to its own history). Think: “is it trending down with messy volatility / drawdowns?”</p>
+          <p><b>Setup</b> is a pullback + stabilization style read (relative to the asset’s own history).</p>
+          <p><b>Fragility</b> is a breakdown + instability style read (relative to the asset’s own history).</p>
           <p><b>Condition</b> summarizes how common setup-like vs fragility-like behavior is across the tracked set.</p>
-          <p><b>Anchors</b>: % off 52w high, vs 200DMA, ATR% (volatility), and liquidity ($ volume) help you sanity-check the score.</p>
-          <hr/>
-          <p><b>Fear &amp; Greed</b> uses CNN’s published score + label; the dial is our visualization of those values.</p>
         </div>
       `);
     });
@@ -1756,8 +1626,7 @@
         <div class="body">
           <p><b>Setups</b>: pulled-back + stabilizing traits.</p>
           <p><b>Fragility</b>: persistent breakdown traits.</p>
-          <p><b>Mixed</b>: cross-currents (not a clean read).</p>
-          <p>These are examples to review — not recommendations.</p>
+          <p><b>Mixed</b>: cross-currents.</p>
         </div>
       `);
     });
@@ -1777,7 +1646,6 @@
       if (__LAST_SYMBOL) await refreshNewsTicker(__LAST_SYMBOL);
     });
 
-    // Live settings
     applyLivePrefsToUI();
     document.getElementById("liveSaveBtn").addEventListener("click", async () => {
       const enabled = !!document.getElementById("liveEnabled").checked;
@@ -1803,7 +1671,6 @@
       await refreshBenchTape();
     });
 
-    // Benchmarks lazy-load
     document.querySelector('[data-collapse="benchBody"]').addEventListener("click", async () => {
       const isNowOpen = !document.getElementById("benchBody").classList.contains("hidden");
       if (isNowOpen) {
@@ -1811,54 +1678,6 @@
         await renderBenchmarks();
       } else {
         document.getElementById("benchStatus").textContent = "Collapsed";
-      }
-    });
-
-    // Ticker load
-    const input = document.getElementById("tickerInput");
-    document.getElementById("loadTickerBtn").addEventListener("click", async () => {
-      const sym = normalizeTicker(input.value);
-      if (!sym) return;
-      await doLoadTicker(sym);
-    });
-    input.addEventListener("keydown", async (ev) => {
-      if (ev.key === "Enter") {
-        const sym = normalizeTicker(input.value);
-        if (!sym) return;
-        await doLoadTicker(sym);
-      }
-    });
-
-    // AI wiring
-    const rememberOn = loadRememberPref();
-    document.getElementById("aiRemember").checked = rememberOn;
-    __AI_HISTORY = rememberOn ? trimHistory(loadHistoryFromStorage()) : [];
-    updateMemoryMeta();
-
-    document.getElementById("aiRemember").addEventListener("change", () => {
-      const on = !!document.getElementById("aiRemember").checked;
-      saveRememberPref(on);
-      if (on) __AI_HISTORY = trimHistory(loadHistoryFromStorage());
-      else { __AI_HISTORY = []; localStorage.removeItem(AI_HISTORY_STORAGE_KEY); }
-      updateMemoryMeta();
-    });
-
-    document.getElementById("aiClearMemoryBtn").addEventListener("click", () => {
-      __AI_HISTORY = [];
-      localStorage.removeItem(AI_HISTORY_STORAGE_KEY);
-      updateMemoryMeta();
-    });
-
-    async function doAsk(){
-      const q = (document.getElementById("aiQuestion").value || "").trim();
-      if (!q) return;
-      await askAI(q, !!document.getElementById("aiIncludeTicker").checked);
-    }
-    document.getElementById("aiAskBtn").addEventListener("click", doAsk);
-    document.getElementById("aiQuestion").addEventListener("keydown", (ev) => {
-      if (ev.key === "Enter" && (ev.ctrlKey || ev.metaKey)) {
-        ev.preventDefault();
-        doAsk();
       }
     });
 
@@ -1875,17 +1694,14 @@
       setBadgeText("stSnapshot", "Unavailable");
     }
 
-    // Market pulse + bench tape + news
     await refreshMarketPulse();
     await refreshBenchTape();
     await refreshNewsMarket();
     await refreshNewsTicker(__LAST_SYMBOL);
 
-    // Status badges
     setBadgeText("stLive", loadLivePrefs().enabled ? "On" : "Off");
     setDot("dotLive", loadLivePrefs().enabled ? "good" : null);
 
-    // Start loops
     scheduleLiveLoop();
     scheduleNewsLoop();
 
