@@ -115,13 +115,10 @@
       padding:12px;
       background: rgba(10,14,20,0.35);
     }
-    .drawer h3{margin:0 0 10px; font-size:13px}
     .cols{display:grid; grid-template-columns: 1fr 1fr; gap:12px}
     @media (max-width: 980px){ .cols{grid-template-columns:1fr} }
     .list{display:flex; flex-direction:column; gap:8px}
     .item{display:flex; justify-content:space-between; gap:10px; padding:8px 10px; border:1px solid rgba(34,48,71,0.7); border-radius:12px}
-    .item .lk{color:var(--muted)}
-    .item .rv{font-variant-numeric: tabular-nums}
     .err{color:var(--bad); font-size:12px}
     .ok{color:var(--good); font-size:12px}
     .muted{color:var(--muted)}
@@ -160,7 +157,7 @@
       min-height:60px;
     }
 
-    /* Live + badges */
+    /* Live badges + tags */
     .badge{
       display:inline-flex;
       align-items:center;
@@ -187,6 +184,33 @@
     .tag.good{color:var(--good)}
     .tag.warn{color:var(--warn)}
     .tag.bad{color:var(--bad)}
+
+    .formRow{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+      margin-top:8px;
+    }
+    .sel{
+      background: rgba(10,14,20,0.20);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 8px 10px;
+      color: var(--text);
+      font-size: 12px;
+      outline: none;
+    }
+    .keyInput{
+      background: rgba(10,14,20,0.20);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 8px 10px;
+      color: var(--text);
+      font-size: 12px;
+      outline: none;
+      width: min(520px, 100%);
+    }
     .newsItemTitle{display:block; margin-bottom:2px}
     .newsMeta{font-size:11px; color:var(--muted)}
   </style>
@@ -206,15 +230,53 @@
     </div>
   </div>
 
-  <!-- Live overlay tape -->
+  <!-- Live overlay tape + settings -->
   <div class="card" id="liveCard" style="padding:12px; margin-bottom:12px;">
     <div class="sectionTitle">
       <h2 style="margin:0">Live overlay</h2>
       <div class="small" id="liveMeta">—</div>
     </div>
+
     <div class="chips" id="liveChips"></div>
-    <div class="hint" style="margin-top:8px">
-      Live overlay is cached briefly via Worker and refreshes more frequently during market hours. Baseline analytics update on pipeline cadence.
+
+    <div class="drawer" id="liveSettings" style="margin-top:10px">
+      <div class="sectionTitle">
+        <h3 style="margin:0; font-size:13px;">Live Data Settings (BYO key)</h3>
+        <div class="small" id="liveSettingsStatus">—</div>
+      </div>
+
+      <div class="formRow">
+        <label class="small muted">
+          <input type="checkbox" id="liveEnabled" />
+          Enable live overlay
+        </label>
+
+        <span class="small muted">Provider:</span>
+        <select class="sel" id="liveProvider">
+          <option value="auto">Auto (Finnhub + Twelve Data)</option>
+          <option value="finnhub">Finnhub only</option>
+          <option value="twelvedata">Twelve Data only</option>
+        </select>
+
+        <button class="btn" id="liveSaveBtn">Save</button>
+        <button class="btn" id="liveClearBtn">Clear keys</button>
+        <button class="btn" id="liveTestBtn">Test now</button>
+      </div>
+
+      <div class="formRow">
+        <span class="small muted" style="min-width:110px">Finnhub key</span>
+        <input class="keyInput mono" id="finnhubKey" type="password" placeholder="Stored locally (this browser only)" autocomplete="off" />
+      </div>
+
+      <div class="formRow">
+        <span class="small muted" style="min-width:110px">Twelve Data key</span>
+        <input class="keyInput mono" id="twelveKey" type="password" placeholder="Stored locally (this browser only)" autocomplete="off" />
+      </div>
+
+      <div class="hint" style="margin-top:10px">
+        Keys are stored in <span class="mono">localStorage</span> on this device and sent only as request headers to the Worker (<span class="mono">/live</span>).
+        If keys are missing, the dashboard falls back to baseline analytics (still updating automatically).
+      </div>
     </div>
   </div>
 
@@ -256,7 +318,7 @@
 
   <div style="height:12px"></div>
 
-  <!-- Highlights (wired to state.tables.*.rows) -->
+  <!-- Highlights -->
   <div class="card" id="highlightsCard">
     <div class="sectionTitle">
       <h2>Highlights</h2>
@@ -305,7 +367,7 @@
       </div>
     </div>
     <div class="hint" style="margin-top:10px">
-      Headlines are fetched via Worker (<span class="mono">/news</span>) from RSS/official feeds and deduped best-effort. Click-through only (no full-text rehosting).
+      Headlines are fetched via Worker (<span class="mono">/news</span>) from RSS/official feeds and deduped best-effort. Click-through only.
     </div>
   </div>
 
@@ -329,7 +391,7 @@
     <div class="row" style="margin-top:8px">
       <label class="small muted">
         <input type="checkbox" id="aiIncludeTicker" checked />
-        Include last loaded pack + live quotes for mentioned tickers
+        Include last loaded pack + (optional) live quotes for mentioned tickers
       </label>
 
       <label class="small muted">
@@ -382,12 +444,20 @@
   }
 
   // ----------------------------
+  // LocalStorage keys (Live overlay BYO)
+  // ----------------------------
+  const LS_LIVE_ENABLED = "hmoney_live_enabled_v1";
+  const LS_LIVE_PROVIDER = "hmoney_live_provider_v1";
+  const LS_FINNHUB_KEY  = "hmoney_finnhub_key_v1";
+  const LS_TWELVE_KEY   = "hmoney_twelvedata_key_v1";
+
+  // ----------------------------
   // AI MEMORY CONFIG (client-side)
   // ----------------------------
   const AI_HISTORY_STORAGE_KEY = "hmoney_ai_history_v1";
   const AI_REMEMBER_PREF_KEY = "hmoney_ai_remember_v1";
-  const AI_HISTORY_MAX_MESSAGES = 12;     // user+assistant messages kept
-  const AI_HISTORY_MAX_CHARS = 12000;     // safety cap for payload size
+  const AI_HISTORY_MAX_MESSAGES = 12;
+  const AI_HISTORY_MAX_CHARS = 12000;
 
   // ----------------------------
   // Helpers / constants
@@ -480,12 +550,6 @@
     return await r.json();
   }
 
-  async function fetchWorkerJson(fullUrl){
-    const r = await fetch(fullUrl, {cache:"no-store"});
-    if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
-    return await r.json();
-  }
-
   function el(tag, attrs={}, children=[]){
     const e = document.createElement(tag);
     for (const [k,v] of Object.entries(attrs)){
@@ -529,12 +593,62 @@
     const {weekday, hour, minute} = getPTParts();
     const isWeekday = ["Mon","Tue","Wed","Thu","Fri"].includes(weekday);
     const mins = hour*60 + minute;
-    // Regular hours: 6:30–13:00 PT
     return isWeekday && mins >= (6*60+30) && mins <= (13*60+0);
   }
 
   // ----------------------------
-  // Evidence-pack helpers (Worker /pack)
+  // Live settings (BYO keys)
+  // ----------------------------
+  function loadLivePrefs(){
+    const enabled = (localStorage.getItem(LS_LIVE_ENABLED) ?? "false") === "true";
+    const provider = localStorage.getItem(LS_LIVE_PROVIDER) || "auto";
+    const finnhubKey = localStorage.getItem(LS_FINNHUB_KEY) || "";
+    const twelveKey  = localStorage.getItem(LS_TWELVE_KEY) || "";
+    return { enabled, provider, finnhubKey, twelveKey };
+  }
+
+  function saveLivePrefs(p){
+    localStorage.setItem(LS_LIVE_ENABLED, p.enabled ? "true" : "false");
+    localStorage.setItem(LS_LIVE_PROVIDER, p.provider || "auto");
+    localStorage.setItem(LS_FINNHUB_KEY, p.finnhubKey || "");
+    localStorage.setItem(LS_TWELVE_KEY, p.twelveKey || "");
+  }
+
+  function applyLivePrefsToUI(){
+    const p = loadLivePrefs();
+    document.getElementById("liveEnabled").checked = !!p.enabled;
+    document.getElementById("liveProvider").value = p.provider || "auto";
+    document.getElementById("finnhubKey").value = p.finnhubKey || "";
+    document.getElementById("twelveKey").value = p.twelveKey || "";
+    updateLiveSettingsStatus();
+  }
+
+  function updateLiveSettingsStatus(extra=""){
+    const p = loadLivePrefs();
+    const status = document.getElementById("liveSettingsStatus");
+
+    const hasFH = !!(p.finnhubKey && p.finnhubKey.trim());
+    const hasTD = !!(p.twelveKey && p.twelveKey.trim());
+
+    let msg = p.enabled ? "Enabled" : "Disabled";
+    msg += ` • provider: ${p.provider || "auto"}`;
+    msg += ` • keys: Finnhub ${hasFH ? "✓" : "—"} | Twelve ${hasTD ? "✓" : "—"}`;
+    if (extra) msg += ` • ${extra}`;
+    status.textContent = msg;
+  }
+
+  // ----------------------------
+  // Worker fetch helpers (with optional headers)
+  // ----------------------------
+  async function fetchWorkerJson(fullUrl, headersObj=null){
+    const init = { cache:"no-store", headers: headersObj || undefined };
+    const r = await fetch(fullUrl, init);
+    if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
+    return await r.json();
+  }
+
+  // ----------------------------
+  // Evidence pack (Worker /pack)
   // ----------------------------
   function normalizeTicker(sym){
     return String(sym || "").trim().toUpperCase().replace(/\s+/g, "");
@@ -551,13 +665,13 @@
   }
 
   // ----------------------------
-  // AI memory (client-side)
+  // AI memory
   // ----------------------------
   let __AI_HISTORY = [];
 
   function loadRememberPref(){
     const v = localStorage.getItem(AI_REMEMBER_PREF_KEY);
-    if (v === null) return true; // default ON
+    if (v === null) return true;
     return v === "true";
   }
 
@@ -580,11 +694,7 @@
   }
 
   function saveHistoryToStorage(history){
-    try{
-      localStorage.setItem(AI_HISTORY_STORAGE_KEY, JSON.stringify(history));
-    }catch{
-      // ignore quota errors
-    }
+    try{ localStorage.setItem(AI_HISTORY_STORAGE_KEY, JSON.stringify(history)); }catch{}
   }
 
   function clearHistory(){
@@ -628,15 +738,13 @@
   }
 
   // ----------------------------
-  // State cache for AI + UI
+  // State cache
   // ----------------------------
   let __HMONEY_STATE = null;
   let __LAST_PACK = null;
   let __LAST_PACK_META = null;
   let __LAST_SYMBOL = null;
-  let __BASE_PATH = null;
   let __TICKER_SET = null;
-  let __LIVE_CACHE = null; // last /live payload
 
   function slimStateForAI(state){
     return {
@@ -774,7 +882,7 @@
   }
 
   // ----------------------------
-  // Live overlay
+  // Live overlay (Worker /live with headers)
   // ----------------------------
   function badgeForDelta(n){
     if (n === null || n === undefined) return "";
@@ -788,18 +896,24 @@
   function renderLiveChips(payload){
     const chips = document.getElementById("liveChips");
     const meta = document.getElementById("liveMeta");
-
     chips.innerHTML = "";
+
+    const baselineTs = (__HMONEY_STATE?.generated_at_utc || __HMONEY_STATE?.as_of_utc || "—");
+
     if (!payload || !payload.ok){
       meta.textContent = "Live overlay unavailable";
-      chips.appendChild(el("div", {class:"small muted"}, ["Worker /live did not return quotes."]));
+      chips.appendChild(el("span", {class:"badge"}, [el("span", {}, ["Baseline: "]), el("b", {}, [baselineTs])]));
+      chips.appendChild(el("div", {class:"small muted", style:"margin-top:6px"}, [
+        "Enable live overlay and provide provider key(s) to see near-live quotes.",
+      ]));
       return;
     }
 
-    __LIVE_CACHE = payload;
-
     const asOf = payload.as_of_utc || "—";
-    meta.textContent = `as of ${asOf} • ttl ${payload.cache_ttl_s ?? "?"}s`;
+    const ttl = payload.cache_ttl_s ?? "?";
+    const used = Array.isArray(payload?.debug?.used) ? payload.debug.used.map(x => x.provider).filter(Boolean).join(", ") : "";
+
+    meta.textContent = `as of ${asOf} • ttl ${ttl}s${used ? " • " + used : ""}`;
 
     const quotes = payload.quotes || {};
     for (const sym of LIVE_DEFAULT_SYMBOLS){
@@ -821,26 +935,61 @@
 
     chips.appendChild(el("span", {class:"badge"}, [
       el("span", {}, ["Baseline: "]),
-      el("b", {}, [(__HMONEY_STATE?.generated_at_utc || __HMONEY_STATE?.as_of_utc || "—")]),
+      el("b", {}, [baselineTs]),
     ]));
   }
 
-  async function refreshLive(){
+  function buildLiveHeaders(){
+    const p = loadLivePrefs();
+    const headers = {};
+    if (p.finnhubKey && p.finnhubKey.trim()) headers["X-Finnhub-Key"] = p.finnhubKey.trim();
+    if (p.twelveKey && p.twelveKey.trim()) headers["X-TwelveData-Key"] = p.twelveKey.trim();
+    return headers;
+  }
+
+  // backoff if 429s happen
+  let __LIVE_BACKOFF_UNTIL = 0;
+
+  async function refreshLive(force=false){
+    const p = loadLivePrefs();
+    if (!p.enabled){
+      renderLiveChips(null);
+      updateLiveSettingsStatus("disabled");
+      return;
+    }
+
+    const now = Date.now();
+    if (!force && __LIVE_BACKOFF_UNTIL && now < __LIVE_BACKOFF_UNTIL){
+      updateLiveSettingsStatus(`backoff ${(Math.ceil((__LIVE_BACKOFF_UNTIL - now)/1000))}s`);
+      return;
+    }
+
+    const symbols = LIVE_DEFAULT_SYMBOLS.join(",");
+    const u = `${HMONEY_WORKER_BASE}/live?symbols=${encodeURIComponent(symbols)}&provider=${encodeURIComponent(p.provider || "auto")}`;
+
     try{
-      const symbols = LIVE_DEFAULT_SYMBOLS.join(",");
-      const u = `${HMONEY_WORKER_BASE}/live?symbols=${encodeURIComponent(symbols)}`;
-      const payload = await fetchWorkerJson(u);
+      updateLiveSettingsStatus("fetching…");
+      const payload = await fetchWorkerJson(u, buildLiveHeaders());
       renderLiveChips(payload);
+      updateLiveSettingsStatus("ok");
     }catch(e){
-      renderLiveChips({ ok:false, error:String(e) });
+      const msg = String(e || "");
+      // If preflight/CORS issues happen, msg might be opaque; still back off.
+      if (msg.includes("429")){
+        __LIVE_BACKOFF_UNTIL = Date.now() + 120000; // 2 minutes
+        updateLiveSettingsStatus("rate limited (backing off)");
+      } else {
+        updateLiveSettingsStatus("error");
+      }
+      renderLiveChips({ ok:false, error: msg });
     }
   }
 
   function scheduleLiveLoop(){
-    // adaptive cadence
     const tick = async () => {
-      await refreshLive();
-      const ms = isMarketHoursPT() ? 30000 : 300000; // 30s in-hours, 5m otherwise
+      await refreshLive(false);
+      const p = loadLivePrefs();
+      const ms = (p.enabled ? (isMarketHoursPT() ? 30000 : 300000) : 300000);
       setTimeout(tick, ms);
     };
     tick();
@@ -890,10 +1039,9 @@
     const tick = async () => {
       try{
         await refreshNewsMarket();
-        // ticker column refreshed on load ticker; we also refresh here if selected
         if (__LAST_SYMBOL) await refreshNewsTicker(__LAST_SYMBOL);
       }catch{}
-      const ms = isMarketHoursPT() ? 120000 : 600000; // 2m in-hours, 10m otherwise
+      const ms = isMarketHoursPT() ? 120000 : 600000;
       setTimeout(tick, ms);
     };
     tick();
@@ -913,12 +1061,11 @@
     const ctx = {
       state: __HMONEY_STATE ? slimStateForAI(__HMONEY_STATE) : null,
       chat_history: remember ? trimHistory(__AI_HISTORY) : [],
-      instruction: "Context-first: use ticker_packs (preferred), then ticker_table_rows. If you use stale packs, label staleness. Avoid generic company descriptions unless asked."
+      instruction: "Context-first: use ticker_packs (preferred), then ticker_table_rows. If you use stale packs, label staleness."
     };
 
     const mentioned = extractTickersFromText(question);
-    const MAX_TICKERS = 6;
-    const tickers = mentioned.slice(0, MAX_TICKERS);
+    const tickers = mentioned.slice(0, 6);
 
     const tickerTableRows = {};
     if (__HMONEY_STATE && tickers.length){
@@ -931,7 +1078,7 @@
     }
     if (Object.keys(tickerTableRows).length) ctx.ticker_table_rows = tickerTableRows;
 
-    // Include last loaded pack (if requested)
+    // Include last loaded pack
     if (autoInclude && __LAST_PACK && __LAST_SYMBOL){
       ctx.last_loaded = {
         symbol: __LAST_SYMBOL,
@@ -940,13 +1087,16 @@
       };
     }
 
-    // Include live quotes for mentioned tickers (best-effort)
+    // Optionally include live quotes (only if enabled; uses headers)
     if (autoInclude && tickers.length){
-      try{
-        const u = `${HMONEY_WORKER_BASE}/live?symbols=${encodeURIComponent(tickers.join(","))}`;
-        const live = await fetchWorkerJson(u);
-        if (live && live.ok) ctx.live_quotes = live;
-      }catch{}
+      const p = loadLivePrefs();
+      if (p.enabled){
+        try{
+          const u = `${HMONEY_WORKER_BASE}/live?symbols=${encodeURIComponent(tickers.join(","))}&provider=${encodeURIComponent(p.provider || "auto")}`;
+          const live = await fetchWorkerJson(u, buildLiveHeaders());
+          if (live && live.ok) ctx.live_quotes = live;
+        }catch{}
+      }
     }
 
     status.textContent = "Asking…";
@@ -1003,7 +1153,7 @@
   }
 
   // ----------------------------
-  // Rendering (baseline state)
+  // Rendering baseline state
   // ----------------------------
   function renderPosture(state){
     const posture = state.posture || {};
@@ -1117,7 +1267,7 @@
       `State loaded • packs_dir: ${basePath || "—"}${(packsWritten !== null ? ` • packs_written: ${fmtInt(packsWritten)}` : "")}${mode ? ` • mode: ${mode}` : ""}${shardText}`;
 
     document.getElementById("footer").innerHTML =
-      `Baseline analytics: GitHub Actions → /docs. Live/news/AI: Cloudflare Worker. Data currently sourced primarily from Yahoo Finance via yfinance/Yahoo endpoints; click-through provenance where possible.`;
+      `Baseline analytics: GitHub Actions → /docs. Live/news/AI: Cloudflare Worker. Live overlay uses BYO keys stored locally (this browser).`;
 
     return basePath;
   }
@@ -1128,12 +1278,11 @@
     if (h === "opp") return `${METHODOLOGY_BASE}#opportunity-score`;
     if (h === "risk") return `${METHODOLOGY_BASE}#structural-risk-score`;
     if (h === "discount") return `${METHODOLOGY_BASE}#discount-score`;
-    if (h === "rsi") return `${METHODOLOGY_BASE}#rsi`;
     return null;
   }
 
   // ----------------------------
-  // Highlights (FROM state.tables)
+  // Highlights (state.tables)
   // ----------------------------
   function renderHighlights(state){
     const tables = state.tables || {};
@@ -1161,7 +1310,6 @@
     document.getElementById("hlMeta").textContent = metaParts.join(" • ");
 
     function packLink(sym){
-      // Use Worker /pack endpoint as a stable link (it returns the best pack + pack_url).
       const href = `${HMONEY_WORKER_BASE}/pack?ticker=${encodeURIComponent(sym)}`;
       return link(href, "pack", {class:"mono"});
     }
@@ -1256,7 +1404,6 @@
       tbl.appendChild(thead);
       tbl.appendChild(tbody);
 
-      // Fetch packs in parallel (faster)
       const jobs = symbols.map(async (sym) => {
         try{
           const res = await loadPackSmart(sym);
@@ -1286,7 +1433,6 @@
           const market = pack.market || {};
           const scores = pack.scores || {};
           const links = pack.links || {};
-
           const quoteLink = links.quote || quoteUrl(sym);
 
           const last = market.last_price ?? null;
@@ -1300,8 +1446,7 @@
             ? el("span", {class:"tag warn", style:"margin-left:8px"}, ["STALE"])
             : el("span", {class:"tag good", style:"margin-left:8px"}, ["CURRENT"]);
 
-          const repText = `${BENCHMARK_META[sym] || "Benchmark"}`;
-          const repKids = [el("span", {class:"muted"}, [repText]), staleTag];
+          const repKids = [el("span", {class:"muted"}, [BENCHMARK_META[sym] || "Benchmark"]), staleTag];
 
           const pctClass = badgeForDelta((() => {
             let v = market.pct_change_1d;
@@ -1363,31 +1508,65 @@
       const state = await fetchJson("./state.json");
       __HMONEY_STATE = state;
 
-      // Use the run folder as the cache-bust token so all pack URLs match this run
       window.__HMONEY_V = normalizeBasePath(state?.evidence_pack_index?.base_path || "")
         || state?.generated_at_utc
         || Date.now();
 
       __TICKER_SET = buildTickerSetFromState(state);
 
-      const basePath = setHeaderMeta(state);
-      __BASE_PATH = basePath;
-
+      setHeaderMeta(state);
       renderSnapshot(state);
       renderPosture(state);
       renderHighlights(state);
 
-      // Benchmarks now load via Worker /pack with fallback
       await renderBenchmarks();
 
       document.getElementById("reloadBtn").addEventListener("click", () => location.reload());
 
-      // Show where packs live
+      // Run meta
       const basePathRaw = state?.evidence_pack_index?.base_path || "";
       const basePathNorm = normalizeBasePath(basePathRaw);
       document.getElementById("runMeta").textContent = basePathNorm ? `packs_dir: ${basePathNorm}` : "—";
 
-      // Find-a-ticker drawer handlers (Worker /pack)
+      // Live settings wiring
+      applyLivePrefsToUI();
+
+      document.getElementById("liveSaveBtn").addEventListener("click", async () => {
+        const enabled = !!document.getElementById("liveEnabled").checked;
+        const provider = document.getElementById("liveProvider").value || "auto";
+        const finnhubKey = document.getElementById("finnhubKey").value || "";
+        const twelveKey  = document.getElementById("twelveKey").value || "";
+        saveLivePrefs({ enabled, provider, finnhubKey, twelveKey });
+        updateLiveSettingsStatus("saved");
+        await refreshLive(true);
+      });
+
+      document.getElementById("liveClearBtn").addEventListener("click", async () => {
+        saveLivePrefs({ enabled:false, provider:"auto", finnhubKey:"", twelveKey:"" });
+        applyLivePrefsToUI();
+        updateLiveSettingsStatus("cleared");
+        await refreshLive(true);
+      });
+
+      document.getElementById("liveTestBtn").addEventListener("click", async () => {
+        await refreshLive(true);
+      });
+
+      document.getElementById("liveEnabled").addEventListener("change", async () => {
+        const p = loadLivePrefs();
+        saveLivePrefs({ ...p, enabled: !!document.getElementById("liveEnabled").checked });
+        updateLiveSettingsStatus("toggled");
+        await refreshLive(true);
+      });
+
+      document.getElementById("liveProvider").addEventListener("change", async () => {
+        const p = loadLivePrefs();
+        saveLivePrefs({ ...p, provider: document.getElementById("liveProvider").value || "auto" });
+        updateLiveSettingsStatus("provider");
+        await refreshLive(true);
+      });
+
+      // Find-a-ticker drawer handlers
       const input = document.getElementById("tickerInput");
       const btn = document.getElementById("loadTickerBtn");
 
@@ -1419,17 +1598,23 @@
 
           const packUrl = res.pack_url ? res.pack_url : `${HMONEY_WORKER_BASE}/pack?ticker=${encodeURIComponent(sym)}`;
 
-          // Also show live quote for the ticker (best-effort)
+          // Show live quote best-effort (only if enabled + keys)
           let liveLine = "";
-          try{
-            const live = await fetchWorkerJson(`${HMONEY_WORKER_BASE}/live?symbols=${encodeURIComponent(sym)}`);
-            const q = live?.quotes?.[sym];
-            if (q && q.price !== null && q.price !== undefined){
-              const pct = (q.pct === null || q.pct === undefined) ? "—" : `${Number(q.pct).toFixed(2)}%`;
-              const cls = badgeForDelta(q.pct);
-              liveLine = `<div class="small muted" style="margin-top:8px">Live: <span class="mono">${fmt(q.price,2)}</span> • <span class="mono ${cls}">${pct}</span> <span class="muted">(${live.as_of_utc})</span></div>`;
-            }
-          }catch{}
+          const p = loadLivePrefs();
+          if (p.enabled){
+            try{
+              const live = await fetchWorkerJson(
+                `${HMONEY_WORKER_BASE}/live?symbols=${encodeURIComponent(sym)}&provider=${encodeURIComponent(p.provider || "auto")}`,
+                buildLiveHeaders()
+              );
+              const q = live?.quotes?.[sym];
+              if (q && q.price !== null && q.price !== undefined){
+                const pct = (q.pct === null || q.pct === undefined) ? "—" : `${Number(q.pct).toFixed(2)}%`;
+                const cls = badgeForDelta(q.pct);
+                liveLine = `<div class="small muted" style="margin-top:8px">Live: <span class="mono">${fmt(q.price,2)}</span> • <span class="mono ${cls}">${pct}</span> <span class="muted">(${live.as_of_utc})</span></div>`;
+              }
+            }catch{}
+          }
 
           drawer.innerHTML = `
             <div class="ok">Loaded evidence for <span class="mono">${sym}</span> ${tag}</div>
@@ -1445,7 +1630,6 @@
             ${liveLine}
           `;
 
-          // Refresh ticker news column
           await refreshNewsTicker(sym);
         }catch(e){
           drawer.innerHTML = `
@@ -1486,9 +1670,7 @@
         updateMemoryMeta();
       });
 
-      aiClear.addEventListener("click", () => {
-        clearHistory();
-      });
+      aiClear.addEventListener("click", () => clearHistory());
 
       async function doAsk(){
         const q = (aiQ.value || "").trim();
@@ -1504,9 +1686,14 @@
         }
       });
 
-      // Kick off automation loops
+      // Start loops
       scheduleLiveLoop();
       scheduleNewsLoop();
+
+      // Initial paint
+      await refreshLive(true);
+      await refreshNewsMarket();
+      await refreshNewsTicker(__LAST_SYMBOL);
 
     }catch(e){
       document.getElementById("subline").textContent = "Failed to load state.json";
