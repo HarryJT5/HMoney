@@ -1018,11 +1018,14 @@ function applyCollapse(panelId, collapsed){
   });
 }
 function initCollapseButtons(){
-  const defaults = new Set(["newsBody","benchBody","liveSettingsBody"]);
+  // Default: nothing collapsed
+  const defaults = new Set([]);
+
   document.querySelectorAll("[data-collapse]").forEach(btn => {
     const panelId = btn.getAttribute("data-collapse");
     const collapsed = defaults.has(panelId);
     applyCollapse(panelId, collapsed);
+
     btn.addEventListener("click", () => {
       const nowCollapsed = !document.getElementById(panelId).classList.contains("hidden");
       applyCollapse(panelId, nowCollapsed);
@@ -1207,18 +1210,23 @@ function renderMarket(state){
   const pullPct = sample?.pullback_density_pct ?? null;
   const fragPct = sample?.fragility_presence_pct ?? null;
 
-  let explain = "—";
-  if (pullPct !== null && fragPct !== null){
-    if (pullPct > fragPct){
-      explain = "More names show stabilizing pullback traits than breakdown traits.";
-    } else if (fragPct > pullPct){
-      explain = "Breakdown traits are more common than stabilizing pullback traits.";
-    } else {
-      explain = "Stabilization traits and breakdown traits look roughly balanced.";
-    }
-    explain += " (Descriptive, not a forecast.)";
-  }
-  document.getElementById("marketExplain").textContent = explain;
+  const denom = sample?.denom_used_for_presence ?? null;
+const pullN = (denom!==null && pullPct!==null) ? Math.round(Number(denom) * Number(pullPct) / 100) : null;
+const fragN = (denom!==null && fragPct!==null) ? Math.round(Number(denom) * Number(fragPct) / 100) : null;
+
+let explain = "—";
+if (pullPct !== null && fragPct !== null){
+  const a = `Across ${denom ?? "—"} tracked: stabilizing pullback traits ${Number(pullPct).toFixed(1)}%${pullN!==null ? ` (${pullN})` : ""}`;
+  const b = `breakdown-style traits ${Number(fragPct).toFixed(1)}%${fragN!==null ? ` (${fragN})` : ""}.`;
+
+  let tilt = "";
+  if (pullPct > fragPct) tilt = "Breadth tilt: more stabilizing pullbacks than breakdowns.";
+  else if (fragPct > pullPct) tilt = "Breadth tilt: more breakdowns than stabilizing pullbacks.";
+  else tilt = "Breadth tilt: roughly balanced.";
+
+  explain = `${a} • ${b} ${tilt} (Descriptive, not a forecast.)`;
+}
+document.getElementById("marketExplain").textContent = explain;
 
   // bars (details)
   const bars = document.getElementById("bars");
@@ -1603,8 +1611,11 @@ async function renderBenchmarks(){
     const thead = el("thead", {}, [el("tr", {}, [
       el("th", {}, ["Ticker"]),
       el("th", {"aria-label":"Tracks"}, [""]),
-      el("th", {class:"num"}, ["Setup"]),
+      el("th", {class:"num"}, ["Last"]),
       el("th", {class:"num"}, ["%1D"]),
+      el("th", {class:"num"}, ["Off high"]),
+      el("th", {class:"num"}, ["vs 200D"]),
+      el("th", {class:"num"}, ["ATR%"]),
     ])]);
     const tbody = el("tbody", {}, []);
 
@@ -1622,36 +1633,63 @@ async function renderBenchmarks(){
 
     for (const r of results){
       const sym = r.sym;
+
       const tA = el("a", {href:"#", class:"mono"}, [sym]);
       tA.addEventListener("click", (e) => {
         e.preventDefault();
         setTickerRoute(sym, "t");
       });
-
       const y = link(quoteUrl(sym), "↗", {class:"mono", style:"margin-left:8px"});
 
-      if (r.ok){
-        totalFound += 1;
-        const pack = r.res.pack || {};
-        const m = pack.market || {};
-        const s = pack.scores || {};
-        const cls = pctClass(m.pct_change_1d);
-        const pctSpan = el("span", {class:"mono", title:`raw: ${m.pct_change_1d}`}, [fmtPctChange1d(m.pct_change_1d)]);
-
-        tbody.appendChild(el("tr", {}, [
-          el("td", {}, [tA, y]),
-          el("td", {}, [el("span", {class:"muted"}, [BENCHMARK_META[sym] || "—"])]),
-          el("td", {class:"num"}, [el("span", {class:"mono"}, [fmtInt(s.opportunity_score)])]),
-          el("td", {class:`num ${cls}`}, [pctSpan]),
-        ]));
-      } else {
+      if (!r.ok){
         tbody.appendChild(el("tr", {}, [
           el("td", {}, [tA, y]),
           el("td", {}, [el("span", {class:"muted"}, [BENCHMARK_META[sym] || "—"])]),
           el("td", {class:"num muted"}, ["—"]),
           el("td", {class:"num muted"}, ["—"]),
+          el("td", {class:"num muted"}, ["—"]),
+          el("td", {class:"num muted"}, ["—"]),
+          el("td", {class:"num muted"}, ["—"]),
         ]));
+        continue;
       }
+
+      totalFound += 1;
+
+      const pack = r.res.pack || {};
+      const m = pack.market || {};
+
+      const last = m.last_price ?? m.last ?? null;
+      const pct1d = m.pct_change_1d ?? null;
+      const offHigh = m.pct_off_52w_high ?? null; // ratio
+      const ma200 = m.ma_200 ?? null;
+      const atr = m.atr_pct ?? null; // percent points per your packs
+
+      let dist200 = null;
+      if (last !== null && ma200 !== null && Number(ma200) !== 0){
+        dist200 = (Number(last)/Number(ma200) - 1) * 100;
+      }
+
+      const cls = pctClass(pct1d);
+      const pctSpan = el("span", {class:"mono", title:`raw: ${pct1d}`}, [fmtPctChange1d(pct1d)]);
+
+      const offHighText = (offHigh === null || offHigh === undefined) ? "—" : `${(Number(offHigh)*100).toFixed(1)}%`;
+      const offHighSpan = el("span", {class:"mono", title:`raw: ${offHigh}`}, [offHighText]);
+
+      const dist200Text = (dist200 === null || dist200 === undefined) ? "—" : `${Number(dist200).toFixed(1)}%`;
+      const dist200Span = el("span", {class:"mono", title:`raw: last=${last}, ma200=${ma200}`}, [dist200Text]);
+
+      const atrSpan = el("span", {class:"mono", title:`raw: ${atr}`}, [fmtAtrPct(atr)]);
+
+      tbody.appendChild(el("tr", {}, [
+        el("td", {}, [tA, y]),
+        el("td", {}, [el("span", {class:"muted"}, [BENCHMARK_META[sym] || "—"])]),
+        el("td", {class:"num"}, [el("span", {class:"mono"}, [last==null ? "—" : fmt(last,2)])]),
+        el("td", {class:`num ${cls}`}, [pctSpan]),
+        el("td", {class:"num"}, [offHighSpan]),
+        el("td", {class:"num"}, [dist200Span]),
+        el("td", {class:"num"}, [atrSpan]),
+      ]));
     }
 
     tbl.appendChild(thead);
@@ -2227,6 +2265,9 @@ async function init(){
     updateLiveSettingsStatus("saved");
     await refreshLive();
     await refreshBenchTape();
+    // Benchmarks: load immediately (default open)
+document.getElementById("benchStatus").textContent = "Loading…";
+renderBenchmarks();
   });
 
   document.getElementById("liveClearBtn").addEventListener("click", async () => {
