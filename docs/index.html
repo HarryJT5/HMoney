@@ -601,7 +601,7 @@
 
         <div class="tabs">
           <button class="tabBtn active" id="tabSetups">Setups</button>
-          <button class="tabBtn" id="tabRisk">Fragility</button>
+          <button class="tabBtn" id="tabRisk">Breakdowns</button>
           <button class="tabBtn" id="tabMixed">Mixed</button>
         </div>
 
@@ -885,22 +885,32 @@ function fmtInt(x){
   if (!Number.isFinite(n)) return "—";
   return String(Math.trunc(n));
 }
-function fmtPctChange1d(x){
+
+// Percent-point formatting contract:
+// - pct_change_1d is ALWAYS percent points (e.g., -0.17 means -0.17%)
+// - live quote pct is also treated as percent points
+function fmtPctPoints(x, digits=2){
   if (x === null || x === undefined) return "—";
-  let v = Number(x);
+  const v = Number(x);
   if (!Number.isFinite(v)) return "—";
-  if (Math.abs(v) <= 0.25) v *= 100;
-  return `${v.toFixed(1)}%`;
+  return `${v.toFixed(digits)}%`;
+}
+function fmtPctChange1d(x){
+  return fmtPctPoints(x, 2);
 }
 function pctClass(v){
   if (v === null || v === undefined) return "";
-  let n = Number(v);
+  const n = Number(v);
   if (!Number.isFinite(n)) return "";
-  if (Math.abs(n) <= 0.25) n *= 100;
   if (n > 0) return "pos";
   if (n >= -10) return "mildneg";
   return "neg";
 }
+// atr_pct contract (based on your packs): atr_pct is percent points (e.g., 2.38 means 2.38%)
+function fmtAtrPct(x){
+  return fmtPctPoints(x, 2);
+}
+
 function quoteUrl(sym){
   return `https://finance.yahoo.com/quote/${encodeURIComponent(sym)}`;
 }
@@ -1127,8 +1137,9 @@ function renderFearGreedWidget(score, rating, whenIso, sourceUrl){
   const host = document.getElementById("fgHost");
   if (!host) return;
 
-  const s = (score === null || score === undefined) ? null : Math.round(Number(score));
-  const bucket = (rating ? String(rating) : fgBucket(s));
+  const hasScore = (score !== null && score !== undefined && Number.isFinite(Number(score)));
+  const s = hasScore ? Math.round(Number(score)) : null;
+  const bucket = hasScore ? (rating ? String(rating) : fgBucket(s)) : "Unavailable";
   const when = whenIso ? formatLA(whenIso) : "—";
 
   host.innerHTML = "";
@@ -1136,9 +1147,11 @@ function renderFearGreedWidget(score, rating, whenIso, sourceUrl){
     el("div", {}, [
       el("div", {class:"fgSub"}, ["Sentiment (Fear & Greed)"]),
       el("div", {class:"fgValue"}, [
-        (s === null || Number.isNaN(s)) ? "—" : `${s} (${bucket})`
+        hasScore ? `${s} (${bucket})` : "Unavailable"
       ]),
-      el("div", {class:"small muted", style:"margin-top:3px"}, [when]),
+      el("div", {class:"small muted", style:"margin-top:3px"}, [
+        hasScore ? when : "Feed not available (worker /market)"
+      ]),
     ]),
     el("div", {}, [
       link(sourceUrl || "https://www.cnn.com/markets/fear-and-greed", "Source", {class:"small"})
@@ -1146,7 +1159,8 @@ function renderFearGreedWidget(score, rating, whenIso, sourceUrl){
   ]);
 
   const bar = el("div", {class:"fgBar"}, []);
-  const marker = el("div", {class:"fgMarker", style:`left:${(s === null || Number.isNaN(s)) ? 50 : clamp(s,0,100)}%`}, []);
+  const markerLeft = hasScore ? clamp(s,0,100) : 50;
+  const marker = el("div", {class:"fgMarker", style:`left:${markerLeft}%`}, []);
   bar.appendChild(marker);
 
   const ticks = el("div", {class:"fgTicks"}, [
@@ -1198,7 +1212,7 @@ function renderMarket(state){
     if (pullPct > fragPct){
       explain = "More names show stabilizing pullback traits than breakdown traits.";
     } else if (fragPct > pullPct){
-      explain = "Breakdown/fragility traits are more common than stabilizing pullback traits.";
+      explain = "Breakdown traits are more common than stabilizing pullback traits.";
     } else {
       explain = "Stabilization traits and breakdown traits look roughly balanced.";
     }
@@ -1304,7 +1318,7 @@ function renderLiveChips(payload){
       el("span", {class:"mono"}, [sym]),
       extraTag,
       el("span", {class:"mono"}, [(price === null || price === undefined) ? "—" : fmt(price, 2)]),
-      el("span", {class:`mono ${cls}`}, [pctText]),
+      el("span", {class:`mono ${cls}`, title:`raw: ${pct}`}, [pctText]),
       link(quoteUrl(sym), "↗", {class:"mono"})
     ].filter(Boolean);
 
@@ -1361,7 +1375,7 @@ async function refreshBenchTape(){
           const pctText = (q.pct === null || q.pct === undefined) ? "—" : `${Number(q.pct).toFixed(2)}%`;
           host.appendChild(el("span", {class:"chip"}, [
             link(quoteUrl(sym), sym, {class:"mono"}),
-            el("span", {class:`mono ${cls}`}, [pctText]),
+            el("span", {class:`mono ${cls}`, title:`raw: ${q.pct}`}, [pctText]),
           ]));
         }
         return;
@@ -1478,9 +1492,7 @@ function scheduleNewsLoop(){
 }
 
 /* ----------------------------
-   Highlights (REMOVE Evidence column)
-   - ticker links to internal route + yahoo
-   - inline [pack]
+   Highlights
 ---------------------------- */
 function setActiveTab(tab){
   __HL_TAB = tab;
@@ -1514,8 +1526,7 @@ function renderHighlightsTable(state){
 
   const thr = state?.breadth?.thresholds || {};
   const setupThr = (thr.opportunity_score_green ?? 60);
-  const fragThr = (thr.risk_score_red ?? 70);
-  document.getElementById("hlMeta").textContent = `Setup≥${fmtInt(setupThr)} • Fragility≥${fmtInt(fragThr)}`;
+  document.getElementById("hlMeta").textContent = `Setup≥${fmtInt(setupThr)}`;
 
   let rows = pulled;
   if (__HL_TAB === "risk") rows = fragile;
@@ -1532,7 +1543,6 @@ function renderHighlightsTable(state){
     el("th", {class:"num"}, ["Last"]),
     el("th", {class:"num"}, ["%1D"]),
     el("th", {class:"num"}, ["Setup"]),
-    el("th", {class:"num"}, ["Fragility"]),
   ])]);
   const tbody = el("tbody", {}, []);
 
@@ -1553,13 +1563,13 @@ function renderHighlightsTable(state){
     });
 
     const cls = pctClass(r.pct_change_1d);
+    const pctSpan = el("span", {class:"mono", title:`raw: ${r.pct_change_1d}`}, [fmtPctChange1d(r.pct_change_1d)]);
 
     tbody.appendChild(el("tr", {}, [
       el("td", {}, [tick]),
       el("td", {class:"num"}, [el("span", {class:"mono"}, [ (r.last==null) ? "—" : fmt(r.last,2) ])]),
-      el("td", {class:`num ${cls}`}, [el("span", {class:"mono"}, [fmtPctChange1d(r.pct_change_1d)])]),
+      el("td", {class:`num ${cls}`}, [pctSpan]),
       el("td", {class:"num"}, [el("span", {class:"mono"}, [fmtInt(r.opportunity_score)])]),
-      el("td", {class:"num"}, [el("span", {class:"mono"}, [fmtInt(r.risk_score)])]),
     ]));
   }
 
@@ -1569,8 +1579,7 @@ function renderHighlightsTable(state){
 }
 
 /* ----------------------------
-   Benchmarks (remove 'Meaning' label)
-   - ticker links route + still easy Yahoo click via ↗
+   Benchmarks
 ---------------------------- */
 async function renderBenchmarks(){
   if (__BENCH_LOADED) return;
@@ -1593,9 +1602,8 @@ async function renderBenchmarks(){
     const tbl = el("table", {}, []);
     const thead = el("thead", {}, [el("tr", {}, [
       el("th", {}, ["Ticker"]),
-      el("th", {"aria-label":"Tracks"}, [""]),  // no "Meaning"
+      el("th", {"aria-label":"Tracks"}, [""]),
       el("th", {class:"num"}, ["Setup"]),
-      el("th", {class:"num"}, ["Fragility"]),
       el("th", {class:"num"}, ["%1D"]),
     ])]);
     const tbody = el("tbody", {}, []);
@@ -1628,19 +1636,18 @@ async function renderBenchmarks(){
         const m = pack.market || {};
         const s = pack.scores || {};
         const cls = pctClass(m.pct_change_1d);
+        const pctSpan = el("span", {class:"mono", title:`raw: ${m.pct_change_1d}`}, [fmtPctChange1d(m.pct_change_1d)]);
 
         tbody.appendChild(el("tr", {}, [
           el("td", {}, [tA, y]),
           el("td", {}, [el("span", {class:"muted"}, [BENCHMARK_META[sym] || "—"])]),
           el("td", {class:"num"}, [el("span", {class:"mono"}, [fmtInt(s.opportunity_score)])]),
-          el("td", {class:"num"}, [el("span", {class:"mono"}, [fmtInt(s.structural_risk_score)])]),
-          el("td", {class:`num ${cls}`}, [el("span", {class:"mono"}, [fmtPctChange1d(m.pct_change_1d)])]),
+          el("td", {class:`num ${cls}`}, [pctSpan]),
         ]));
       } else {
         tbody.appendChild(el("tr", {}, [
           el("td", {}, [tA, y]),
           el("td", {}, [el("span", {class:"muted"}, [BENCHMARK_META[sym] || "—"])]),
-          el("td", {class:"num muted"}, ["—"]),
           el("td", {class:"num muted"}, ["—"]),
           el("td", {class:"num muted"}, ["—"]),
         ]));
@@ -1693,7 +1700,7 @@ function renderSnapshot(state){
   const denom = sample.denom_used_for_presence ?? null;
   snap.appendChild(el("div", {class:"kv", style:"min-width:160px"}, [
     el("div", {class:"k"}, ["Breadth base"]),
-    el("div", {class:"v mono"}, [denom !== null ? fmtInt(denom) : "—"])
+    el("div", {class:"v mono"}, [denom !== null ? fmtInt(denom) : "—"]
   ]));
 }
 
@@ -1723,7 +1730,7 @@ function renderTickerDrawer(sym, packRes, liveQ){
   if (!packRes){
     // fallback: show live quote + links
     const liveLine = liveQ
-      ? `<div class="small muted" style="margin-top:10px">Live: <span class="mono">${fmt(liveQ.price,2)}</span> • <span class="mono ${pctClass(liveQ.pct)}">${(liveQ.pct==null?"—":Number(liveQ.pct).toFixed(2)+"%")}</span> • ${liveQ.market_time_utc ? formatLA(liveQ.market_time_utc) : "—"}</div>`
+      ? `<div class="small muted" style="margin-top:10px">Live: <span class="mono">${fmt(liveQ.price,2)}</span> • <span class="mono ${pctClass(liveQ.pct)}" title="raw: ${liveQ.pct}">${(liveQ.pct==null?"—":Number(liveQ.pct).toFixed(2)+"%")}</span> • ${liveQ.market_time_utc ? formatLA(liveQ.market_time_utc) : "—"}</div>`
       : `<div class="small muted" style="margin-top:10px">No scan data for this ticker in the latest snapshot.</div>`;
 
     drawer.innerHTML = `
@@ -1763,7 +1770,7 @@ function renderTickerDrawer(sym, packRes, liveQ){
   const packHref = `${HMONEY_WORKER_BASE}/pack?ticker=${encodeURIComponent(sym)}`;
 
   const liveLine = liveQ
-    ? `<div class="small muted" style="margin-top:8px">Live: <span class="mono">${fmt(liveQ.price,2)}</span> • <span class="mono ${pctClass(liveQ.pct)}">${(liveQ.pct==null?"—":Number(liveQ.pct).toFixed(2)+"%")}</span> • ${liveQ.market_time_utc ? formatLA(liveQ.market_time_utc) : "—"}</div>`
+    ? `<div class="small muted" style="margin-top:8px">Live: <span class="mono">${fmt(liveQ.price,2)}</span> • <span class="mono ${pctClass(liveQ.pct)}" title="raw: ${liveQ.pct}">${(liveQ.pct==null?"—":Number(liveQ.pct).toFixed(2)+"%")}</span> • ${liveQ.market_time_utc ? formatLA(liveQ.market_time_utc) : "—"}</div>`
     : "";
 
   drawer.innerHTML = `
@@ -1783,10 +1790,10 @@ function renderTickerDrawer(sym, packRes, liveQ){
       <div class="small muted" style="margin-bottom:6px">Anchors</div>
       <div class="row" style="gap:10px">
         <div class="kv" style="min-width:170px"><div class="k">Last</div><div class="v mono">${last!==null?fmt(last,2):"—"}</div></div>
-        <div class="kv" style="min-width:170px"><div class="k">%1D</div><div class="v mono ${pctClass(pct1d)}">${fmtPctChange1d(pct1d)}</div></div>
-        <div class="kv" style="min-width:170px"><div class="k">% off 52w high</div><div class="v mono">${offHigh!==null?(offHigh*100).toFixed(1)+"%":"—"}</div></div>
-        <div class="kv" style="min-width:170px"><div class="k">vs 200DMA</div><div class="v mono">${dist200!==null?dist200.toFixed(1)+"%":"—"}</div></div>
-        <div class="kv" style="min-width:170px"><div class="k">ATR%</div><div class="v mono">${atr!==null?(atr*100).toFixed(1)+"%":"—"}</div></div>
+        <div class="kv" style="min-width:170px"><div class="k">%1D</div><div class="v mono ${pctClass(pct1d)}" title="raw: ${pct1d}">${fmtPctChange1d(pct1d)}</div></div>
+        <div class="kv" style="min-width:170px"><div class="k">% off 52w high</div><div class="v mono" title="raw: ${offHigh}">${offHigh!==null?(offHigh*100).toFixed(1)+"%":"—"}</div></div>
+        <div class="kv" style="min-width:170px"><div class="k">vs 200DMA</div><div class="v mono" title="raw: last=${last}, ma200=${ma200}">${dist200!==null?dist200.toFixed(1)+"%":"—"}</div></div>
+        <div class="kv" style="min-width:170px"><div class="k">ATR%</div><div class="v mono" title="raw: ${atr}">${atr!==null?fmtAtrPct(atr):"—"}</div></div>
         <div class="kv" style="min-width:170px"><div class="k">$ vol (20d)</div><div class="v mono">${dv!==null?Number(dv).toExponential(2):"—"}</div></div>
       </div>
 
@@ -1794,7 +1801,6 @@ function renderTickerDrawer(sym, packRes, liveQ){
 
       <div class="row" style="gap:10px">
         <div class="kv" style="min-width:170px"><div class="k">Setup score</div><div class="v mono">${fmtInt(s.opportunity_score)}</div></div>
-        <div class="kv" style="min-width:170px"><div class="k">Fragility score</div><div class="v mono">${fmtInt(s.structural_risk_score)}</div></div>
       </div>
 
       ${liveLine}
@@ -1887,7 +1893,7 @@ async function renderTickerPageContent(sym){
       <div style="font-weight:800; margin-bottom:6px">${sym}</div>
       <div class="small muted">No evidence pack for this ticker in the latest scan.</div>
       <div class="small muted" style="margin-top:8px">
-        ${liveQ ? `Live: <span class="mono">${fmt(liveQ.price,2)}</span> • <span class="mono ${pctClass(liveQ.pct)}">${(liveQ.pct==null?"—":Number(liveQ.pct).toFixed(2)+"%")}</span>` : "Live quote unavailable."}
+        ${liveQ ? `Live: <span class="mono">${fmt(liveQ.price,2)}</span> • <span class="mono ${pctClass(liveQ.pct)}" title="raw: ${liveQ.pct}">${(liveQ.pct==null?"—":Number(liveQ.pct).toFixed(2)+"%")}</span>` : "Live quote unavailable."}
       </div>
       <div class="small muted" style="margin-top:8px">
         Next step: force core tickers (AMZN, AAPL, MSFT, NVDA…) into every run so pages always exist.
@@ -1912,9 +1918,8 @@ async function renderTickerPageContent(sym){
 
     <div class="row" style="gap:10px">
       <div class="kv" style="min-width:190px"><div class="k">Setup score</div><div class="v mono">${fmtInt(s.opportunity_score)}</div></div>
-      <div class="kv" style="min-width:190px"><div class="k">Fragility score</div><div class="v mono">${fmtInt(s.structural_risk_score)}</div></div>
-      <div class="kv" style="min-width:190px"><div class="k">% off 52w high</div><div class="v mono">${m.pct_off_52w_high!=null?(m.pct_off_52w_high*100).toFixed(1)+"%":"—"}</div></div>
-      <div class="kv" style="min-width:190px"><div class="k">ATR%</div><div class="v mono">${m.atr_pct!=null?(m.atr_pct*100).toFixed(1)+"%":"—"}</div></div>
+      <div class="kv" style="min-width:190px"><div class="k">% off 52w high</div><div class="v mono" title="raw: ${m.pct_off_52w_high}">${m.pct_off_52w_high!=null?(m.pct_off_52w_high*100).toFixed(1)+"%":"—"}</div></div>
+      <div class="kv" style="min-width:190px"><div class="k">ATR%</div><div class="v mono" title="raw: ${m.atr_pct}">${m.atr_pct!=null?fmtAtrPct(m.atr_pct):"—"}</div></div>
     </div>
 
     <div style="height:10px"></div>
@@ -1922,10 +1927,10 @@ async function renderTickerPageContent(sym){
     <div class="detailsBox">
       <div class="small muted" style="margin-bottom:6px">Quick take (descriptive)</div>
       <div style="font-size:14px">
-        Setup is a pullback+stabilization style read (relative to its own history). Fragility is breakdown+instability style read.
+        Setup is a pullback + stabilization style read (relative to its own history). Use the anchors above (off-high, vs 200DMA, ATR%) to contextualize downside / instability traits.
       </div>
       <div class="small muted" style="margin-top:8px">
-        Live quote (optional): ${liveQ ? `<span class="mono">${fmt(liveQ.price,2)}</span> • <span class="mono ${pctClass(liveQ.pct)}">${(liveQ.pct==null?"—":Number(liveQ.pct).toFixed(2)+"%")}</span>` : "not available"}
+        Live quote (optional): ${liveQ ? `<span class="mono">${fmt(liveQ.price,2)}</span> • <span class="mono ${pctClass(liveQ.pct)}" title="raw: ${liveQ.pct}">${(liveQ.pct==null?"—":Number(liveQ.pct).toFixed(2)+"%")}</span>` : "not available"}
       </div>
     </div>
   `;
@@ -2083,12 +2088,6 @@ async function doAskAI(){
   if (includeTicker && __LAST_PACK) ctx.last_loaded_pack = __LAST_PACK;
 
   try{
-    const res = await fetchJsonWorker(HMONEY_AI_ENDPOINT, {"Content-Type":"application/json"}, 25000);
-    // NOTE: The worker expects POST. We’ll do a real POST below.
-    // This line never runs because fetchJsonWorker is GET-only in our usage.
-  }catch{}
-
-  try{
     const ctrl = new AbortController();
     const timeout = setTimeout(() => ctrl.abort(), 25000);
 
@@ -2183,7 +2182,6 @@ async function init(){
     showModal("Definitions (short)", `
       <div class="body">
         <p><b>Setup</b> is a pullback + stabilization style read (relative to the asset’s own history).</p>
-        <p><b>Fragility</b> is a breakdown + instability style read (relative to the asset’s own history).</p>
         <p><b>Fear &amp; Greed</b> is CNN’s published score + label; we display it as a simple bar + marker.</p>
       </div>
     `);
@@ -2193,7 +2191,7 @@ async function init(){
     showModal("Highlights", `
       <div class="body">
         <p><b>Setups</b>: pulled-back + stabilizing traits.</p>
-        <p><b>Fragility</b>: persistent breakdown traits.</p>
+        <p><b>Breakdowns</b>: persistent downtrend / instability traits (examples to review).</p>
         <p><b>Mixed</b>: cross-currents (not a clean read).</p>
         <p>These are examples to review — not recommendations.</p>
       </div>
