@@ -172,20 +172,34 @@
     html[data-theme="dark"] .layoutHint{ background: rgba(10,14,20,0.22); }
     html[data-layout="edit"] .layoutHint{ display:block; }
 
-    /* Default board layout */
-    .moduleGrid{
-      display:grid;
-      grid-template-columns: 1fr 360px;
-      gap:12px;
-      align-items:start;
-    }
-    @media (max-width: 1100px){
-      .moduleGrid{grid-template-columns:1fr}
-      .sticky{position:static !important; top:auto !important}
-    }
+    /* Default board layout (Option 2): two independent stacks */
+.moduleGrid{
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+}
 
-    .span2{grid-column: 1 / -1}
-    .sticky{position:sticky; top:14px; z-index:50}
+/* Each column is its own vertical flow (no grid-row gaps) */
+.col{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  min-width:0; /* prevents overflow pushing page wide */
+}
+.col.left{ flex: 1 1 auto; }
+.col.right{ flex: 0 0 360px; width:360px; }
+
+/* span2 is harmless now (kept for compatibility) */
+.span2{ width:100%; }
+
+/* Sticky is now safe (it won’t overlap the left column) */
+.sticky{ position:sticky; top:14px; z-index:2; }
+
+@media (max-width: 1100px){
+  .moduleGrid{ flex-direction:column; }
+  .col.right{ width:auto; flex: 1 1 auto; }
+  .sticky{ position:static !important; top:auto !important; }
+}
 .card{ z-index:1; }
 
     .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
@@ -477,6 +491,9 @@ html[data-theme="dark"] .pillNum{
   </div>
 
   <div class="moduleGrid" id="moduleGrid">
+      <!-- Option 2 layout: JS moves cards into these two stacks -->
+  <div class="col left" id="colLeft"></div>
+  <div class="col right" id="colRight"></div>
 
     <!-- Full ticker page (linkable): shown when #page=TICKER -->
     <div class="card span2 hidden" id="tickerPageCard" data-mod="tickerPage">
@@ -795,7 +812,51 @@ function initTheme(){
   const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
   applyTheme(prefersDark ? "dark" : "light");
 }
+/* ----------------------------
+   Option 2 layout: two independent stacks (no grid gaps)
+---------------------------- */
+function mountTwoColumnStacks(){
+  const grid = document.getElementById("moduleGrid");
+  const left = document.getElementById("colLeft");
+  const right = document.getElementById("colRight");
+  if (!grid || !left || !right) return;
 
+  // Ensure columns stay at the top even if something appended nodes
+  if (left.parentElement !== grid) grid.appendChild(left);
+  if (right.parentElement !== grid) grid.appendChild(right);
+  grid.prepend(right);
+  grid.prepend(left);
+
+  // Decide which cards live on the right
+  const rightMods = new Set(["ticker","benchmarks"]);
+
+  // Move all cards into the two stacks
+  const cards = Array.from(grid.querySelectorAll(".card[data-mod]"));
+  for (const card of cards){
+    const mod = card.getAttribute("data-mod") || "";
+    (rightMods.has(mod) ? right : left).appendChild(card);
+  }
+
+  // Initial ordering preference: show Benchmarks first until a ticker is loaded
+  reorderRightColumn();
+}
+
+function reorderRightColumn(){
+  const right = document.getElementById("colRight");
+  const tickerCard = document.getElementById("tickerCard");
+  const benchCard  = document.getElementById("benchCard");
+  if (!right || !tickerCard || !benchCard) return;
+
+  // If a ticker is loaded, keep Ticker on top; otherwise Benchmarks on top
+  const hasTicker = !!window.__LAST_SYMBOL;
+  if (hasTicker){
+    right.prepend(tickerCard);
+    right.appendChild(benchCard);
+  } else {
+    right.prepend(benchCard);
+    right.appendChild(tickerCard);
+  }
+}
 /* ----------------------------
    Layout drag/drop (HANDLE ONLY)
 ---------------------------- */
@@ -891,9 +952,16 @@ function initDragDrop(){
     if (!dragging) return;
 
     const target = e.target.closest(".card[data-mod]");
-    for (const c of getGridCards()) c.classList.remove("dropTarget");
+for (const c of getGridCards()) c.classList.remove("dropTarget");
 
-    if (!target || target === dragging) return;
+// If hovering a column blank area, append to that column
+const col = e.target.closest(".col");
+if (!target){
+  if (col && dragging) col.appendChild(dragging);
+  return;
+}
+
+if (target === dragging) return;
 
     target.classList.add("dropTarget");
 
@@ -1075,7 +1143,7 @@ function applyCollapse(panelId, collapsed){
 }
 function initCollapseButtons(){
   // Nothing collapsed by default
-  const defaults = new Set([]);
+  const defaults = new Set(["liveSettingsBody"]);
 
   document.querySelectorAll("[data-collapse]").forEach(btn => {
     const panelId = btn.getAttribute("data-collapse");
@@ -1140,6 +1208,7 @@ function updateLiveSettingsStatus(extra=""){
 ---------------------------- */
 let __STATE = null;
 let __LAST_SYMBOL = null;
+window.__LAST_SYMBOL = __LAST_SYMBOL;
 let __LAST_PACK = null;
 let __LAST_PACK_META = null;
 let __BENCH_LOADED = false;
@@ -2060,6 +2129,8 @@ async function doLoadTicker(sym){
   if (!s) return;
 
   __LAST_SYMBOL = s;
+  window.__LAST_SYMBOL = __LAST_SYMBOL;
+reorderRightColumn();
   document.getElementById("tickerInput").value = s;
 
   // show loading
@@ -2219,9 +2290,12 @@ function parseHash(){
 async function handleRoute(){
   const r = parseHash();
   if (!r){
-    hideTickerPage();
-    return;
-  }
+  __LAST_SYMBOL = null;
+  window.__LAST_SYMBOL = __LAST_SYMBOL;
+  reorderRightColumn();
+  hideTickerPage();
+  return;
+}
   if (!r.sym) return;
 
   await doLoadTicker(r.sym);
