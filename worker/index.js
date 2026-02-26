@@ -88,7 +88,6 @@ export default {
     function toIsoMaybe(x) {
       if (x === null || x === undefined) return null;
 
-      // numeric epoch (seconds or ms)
       if (typeof x === "number" && Number.isFinite(x)) {
         const ms = (x > 2_000_000_000_000) ? x : (x > 2_000_000_000 ? x * 1000 : x);
         const d = new Date(ms);
@@ -99,7 +98,6 @@ export default {
       const s = String(x).trim();
       if (!s) return null;
 
-      // parseable date string
       const d = new Date(s);
       if (!isNaN(d.getTime())) return d.toISOString().replace(/\.\d{3}Z$/, "Z");
 
@@ -562,10 +560,8 @@ export default {
     // Market (/market) — Fear & Greed
     // -------------------------
     function parseFearGreed(json) {
-      // CNN feed tends to include: fear_and_greed { score, rating, timestamp }
       const fg = json?.fear_and_greed ?? json?.fearAndGreed ?? json?.fear_greed ?? null;
 
-      // Try likely fields
       const score =
         fg?.score ?? fg?.now?.score ?? fg?.now?.value ?? json?.score ?? null;
 
@@ -601,10 +597,12 @@ export default {
         return hit;
       }
 
-      const sourceUrl = "https://production.dataviz.cnn.io/index/fearandgreed/graphdata";
+      // We fetch the raw JSON feed, but we want the UI link to go to the human CNN page.
+      const dataUrl = "https://production.dataviz.cnn.io/index/fearandgreed/graphdata";
+      const pageUrl = "https://www.cnn.com/markets/fear-and-greed";
 
       try {
-        const r = await fetch(sourceUrl, {
+        const r = await fetch(dataUrl, {
           method: "GET",
           headers: {
             "User-Agent": "HMoneyWorker/1.0",
@@ -613,12 +611,12 @@ export default {
         });
 
         if (!r.ok) {
-          return errJson("Fear & Greed fetch failed", 502, { status: r.status, source_url: sourceUrl });
+          return errJson("Fear & Greed fetch failed", 502, { status: r.status, source_data_url: dataUrl });
         }
 
         const j = await r.json().catch(() => null);
         if (!j || typeof j !== "object") {
-          return errJson("Fear & Greed parse failed", 502, { source_url: sourceUrl });
+          return errJson("Fear & Greed parse failed", 502, { source_data_url: dataUrl });
         }
 
         const fg = parseFearGreed(j);
@@ -627,7 +625,10 @@ export default {
           generated_at_utc: nowUtcIso(),
           cache_ttl_s: TTL_MARKET,
           cache_hit: false,
-          source_url: sourceUrl,
+          // UI should link here:
+          source_url: pageUrl,
+          // Debug / transparency:
+          source_data_url: dataUrl,
           fear_greed: fg,
           debug: {
             top_keys: Object.keys(j).slice(0, 20),
@@ -644,7 +645,7 @@ export default {
         await caches.default.put(new Request(cacheKeyUrl), out.clone());
         return out;
       } catch (e) {
-        return errJson("Fear & Greed error", 502, { details: String(e), source_url: sourceUrl });
+        return errJson("Fear & Greed error", 502, { details: String(e), source_data_url: dataUrl, source_url: pageUrl });
       }
     }
 
@@ -789,11 +790,10 @@ export default {
     }
 
     // -------------------------
-    // AI (Workers AI)
+    // AI (Workers AI) — messages + prompt fallback
     // -------------------------
     function extractAiText(result) {
       if (typeof result === "string") return result;
-
       if (!result || typeof result !== "object") return "";
 
       if (typeof result.response === "string") return result.response;
@@ -816,6 +816,16 @@ export default {
       return "";
     }
 
+    function previewObj(x, max = 1400) {
+      try {
+        let s = JSON.stringify(x);
+        if (s.length > max) s = s.slice(0, max) + "...(truncated)";
+        return s;
+      } catch {
+        return "(unserializable)";
+      }
+    }
+
     async function handleAi() {
       let body;
       try { body = await request.json(); } catch { return errJson("Invalid JSON body", 400); }
@@ -831,7 +841,7 @@ export default {
       }
 
       const system = [
-        "You are a helpful assistant.",
+        "You are a helpful assistant for an investment dashboard.",
         "Be clear and concise. Ask for clarification only if absolutely needed.",
         "",
         "Truth policy:",
@@ -868,9 +878,12 @@ export default {
         ? String(env.AI_MODEL)
         : "@cf/meta/llama-3-8b-instruct";
 
-      let result;
+      const debug = { model: MODEL_PRIMARY, attempts: [] };
+
+      // Attempt 1: chat-style messages
+      let result1 = null;
       try {
-        result = await env.AI.run(MODEL_PRIMARY, {
+        result1 = await env.AI.run(MODEL_PRIMARY, {
           messages: [
             { role: "system", content: system },
             { role: "user", content: user },
@@ -879,24 +892,41 @@ export default {
           temperature: 0.6,
         });
       } catch (e) {
-        return errJson("AI model call failed", 502, { details: String(e) });
+        debug.attempts.push({ kind: "messages", ok: false, error: String(e) });
       }
 
-      const answer = extractAiText(result).trim();
+      let answer = extractAiText(result1).trim();
+      debug.attempts.push({
+        kind: "messages",
+        ok: !!answer,
+        result_keys: result1 && typeof result1 === "object" ? Object.keys(result1) : [],
+        preview: result1 ? previewObj(result1) : null
+      });
+
+      // Attempt 2: prompt-style (some CF models behave better with prompt)
+      if (!answer) {
+        let result2 = null;
+        try {
+          result2 = await env.AI.run(MODEL_PRIMARY, {
+            prompt: `${system}\n\n${user}`,
+            max_tokens: 700,
+            temperature: 0.6,
+          });
+        } catch (e) {
+          debug.attempts.push({ kind: "prompt", ok: false, error: String(e) });
+        }
+
+        answer = extractAiText(result2).trim();
+        debug.attempts.push({
+          kind: "prompt",
+          ok: !!answer,
+          result_keys: result2 && typeof result2 === "object" ? Object.keys(result2) : [],
+          preview: result2 ? previewObj(result2) : null
+        });
+      }
 
       if (!answer) {
-        const keys = (result && typeof result === "object") ? Object.keys(result) : [];
-        let preview = "";
-        try {
-          preview = JSON.stringify(result);
-          if (preview.length > 1500) preview = preview.slice(0, 1500) + "...(truncated)";
-        } catch {
-          preview = "(unserializable)";
-        }
-        return errJson("AI returned empty response", 502, {
-          model: MODEL_PRIMARY,
-          debug: { result_type: typeof result, result_keys: keys, result_preview: preview }
-        });
+        return errJson("AI returned empty response", 502, { debug });
       }
 
       return okJson({ ok: true, model: MODEL_PRIMARY, answer });
