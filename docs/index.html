@@ -2031,8 +2031,8 @@ async function handleRoute(){
 ---------------------------- */
 const AI_HISTORY_STORAGE_KEY = "hmoney_ai_history_v1";
 const AI_REMEMBER_PREF_KEY = "hmoney_ai_remember_v1";
-const AI_HISTORY_MAX_MESSAGES = 12;
-const AI_HISTORY_MAX_CHARS = 12000;
+const AI_HISTORY_MAX_MESSAGES = 8;
+const AI_HISTORY_MAX_CHARS = 6000;
 let __AI_HISTORY = [];
 
 function loadRememberPref(){
@@ -2099,16 +2099,44 @@ function extractTickersFromText(text){
 }
 
 function slimStateForAI(state){
+  // Keep only what’s needed for reasoning; avoid large tables/blobs.
+  const posture = state?.posture ?? null;
+
+  const breadth = state?.breadth ? {
+    sample: state.breadth.sample ?? null,
+    thresholds: state.breadth.thresholds ?? null,
+  } : null;
+
+  const universe = state?.universe ? {
+    target_size: state.universe.target_size ?? null,
+    actual_size: state.universe.actual_size ?? state.universe_size ?? null,
+  } : (state?.universe_size ? { actual_size: state.universe_size } : null);
+
+  const quality = state?.quality ? {
+    success_rate_pct: state.quality.success_rate_pct ?? null,
+    skipped_tickers_count: state.quality.skipped_tickers_count ?? null,
+  } : null;
+
+  // Include only a small preview of each table (top 5 rows max)
+  const tablesIn = state?.tables || {};
+  const pickRows = (rows) => Array.isArray(rows) ? rows.slice(0, 5) : [];
+  const tables = {
+    pulled_back: tablesIn.pulled_back ? { rows: pickRows(tablesIn.pulled_back.rows) } : null,
+    fragile:     tablesIn.fragile     ? { rows: pickRows(tablesIn.fragile.rows) } : null,
+    mixed:       tablesIn.mixed       ? { rows: pickRows(tablesIn.mixed.rows) } : null,
+  };
+
   return {
     generated_at_utc: state?.generated_at_utc ?? null,
     as_of_utc: state?.as_of_utc ?? null,
-    posture: state?.posture ?? null,
-    breadth: state?.breadth ?? null,
-    tables: state?.tables ?? null,
-    quality: state?.quality ?? null,
-    universe: state?.universe ?? null,
+    posture,
+    breadth,
+    universe,
+    quality,
+    tables,
   };
 }
+
 function slimPackForAI(pack){
   if (!pack || typeof pack !== "object") return null;
 
@@ -2145,6 +2173,40 @@ function slimPackForAI(pack){
   const links = pack.links ?? null;
 
   return { asset, market, scores, classification, links };
+}
+function slimPackForAI(pack){
+  if (!pack || typeof pack !== "object") return null;
+
+  const a = pack.asset || {};
+  const m = pack.market || {};
+  const s = pack.scores || {};
+  const c = pack.classification || {};
+
+  return {
+    asset: {
+      ticker: a.ticker ?? null,
+      name: a.name ?? null,
+      type: a.type ?? null,
+      exchange: a.exchange ?? null,
+    },
+    market: {
+      last_price: m.last_price ?? m.last ?? null,
+      pct_change_1d: m.pct_change_1d ?? null,
+      pct_off_52w_high: m.pct_off_52w_high ?? null,
+      ma_200: m.ma_200 ?? null,
+      atr_pct: m.atr_pct ?? null,
+      dollar_volume_20d: m.dollar_volume_20d ?? null,
+    },
+    scores: {
+      opportunity_score: s.opportunity_score ?? null,
+      structural_risk_score: s.structural_risk_score ?? null,
+    },
+    classification: {
+      label: c.label ?? null,
+      tags: c.tags ?? null,
+    },
+    links: pack.links ?? null,
+  };
 }
 async function doAskAI(){
   const qEl = document.getElementById("aiQuestion");
