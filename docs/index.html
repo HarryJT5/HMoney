@@ -1576,87 +1576,179 @@ function setTickerRoute(sym, mode="t"){
 
 function renderHighlightsTable(state){
   const host = document.getElementById("hlTableHost");
+  const meta = document.getElementById("hlMeta");
   host.innerHTML = "";
 
   if (!state){
+    if (meta) meta.textContent = "—";
     host.appendChild(el("div", {class:"small muted"}, ["No data."]));
     return;
   }
 
-  // Local helper (keeps this function copy/paste-able).
-  // Requires the CSS .pillNum + .pos/.mildneg/.neg/.neutral classes you added earlier.
-  const pill = (text, cls="", title="") => {
-    const attrs = { class: `mono pillNum ${cls}`.trim() };
-    if (title) attrs.title = title;
-    return el("span", attrs, [text]);
+  // ---- helpers ----
+  const normalizePct = (x) => {
+    if (x === null || x === undefined) return null;
+    let v = Number(x);
+    if (!Number.isFinite(v)) return null;
+    // If it looks like a fraction (e.g., 0.012), convert to percent
+    if (Math.abs(v) <= 0.25) v *= 100;
+    return v;
   };
 
+  const normalizeLast = (x) => {
+    if (x === null || x === undefined) return null;
+    const v = Number(x);
+    return Number.isFinite(v) ? v : null;
+  };
+
+  const pctKind = (pct) => {
+    const cls = pctClass(pct); // uses your existing helper
+    if (cls === "neg") return "bad";
+    if (cls === "mildneg") return "warn";
+    return "good";
+  };
+
+  const pctPill = (pct) => {
+    const kind = pctKind(pct);
+    const pill = el("span", {
+      class: `tag ${kind}`,
+      style: [
+        "display:inline-flex",
+        "align-items:center",
+        "justify-content:center",
+        "font-weight:800",
+        "font-size:12px",
+        "padding:4px 10px",
+        "border-radius:999px",
+        "min-width:78px",
+        "box-shadow: var(--shadow2)"
+      ].join(";")
+    }, [fmtPctChange1d(pct)]);
+    return pill;
+  };
+
+  // ---- collect candidate rows from any available state tables ----
   const tables = state.tables || {};
-  const pulled = Array.isArray(tables?.pulled_back?.rows) ? tables.pulled_back.rows : [];
-  const fragile = Array.isArray(tables?.fragile?.rows) ? tables.fragile.rows : [];
-  const mixed = Array.isArray(tables?.mixed?.rows) ? tables.mixed.rows : [];
+  const allRows = [];
 
-  // Thresholds (we keep Setup threshold; we stop using/printing fragility/risk thresholds)
-  const thr = state?.breadth?.thresholds || {};
-  const setupThr = (thr.opportunity_score_green ?? 60);
+  for (const k of Object.keys(tables)){
+    const rows = tables?.[k]?.rows;
+    if (Array.isArray(rows)) allRows.push(...rows);
+  }
 
-  // Meta line (no fragility)
-  const hlMeta = document.getElementById("hlMeta");
-  if (hlMeta) hlMeta.textContent = `Setup≥${fmtInt(setupThr)}`;
-
-  // Which list to show
-  let rows = pulled;
-  if (__HL_TAB === "risk") rows = fragile;   // “Breakdowns” tab (no fragility score shown)
-  if (__HL_TAB === "mixed") rows = mixed;
-
-  if (!rows || !rows.length){
-    host.appendChild(el("div", {class:"small muted", style:"margin-top:8px"}, ["No items right now."]));
+  if (!allRows.length){
+    if (meta) meta.textContent = "Top movers unavailable";
+    host.appendChild(el("div", {class:"small muted"}, ["No table rows found in state.json."]));
     return;
   }
 
-  const tbl = el("table", {}, []);
+  // ---- dedupe by ticker, keep the row with a usable %1D (or the largest abs %1D) ----
+  const byTicker = new Map();
+
+  for (const r of allRows){
+    const sym = normalizeTicker(r.ticker || r.symbol || "");
+    if (!sym) continue;
+
+    const pct = normalizePct(
+      r.pct_change_1d ?? r.pct1d ?? r.pct ?? r.change_pct ?? r.changePercent
+    );
+    const last = normalizeLast(r.last ?? r.price ?? r.close);
+
+    const prev = byTicker.get(sym);
+    const prevScore = prev?.__pct !== null && prev?.__pct !== undefined ? Math.abs(prev.__pct) : -1;
+    const score = pct !== null && pct !== undefined ? Math.abs(pct) : -1;
+
+    // prefer having pct; then prefer bigger abs move
+    if (!prev || (score >= 0 && score > prevScore)){
+      byTicker.set(sym, {
+        ticker: sym,
+        __pct: pct,
+        __last: last,
+      });
+    } else if (prev && (prev.__last === null || prev.__last === undefined) && last !== null){
+      // fill last if missing
+      prev.__last = last;
+      byTicker.set(sym, prev);
+    }
+  }
+
+  let rows = Array.from(byTicker.values()).filter(x => x.__pct !== null && x.__pct !== undefined);
+
+  if (!rows.length){
+    if (meta) meta.textContent = "Top movers unavailable";
+    host.appendChild(el("div", {class:"small muted"}, ["No usable %1D values found."]));
+    return;
+  }
+
+  // ---- tab logic (re-uses your existing __HL_TAB values) ----
+  // setups => gainers, risk => losers, mixed => biggest movers
+  let title = "Top gainers (1D)";
+  if (__HL_TAB === "risk"){
+    rows.sort((a,b) => a.__pct - b.__pct);
+    title = "Top losers (1D)";
+  } else if (__HL_TAB === "mixed"){
+    rows.sort((a,b) => Math.abs(b.__pct) - Math.abs(a.__pct));
+    title = "Biggest movers (1D)";
+  } else {
+    rows.sort((a,b) => b.__pct - a.__pct);
+    title = "Top gainers (1D)";
+  }
+
+  if (meta) meta.textContent = title;
+
+  // ---- build table ----
+  const tbl = el("table", {style:"table-layout:fixed; width:100%;"}, []);
   const thead = el("thead", {}, [el("tr", {}, [
     el("th", {}, ["Ticker"]),
     el("th", {class:"num"}, ["Last"]),
     el("th", {class:"num"}, ["%1D"]),
-    el("th", {class:"num"}, ["Setup"]),
+    el("th", {}, [""])
   ])]);
 
   const tbody = el("tbody", {}, []);
 
-  for (const r of rows.slice(0, 10)){
-    const sym = normalizeTicker(r.ticker);
-    const packHref = `${HMONEY_WORKER_BASE}/pack?ticker=${encodeURIComponent(sym)}`;
+  for (const r of rows.slice(0, 12)){
+    const sym = r.ticker;
 
-    const tick = el("span", {}, [
-      el("a", {href:"#", class:"mono"}, [sym]),
-      el("span", {class:"small muted", style:"margin-left:8px"}, ["·"]),
-      link(packHref, "pack", {class:"small mono", style:"margin-left:8px"}),
-    ]);
-
-    // internal navigation click
-    tick.querySelector("a").addEventListener("click", (e) => {
+    const a = el("a", {href:"#", class:"mono", style:"font-weight:800"}, [sym]);
+    a.addEventListener("click", (e) => {
       e.preventDefault();
       setTickerRoute(sym, "t");
     });
 
-    const cls1d = pctClass(r.pct_change_1d);
-    const raw1d = (r.pct_change_1d === null || r.pct_change_1d === undefined) ? "" : String(r.pct_change_1d);
+    const packHref = `${HMONEY_WORKER_BASE}/pack?ticker=${encodeURIComponent(sym)}`;
+    const packLink = link(packHref, "pack", {class:"small mono", style:"margin-left:0"});
 
-    const setupVal = Number(r.opportunity_score);
-    const setupCls = (Number.isFinite(setupVal) && setupVal >= setupThr) ? "pos" : "neutral";
+    const tickCell = el("div", {
+      style: [
+        "display:flex",
+        "align-items:center",
+        "gap:10px",
+        "flex-wrap:wrap",
+        "min-width:0"
+      ].join(";")
+    }, [
+      a,
+      el("span", {class:"small muted"}, ["·"]),
+      packLink,
+    ]);
+
+    const lastText = (r.__last === null || r.__last === undefined) ? "—" : fmt(r.__last, 2);
 
     tbody.appendChild(el("tr", {}, [
-      el("td", {}, [tick]),
-      el("td", {class:"num"}, [el("span", {class:"mono"}, [(r.last==null) ? "—" : fmt(r.last, 2)])]),
-      el("td", {class:"num"}, [pill(fmtPctChange1d(r.pct_change_1d), cls1d, raw1d ? `raw: ${raw1d}` : "")]),
-      el("td", {class:"num"}, [pill(fmtInt(r.opportunity_score), setupCls, "Setup score")]),
+      el("td", {style:"overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"}, [tickCell]),
+      el("td", {class:"num"}, [el("span", {class:"mono", style:"font-weight:700"}, [lastText])]),
+      el("td", {class:"num"}, [pctPill(r.__pct)]),
+      el("td", {class:"num"}, [link(quoteUrl(sym), "↗", {class:"mono"})]),
     ]));
   }
 
   tbl.appendChild(thead);
   tbl.appendChild(tbody);
-  host.appendChild(tbl);
+
+  // prevent overflow bleed
+  const scroller = el("div", {style:"overflow-x:auto; -webkit-overflow-scrolling:touch;"}, [tbl]);
+  host.appendChild(scroller);
 }
 
 /* ----------------------------
