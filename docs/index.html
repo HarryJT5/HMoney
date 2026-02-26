@@ -2109,7 +2109,43 @@ function slimStateForAI(state){
     universe: state?.universe ?? null,
   };
 }
+function slimPackForAI(pack){
+  if (!pack || typeof pack !== "object") return null;
 
+  const asset = pack.asset ? {
+    ticker: pack.asset.ticker ?? null,
+    name: pack.asset.name ?? null,
+    type: pack.asset.type ?? null,
+    exchange: pack.asset.exchange ?? null,
+  } : null;
+
+  const m = pack.market || {};
+  const market = {
+    last_price: m.last_price ?? m.last ?? null,
+    pct_change_1d: m.pct_change_1d ?? null,
+    pct_off_52w_high: m.pct_off_52w_high ?? null,
+    ma_200: m.ma_200 ?? null,
+    atr_pct: m.atr_pct ?? null,
+    dollar_volume_20d: m.dollar_volume_20d ?? null,
+  };
+
+  const s = pack.scores || {};
+  const scores = {
+    opportunity_score: s.opportunity_score ?? null,
+    structural_risk_score: s.structural_risk_score ?? null,
+  };
+
+  const c = pack.classification || {};
+  const classification = {
+    label: c.label ?? null,
+    tags: c.tags ?? null,
+  };
+
+  // Keep links small/useful; skip field_links/explainability if they’re huge
+  const links = pack.links ?? null;
+
+  return { asset, market, scores, classification, links };
+}
 async function doAskAI(){
   const qEl = document.getElementById("aiQuestion");
   const btn = document.getElementById("aiAskBtn");
@@ -2134,7 +2170,7 @@ async function doAskAI(){
     last_loaded_ticker: __LAST_SYMBOL || null,
     last_loaded_pack_meta: __LAST_PACK_META || null,
   };
-  if (includeTicker && __LAST_PACK) ctx.last_loaded_pack = __LAST_PACK;
+  if (includeTicker && __LAST_PACK) ctx.last_loaded_pack = slimPackForAI(__LAST_PACK);
 
   try{
     const ctrl = new AbortController();
