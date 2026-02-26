@@ -1074,14 +1074,13 @@ function applyCollapse(panelId, collapsed){
   });
 }
 function initCollapseButtons(){
-  // Default: nothing collapsed
+  // Nothing collapsed by default
   const defaults = new Set([]);
 
   document.querySelectorAll("[data-collapse]").forEach(btn => {
     const panelId = btn.getAttribute("data-collapse");
     const collapsed = defaults.has(panelId);
     applyCollapse(panelId, collapsed);
-
     btn.addEventListener("click", () => {
       const nowCollapsed = !document.getElementById(panelId).classList.contains("hidden");
       applyCollapse(panelId, nowCollapsed);
@@ -1576,179 +1575,199 @@ function setTickerRoute(sym, mode="t"){
 
 function renderHighlightsTable(state){
   const host = document.getElementById("hlTableHost");
+  if (!host) return;
+
+  // Rename tab labels (no HTML edits needed)
+  const bG = document.getElementById("tabSetups");
+  const bL = document.getElementById("tabRisk");
+  const bM = document.getElementById("tabMixed");
+  if (bG) bG.textContent = "Gainers";
+  if (bL) bL.textContent = "Losers";
+  if (bM) bM.textContent = "Big moves";
+
+  // Header meta text (right side)
   const meta = document.getElementById("hlMeta");
+
   host.innerHTML = "";
 
   if (!state){
-    if (meta) meta.textContent = "—";
     host.appendChild(el("div", {class:"small muted"}, ["No data."]));
+    if (meta) meta.textContent = "—";
     return;
   }
 
-  // ---- helpers ----
-  const normalizePct = (x) => {
+  // --- Helpers ---
+  const toPct = (x) => {
     if (x === null || x === undefined) return null;
     let v = Number(x);
     if (!Number.isFinite(v)) return null;
-    // If it looks like a fraction (e.g., 0.012), convert to percent
+    // Accept either 0.0123 or 1.23 as input; normalize to percent
     if (Math.abs(v) <= 0.25) v *= 100;
     return v;
   };
 
-  const normalizeLast = (x) => {
-    if (x === null || x === undefined) return null;
-    const v = Number(x);
-    return Number.isFinite(v) ? v : null;
+  const canonicalTicker = (sym) => {
+    const s = normalizeTicker(sym);
+    // Keep Highlights consistent with your “vol proxy” decision
+    if (s === "^VIX" || s === "VIX") return "VXX";
+    return s;
   };
 
-  const pctKind = (pct) => {
-    const cls = pctClass(pct); // uses your existing helper
-    if (cls === "neg") return "bad";
-    if (cls === "mildneg") return "warn";
-    return "good";
-  };
+  const pill = (text, kind /* pos|mildneg|neg */) => {
+    // Theme-friendly using CSS vars
+    const bg =
+      kind === "pos" ? "rgba(22,163,74,0.14)" :
+      kind === "neg" ? "rgba(220,38,38,0.12)" :
+      "rgba(245,158,11,0.14)";
 
-  const pctPill = (pct) => {
-    const kind = pctKind(pct);
-    const pill = el("span", {
-      class: `tag ${kind}`,
+    const border =
+      kind === "pos" ? "rgba(22,163,74,0.28)" :
+      kind === "neg" ? "rgba(220,38,38,0.26)" :
+      "rgba(245,158,11,0.26)";
+
+    const color =
+      kind === "pos" ? "var(--good)" :
+      kind === "neg" ? "var(--bad)" :
+      "var(--warn)";
+
+    return el("span", {
+      class: "mono",
       style: [
-        "display:inline-flex",
-        "align-items:center",
-        "justify-content:center",
-        "font-weight:800",
-        "font-size:12px",
-        "padding:4px 10px",
+        "display:inline-block",
+        "padding:5px 10px",
         "border-radius:999px",
-        "min-width:78px",
-        "box-shadow: var(--shadow2)"
+        `background:${bg}`,
+        `border:1px solid ${border}`,
+        `color:${color}`,
+        "font-weight:800",
+        "font-size:12.5px",
+        "min-width:84px",
+        "text-align:center",
+        "line-height:1.1",
+        "white-space:nowrap"
       ].join(";")
-    }, [fmtPctChange1d(pct)]);
-    return pill;
+    }, [text]);
   };
 
-  // ---- collect candidate rows from any available state tables ----
+  const rightArrow = (sym) => {
+    const a = el("a", { href:"#", class:"mono", title:"Load ticker" }, ["↗"]);
+    a.addEventListener("click", (e) => {
+      e.preventDefault();
+      setTickerRoute(sym, "t");
+    });
+    return a;
+  };
+
+  // --- Pull candidate rows ---
+  // We only use price + %1D (no scores).
+  // If later you add a full-universe movers file, we can swap this to be exact.
   const tables = state.tables || {};
-  const allRows = [];
+  const pulled = Array.isArray(tables?.pulled_back?.rows) ? tables.pulled_back.rows : [];
+  const fragile = Array.isArray(tables?.fragile?.rows) ? tables.fragile.rows : [];
+  const mixed  = Array.isArray(tables?.mixed?.rows) ? tables.mixed.rows : [];
 
-  for (const k of Object.keys(tables)){
-    const rows = tables?.[k]?.rows;
-    if (Array.isArray(rows)) allRows.push(...rows);
-  }
+  // Combine + dedupe by canonical ticker.
+  // If multiple entries exist, keep the one with the largest absolute 1D move.
+  const bySym = new Map();
+  const ingest = (rows) => {
+    for (const r of (rows || [])){
+      const rawSym = normalizeTicker(r?.ticker);
+      if (!rawSym) continue;
 
-  if (!allRows.length){
-    if (meta) meta.textContent = "Top movers unavailable";
-    host.appendChild(el("div", {class:"small muted"}, ["No table rows found in state.json."]));
-    return;
-  }
+      const sym = canonicalTicker(rawSym);
+      const pct = toPct(r?.pct_change_1d);
+      const last = (r?.last === null || r?.last === undefined) ? null : Number(r.last);
+      if (pct === null) continue;
 
-  // ---- dedupe by ticker, keep the row with a usable %1D (or the largest abs %1D) ----
-  const byTicker = new Map();
+      const prev = bySym.get(sym);
+      const cand = {
+        sym,
+        rawSym,
+        isProxy: (sym !== rawSym),
+        last: Number.isFinite(last) ? last : null,
+        pct
+      };
 
-  for (const r of allRows){
-    const sym = normalizeTicker(r.ticker || r.symbol || "");
-    if (!sym) continue;
-
-    const pct = normalizePct(
-      r.pct_change_1d ?? r.pct1d ?? r.pct ?? r.change_pct ?? r.changePercent
-    );
-    const last = normalizeLast(r.last ?? r.price ?? r.close);
-
-    const prev = byTicker.get(sym);
-    const prevScore = prev?.__pct !== null && prev?.__pct !== undefined ? Math.abs(prev.__pct) : -1;
-    const score = pct !== null && pct !== undefined ? Math.abs(pct) : -1;
-
-    // prefer having pct; then prefer bigger abs move
-    if (!prev || (score >= 0 && score > prevScore)){
-      byTicker.set(sym, {
-        ticker: sym,
-        __pct: pct,
-        __last: last,
-      });
-    } else if (prev && (prev.__last === null || prev.__last === undefined) && last !== null){
-      // fill last if missing
-      prev.__last = last;
-      byTicker.set(sym, prev);
+      if (!prev || Math.abs(cand.pct) > Math.abs(prev.pct)) bySym.set(sym, cand);
     }
-  }
+  };
 
-  let rows = Array.from(byTicker.values()).filter(x => x.__pct !== null && x.__pct !== undefined);
+  ingest(pulled);
+  ingest(fragile);
+  ingest(mixed);
 
+  let rows = Array.from(bySym.values());
   if (!rows.length){
-    if (meta) meta.textContent = "Top movers unavailable";
-    host.appendChild(el("div", {class:"small muted"}, ["No usable %1D values found."]));
+    host.appendChild(el("div", {class:"small muted", style:"margin-top:8px"}, ["No items right now."]));
+    if (meta) meta.textContent = "—";
     return;
   }
 
-  // ---- tab logic (re-uses your existing __HL_TAB values) ----
-  // setups => gainers, risk => losers, mixed => biggest movers
-  let title = "Top gainers (1D)";
-  if (__HL_TAB === "risk"){
-    rows.sort((a,b) => a.__pct - b.__pct);
-    title = "Top losers (1D)";
-  } else if (__HL_TAB === "mixed"){
-    rows.sort((a,b) => Math.abs(b.__pct) - Math.abs(a.__pct));
-    title = "Biggest movers (1D)";
-  } else {
-    rows.sort((a,b) => b.__pct - a.__pct);
+  // --- Sort for tab ---
+  let title = "—";
+  if (__HL_TAB === "setups"){
+    // Gainers
+    rows.sort((a,b) => (b.pct - a.pct));
     title = "Top gainers (1D)";
+  } else if (__HL_TAB === "risk"){
+    // Losers
+    rows.sort((a,b) => (a.pct - b.pct));
+    title = "Top losers (1D)";
+  } else {
+    // Big moves (absolute)
+    rows.sort((a,b) => (Math.abs(b.pct) - Math.abs(a.pct)));
+    title = "Biggest moves (1D)";
   }
-
   if (meta) meta.textContent = title;
 
-  // ---- build table ----
-  const tbl = el("table", {style:"table-layout:fixed; width:100%;"}, []);
+  // --- Render table ---
+  const tbl = el("table", { style:"table-layout:fixed; width:100%;" }, []);
   const thead = el("thead", {}, [el("tr", {}, [
     el("th", {}, ["Ticker"]),
     el("th", {class:"num"}, ["Last"]),
     el("th", {class:"num"}, ["%1D"]),
-    el("th", {}, [""])
+    el("th", {class:"num", style:"width:34px"}, [""])
   ])]);
 
   const tbody = el("tbody", {}, []);
 
   for (const r of rows.slice(0, 12)){
-    const sym = r.ticker;
+    const sym = r.sym;
 
-    const a = el("a", {href:"#", class:"mono", style:"font-weight:800"}, [sym]);
-    a.addEventListener("click", (e) => {
+    const packHref = `${HMONEY_WORKER_BASE}/pack?ticker=${encodeURIComponent(sym)}`;
+
+    const tickCell = el("div", {style:"display:flex; gap:8px; align-items:center; flex-wrap:wrap"}, [
+      el("a", {href:"#", class:"mono"}, [sym]),
+      r.isProxy ? el("span", {class:"tag tiny warn"}, ["proxy"]) : null,
+      el("span", {class:"small muted"}, ["·"]),
+      link(packHref, "pack", {class:"small mono"}),
+    ].filter(Boolean));
+
+    // internal navigation click
+    tickCell.querySelector("a").addEventListener("click", (e) => {
       e.preventDefault();
       setTickerRoute(sym, "t");
     });
 
-    const packHref = `${HMONEY_WORKER_BASE}/pack?ticker=${encodeURIComponent(sym)}`;
-    const packLink = link(packHref, "pack", {class:"small mono", style:"margin-left:0"});
-
-    const tickCell = el("div", {
-      style: [
-        "display:flex",
-        "align-items:center",
-        "gap:10px",
-        "flex-wrap:wrap",
-        "min-width:0"
-      ].join(";")
-    }, [
-      a,
-      el("span", {class:"small muted"}, ["·"]),
-      packLink,
-    ]);
-
-    const lastText = (r.__last === null || r.__last === undefined) ? "—" : fmt(r.__last, 2);
+    const pctKind = (r.pct > 0) ? "pos" : (r.pct >= -10 ? "mildneg" : "neg");
+    const pctText = `${r.pct.toFixed(2)}%`;
 
     tbody.appendChild(el("tr", {}, [
-      el("td", {style:"overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"}, [tickCell]),
-      el("td", {class:"num"}, [el("span", {class:"mono", style:"font-weight:700"}, [lastText])]),
-      el("td", {class:"num"}, [pctPill(r.__pct)]),
-      el("td", {class:"num"}, [link(quoteUrl(sym), "↗", {class:"mono"})]),
+      el("td", {}, [tickCell]),
+      el("td", {class:"num"}, [
+        el("span", {class:"mono"}, [(r.last === null) ? "—" : fmt(r.last, 2)])
+      ]),
+      el("td", {class:"num"}, [pill(pctText, pctKind)]),
+      el("td", {class:"num"}, [rightArrow(sym)]),
     ]));
   }
 
   tbl.appendChild(thead);
   tbl.appendChild(tbody);
+  host.appendChild(tbl);
 
-  // prevent overflow bleed
-  const scroller = el("div", {style:"overflow-x:auto; -webkit-overflow-scrolling:touch;"}, [tbl]);
-  host.appendChild(scroller);
+  // Small note (optional) if you want to be explicit about coverage:
+  // host.appendChild(el("div",{class:"small muted",style:"margin-top:8px"},["Note: this list is derived from the dashboard’s highlighted subsets, not the full universe."]));
 }
 
 /* ----------------------------
@@ -1762,6 +1781,48 @@ async function renderBenchmarks(){
   benchTables.innerHTML = "";
   document.getElementById("benchStatus").textContent = "Loading…";
 
+  // percent pill (same look as highlights)
+  const pctPill = (pct) => {
+    const p = (pct === null || pct === undefined) ? null : Number(pct);
+    if (!Number.isFinite(p)) return el("span", {class:"mono"}, ["—"]);
+
+    // normalize 0.0123 vs 1.23
+    const v = (Math.abs(p) <= 0.25) ? (p * 100) : p;
+    const kind = (v > 0) ? "pos" : (v >= -10 ? "mildneg" : "neg");
+
+    const bg =
+      kind === "pos" ? "rgba(22,163,74,0.14)" :
+      kind === "neg" ? "rgba(220,38,38,0.12)" :
+      "rgba(245,158,11,0.14)";
+
+    const border =
+      kind === "pos" ? "rgba(22,163,74,0.28)" :
+      kind === "neg" ? "rgba(220,38,38,0.26)" :
+      "rgba(245,158,11,0.26)";
+
+    const color =
+      kind === "pos" ? "var(--good)" :
+      kind === "neg" ? "var(--bad)" :
+      "var(--warn)";
+
+    return el("span", {
+      class:"mono",
+      style:[
+        "display:inline-block",
+        "padding:5px 10px",
+        "border-radius:999px",
+        `background:${bg}`,
+        `border:1px solid ${border}`,
+        `color:${color}`,
+        "font-weight:800",
+        "font-size:12.5px",
+        "min-width:84px",
+        "text-align:center",
+        "white-space:nowrap"
+      ].join(";")
+    }, [`${v.toFixed(2)}%`]);
+  };
+
   let totalExpected = 0;
   let totalFound = 0;
 
@@ -1772,15 +1833,11 @@ async function renderBenchmarks(){
       el("div", {style:"font-weight:700; margin-bottom:8px"}, [groupName])
     ]);
 
-    const tbl = el("table", {}, []);
+    const tbl = el("table", {style:"table-layout:fixed; width:100%;"}, []);
     const thead = el("thead", {}, [el("tr", {}, [
-      el("th", {}, ["Ticker"]),
-      el("th", {"aria-label":"Tracks"}, [""]),
-      el("th", {class:"num"}, ["Last"]),
-      el("th", {class:"num"}, ["%1D"]),
-      el("th", {class:"num"}, ["Off high"]),
-      el("th", {class:"num"}, ["vs 200D"]),
-      el("th", {class:"num"}, ["ATR%"]),
+      el("th", {style:"width:56%;"}, ["Ticker"]),
+      el("th", {class:"num", style:"width:20%;"}, ["Last"]),
+      el("th", {class:"num", style:"width:24%;"}, ["%1D"]),
     ])]);
     const tbody = el("tbody", {}, []);
 
@@ -1800,61 +1857,55 @@ async function renderBenchmarks(){
       const sym = r.sym;
 
       const tA = el("a", {href:"#", class:"mono"}, [sym]);
-      tA.addEventListener("click", (e) => {
-        e.preventDefault();
-        setTickerRoute(sym, "t");
-      });
+      tA.addEventListener("click", (e) => { e.preventDefault(); setTickerRoute(sym, "t"); });
+
       const y = link(quoteUrl(sym), "↗", {class:"mono", style:"margin-left:8px"});
 
-      if (!r.ok){
+      if (r.ok){
+        totalFound += 1;
+
+        const pack = r.res.pack || {};
+        const m = pack.market || {};
+
+        const last = m.last_price ?? m.last ?? null;
+        const pct1d = m.pct_change_1d ?? null;
+        const offHigh = (m.pct_off_52w_high!=null) ? (Number(m.pct_off_52w_high)*100) : null;
+
+        let dist200 = null;
+        if (last != null && m.ma_200 != null && Number(m.ma_200) !== 0){
+          dist200 = (Number(last)/Number(m.ma_200)-1)*100;
+        }
+
+        const atr = (m.atr_pct!=null) ? (Number(m.atr_pct)*100) : null;
+
+        const sub = el("div", {class:"small muted", style:"margin-top:4px; line-height:1.2"}, [
+          `off high ${offHigh!=null?offHigh.toFixed(1)+"%":"—"} • `,
+          `vs 200D ${dist200!=null?dist200.toFixed(1)+"%":"—"} • `,
+          `ATR ${atr!=null?atr.toFixed(2)+"%":"—"}`
+        ]);
+
+        const leftCell = el("div", {}, [
+          el("div", {}, [tA, y, el("span", {class:"muted", style:"margin-left:8px"}, [BENCHMARK_META[sym] || ""])]),
+          sub
+        ]);
+
         tbody.appendChild(el("tr", {}, [
-          el("td", {}, [tA, y]),
-          el("td", {}, [el("span", {class:"muted"}, [BENCHMARK_META[sym] || "—"])]),
-          el("td", {class:"num muted"}, ["—"]),
-          el("td", {class:"num muted"}, ["—"]),
-          el("td", {class:"num muted"}, ["—"]),
+          el("td", {}, [leftCell]),
+          el("td", {class:"num"}, [el("span", {class:"mono"}, [last!=null ? fmt(last,2) : "—"])]),
+          el("td", {class:"num"}, [pctPill(pct1d)]),
+        ]));
+      } else {
+        const leftCell = el("div", {}, [
+          el("div", {}, [tA, y, el("span", {class:"muted", style:"margin-left:8px"}, [BENCHMARK_META[sym] || ""])]),
+          el("div", {class:"small muted", style:"margin-top:4px"}, ["—"])
+        ]);
+
+        tbody.appendChild(el("tr", {}, [
+          el("td", {}, [leftCell]),
           el("td", {class:"num muted"}, ["—"]),
           el("td", {class:"num muted"}, ["—"]),
         ]));
-        continue;
       }
-
-      totalFound += 1;
-
-      const pack = r.res.pack || {};
-      const m = pack.market || {};
-
-      const last = m.last_price ?? m.last ?? null;
-      const pct1d = m.pct_change_1d ?? null;
-      const offHigh = m.pct_off_52w_high ?? null; // ratio
-      const ma200 = m.ma_200 ?? null;
-      const atr = m.atr_pct ?? null; // percent points per your packs
-
-      let dist200 = null;
-      if (last !== null && ma200 !== null && Number(ma200) !== 0){
-        dist200 = (Number(last)/Number(ma200) - 1) * 100;
-      }
-
-      const cls = pctClass(pct1d);
-      const pctSpan = el("span", {class:"mono", title:`raw: ${pct1d}`}, [fmtPctChange1d(pct1d)]);
-
-      const offHighText = (offHigh === null || offHigh === undefined) ? "—" : `${(Number(offHigh)*100).toFixed(1)}%`;
-      const offHighSpan = el("span", {class:"mono", title:`raw: ${offHigh}`}, [offHighText]);
-
-      const dist200Text = (dist200 === null || dist200 === undefined) ? "—" : `${Number(dist200).toFixed(1)}%`;
-      const dist200Span = el("span", {class:"mono", title:`raw: last=${last}, ma200=${ma200}`}, [dist200Text]);
-
-      const atrSpan = el("span", {class:"mono", title:`raw: ${atr}`}, [fmtAtrPct(atr)]);
-
-      tbody.appendChild(el("tr", {}, [
-        el("td", {}, [tA, y]),
-        el("td", {}, [el("span", {class:"muted"}, [BENCHMARK_META[sym] || "—"])]),
-        el("td", {class:"num"}, [el("span", {class:"mono"}, [last==null ? "—" : fmt(last,2)])]),
-        el("td", {class:`num ${cls}`}, [pctSpan]),
-        el("td", {class:"num"}, [offHighSpan]),
-        el("td", {class:"num"}, [dist200Span]),
-        el("td", {class:"num"}, [atrSpan]),
-      ]));
     }
 
     tbl.appendChild(thead);
@@ -1931,9 +1982,8 @@ function renderTickerDrawer(sym, packRes, liveQ){
   drawer.style.display = "block";
 
   if (!packRes){
-    // fallback: show live quote + links
     const liveLine = liveQ
-      ? `<div class="small muted" style="margin-top:10px">Live: <span class="mono">${fmt(liveQ.price,2)}</span> • <span class="mono ${pctClass(liveQ.pct)}" title="raw: ${liveQ.pct}">${(liveQ.pct==null?"—":Number(liveQ.pct).toFixed(2)+"%")}</span> • ${liveQ.market_time_utc ? formatLA(liveQ.market_time_utc) : "—"}</div>`
+      ? `<div class="small muted" style="margin-top:10px">Live: <span class="mono">${fmt(liveQ.price,2)}</span> • <span class="mono ${pctClass(liveQ.pct)}">${(liveQ.pct==null?"—":Number(liveQ.pct).toFixed(2)+"%")}</span> • ${liveQ.market_time_utc ? formatLA(liveQ.market_time_utc) : "—"}</div>`
       : `<div class="small muted" style="margin-top:10px">No scan data for this ticker in the latest snapshot.</div>`;
 
     drawer.innerHTML = `
@@ -1945,7 +1995,7 @@ function renderTickerDrawer(sym, packRes, liveQ){
       </div>
       ${liveLine}
       <div class="small muted" style="margin-top:10px">
-        Tip: to make AMZN always work, we’ll add “core tickers” (mega-caps) as forced packs in every run.
+        Tip: to make core tickers always work, add them as forced packs in every run.
       </div>
     `;
     drawer.querySelector("#openTickerPageBtn").addEventListener("click", () => setTickerRoute(sym, "page"));
@@ -1954,7 +2004,6 @@ function renderTickerDrawer(sym, packRes, liveQ){
 
   const pack = packRes.pack || {};
   const m = pack.market || {};
-  const s = pack.scores || {};
   const asOf = packRes.pack_as_of_utc || pack.as_of_utc || null;
 
   const last = m.last_price ?? m.last ?? null;
@@ -1973,7 +2022,7 @@ function renderTickerDrawer(sym, packRes, liveQ){
   const packHref = `${HMONEY_WORKER_BASE}/pack?ticker=${encodeURIComponent(sym)}`;
 
   const liveLine = liveQ
-    ? `<div class="small muted" style="margin-top:8px">Live: <span class="mono">${fmt(liveQ.price,2)}</span> • <span class="mono ${pctClass(liveQ.pct)}" title="raw: ${liveQ.pct}">${(liveQ.pct==null?"—":Number(liveQ.pct).toFixed(2)+"%")}</span> • ${liveQ.market_time_utc ? formatLA(liveQ.market_time_utc) : "—"}</div>`
+    ? `<div class="small muted" style="margin-top:8px">Live: <span class="mono">${fmt(liveQ.price,2)}</span> • <span class="mono ${pctClass(liveQ.pct)}">${(liveQ.pct==null?"—":Number(liveQ.pct).toFixed(2)+"%")}</span> • ${liveQ.market_time_utc ? formatLA(liveQ.market_time_utc) : "—"}</div>`
     : "";
 
   drawer.innerHTML = `
@@ -1993,19 +2042,12 @@ function renderTickerDrawer(sym, packRes, liveQ){
       <div class="small muted" style="margin-bottom:6px">Anchors</div>
       <div class="row" style="gap:10px">
         <div class="kv" style="min-width:170px"><div class="k">Last</div><div class="v mono">${last!==null?fmt(last,2):"—"}</div></div>
-        <div class="kv" style="min-width:170px"><div class="k">%1D</div><div class="v mono ${pctClass(pct1d)}" title="raw: ${pct1d}">${fmtPctChange1d(pct1d)}</div></div>
-        <div class="kv" style="min-width:170px"><div class="k">% off 52w high</div><div class="v mono" title="raw: ${offHigh}">${offHigh!==null?(offHigh*100).toFixed(1)+"%":"—"}</div></div>
-        <div class="kv" style="min-width:170px"><div class="k">vs 200DMA</div><div class="v mono" title="raw: last=${last}, ma200=${ma200}">${dist200!==null?dist200.toFixed(1)+"%":"—"}</div></div>
-        <div class="kv" style="min-width:170px"><div class="k">ATR%</div><div class="v mono" title="raw: ${atr}">${atr!==null?fmtAtrPct(atr):"—"}</div></div>
+        <div class="kv" style="min-width:170px"><div class="k">%1D</div><div class="v mono ${pctClass(pct1d)}">${fmtPctChange1d(pct1d)}</div></div>
+        <div class="kv" style="min-width:170px"><div class="k">% off 52w high</div><div class="v mono">${offHigh!==null?(offHigh*100).toFixed(1)+"%":"—"}</div></div>
+        <div class="kv" style="min-width:170px"><div class="k">vs 200DMA</div><div class="v mono">${dist200!==null?dist200.toFixed(1)+"%":"—"}</div></div>
+        <div class="kv" style="min-width:170px"><div class="k">ATR%</div><div class="v mono">${atr!==null?(atr*100).toFixed(2)+"%":"—"}</div></div>
         <div class="kv" style="min-width:170px"><div class="k">$ vol (20d)</div><div class="v mono">${dv!==null?Number(dv).toExponential(2):"—"}</div></div>
       </div>
-
-      <div style="height:10px"></div>
-
-      <div class="row" style="gap:10px">
-        <div class="kv" style="min-width:170px"><div class="k">Setup score</div><div class="v mono">${fmtInt(s.opportunity_score)}</div></div>
-      </div>
-
       ${liveLine}
     </div>
   `;
@@ -2096,7 +2138,7 @@ async function renderTickerPageContent(sym){
       <div style="font-weight:800; margin-bottom:6px">${sym}</div>
       <div class="small muted">No evidence pack for this ticker in the latest scan.</div>
       <div class="small muted" style="margin-top:8px">
-        ${liveQ ? `Live: <span class="mono">${fmt(liveQ.price,2)}</span> • <span class="mono ${pctClass(liveQ.pct)}" title="raw: ${liveQ.pct}">${(liveQ.pct==null?"—":Number(liveQ.pct).toFixed(2)+"%")}</span>` : "Live quote unavailable."}
+        ${liveQ ? `Live: <span class="mono">${fmt(liveQ.price,2)}</span> • <span class="mono ${pctClass(liveQ.pct)}">${(liveQ.pct==null?"—":Number(liveQ.pct).toFixed(2)+"%")}</span>` : "Live quote unavailable."}
       </div>
       <div class="small muted" style="margin-top:8px">
         Next step: force core tickers (AMZN, AAPL, MSFT, NVDA…) into every run so pages always exist.
@@ -2107,8 +2149,18 @@ async function renderTickerPageContent(sym){
 
   const pack = packRes.pack || {};
   const m = pack.market || {};
-  const s = pack.scores || {};
   const asOf = packRes.pack_as_of_utc || pack.as_of_utc || null;
+
+  const last = m.last_price ?? m.last ?? null;
+  const pct1d = m.pct_change_1d ?? null;
+  const offHigh = m.pct_off_52w_high ?? null;
+  const atr = m.atr_pct ?? null;
+  const ma200 = m.ma_200 ?? null;
+
+  let dist200 = null;
+  if (last !== null && ma200 !== null && Number(ma200) !== 0){
+    dist200 = (Number(last)/Number(ma200) - 1) * 100;
+  }
 
   host.innerHTML = `
     <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:baseline">
@@ -2120,9 +2172,11 @@ async function renderTickerPageContent(sym){
     <div style="height:10px"></div>
 
     <div class="row" style="gap:10px">
-      <div class="kv" style="min-width:190px"><div class="k">Setup score</div><div class="v mono">${fmtInt(s.opportunity_score)}</div></div>
-      <div class="kv" style="min-width:190px"><div class="k">% off 52w high</div><div class="v mono" title="raw: ${m.pct_off_52w_high}">${m.pct_off_52w_high!=null?(m.pct_off_52w_high*100).toFixed(1)+"%":"—"}</div></div>
-      <div class="kv" style="min-width:190px"><div class="k">ATR%</div><div class="v mono" title="raw: ${m.atr_pct}">${m.atr_pct!=null?fmtAtrPct(m.atr_pct):"—"}</div></div>
+      <div class="kv" style="min-width:190px"><div class="k">Last</div><div class="v mono">${last!==null?fmt(last,2):"—"}</div></div>
+      <div class="kv" style="min-width:190px"><div class="k">%1D</div><div class="v mono ${pctClass(pct1d)}">${fmtPctChange1d(pct1d)}</div></div>
+      <div class="kv" style="min-width:190px"><div class="k">% off 52w high</div><div class="v mono">${offHigh!=null?(offHigh*100).toFixed(1)+"%":"—"}</div></div>
+      <div class="kv" style="min-width:190px"><div class="k">vs 200DMA</div><div class="v mono">${dist200!=null?dist200.toFixed(1)+"%":"—"}</div></div>
+      <div class="kv" style="min-width:190px"><div class="k">ATR%</div><div class="v mono">${atr!=null?(atr*100).toFixed(2)+"%":"—"}</div></div>
     </div>
 
     <div style="height:10px"></div>
@@ -2130,10 +2184,11 @@ async function renderTickerPageContent(sym){
     <div class="detailsBox">
       <div class="small muted" style="margin-bottom:6px">Quick take (descriptive)</div>
       <div style="font-size:14px">
-        Setup is a pullback + stabilization style read (relative to its own history). Use the anchors above (off-high, vs 200DMA, ATR%) to contextualize downside / instability traits.
+        This panel shows a few non-predictive anchors (price, 1D move, distance from highs/200DMA, ATR).
+        Use news + fundamentals + context before concluding anything.
       </div>
       <div class="small muted" style="margin-top:8px">
-        Live quote (optional): ${liveQ ? `<span class="mono">${fmt(liveQ.price,2)}</span> • <span class="mono ${pctClass(liveQ.pct)}" title="raw: ${liveQ.pct}">${(liveQ.pct==null?"—":Number(liveQ.pct).toFixed(2)+"%")}</span>` : "not available"}
+        Live quote (optional): ${liveQ ? `<span class="mono">${fmt(liveQ.price,2)}</span> • <span class="mono ${pctClass(liveQ.pct)}">${(liveQ.pct==null?"—":Number(liveQ.pct).toFixed(2)+"%")}</span>` : "not available"}
       </div>
     </div>
   `;
@@ -2558,16 +2613,10 @@ renderBenchmarks();
     await refreshBenchTape();
   });
 
-  // Bench lazy-load
-  document.querySelector('[data-collapse="benchBody"]').addEventListener("click", async () => {
-    const isNowOpen = !document.getElementById("benchBody").classList.contains("hidden");
-    if (isNowOpen) {
-      document.getElementById("benchStatus").textContent = "Loading…";
-      await renderBenchmarks();
-    } else {
-      document.getElementById("benchStatus").textContent = "Collapsed";
-    }
-  });
+  // Benchmarks: load immediately + show
+applyCollapse("benchBody", false);
+document.getElementById("benchStatus").textContent = "Loading…";
+await renderBenchmarks();
 
   // Ticker lookup
   const input = document.getElementById("tickerInput");
