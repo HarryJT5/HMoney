@@ -57,6 +57,7 @@
       background:
         radial-gradient(1200px 700px at 20% -10%, rgba(70,140,255,0.18) 0%, var(--bg) 55%) fixed;
       color:var(--text);
+      overflow-x:hidden;
     }
 
     a{color:var(--link); text-decoration:none}
@@ -111,6 +112,8 @@
       padding:14px;
       box-shadow: var(--shadow);
       position:relative;
+      z-index:1;
+      min-width:0;
     }
     html[data-theme="dark"] .card{
       background: linear-gradient(180deg, rgba(17,24,38,0.92) 0%, rgba(15,22,34,0.92) 100%);
@@ -172,35 +175,27 @@
     html[data-theme="dark"] .layoutHint{ background: rgba(10,14,20,0.22); }
     html[data-layout="edit"] .layoutHint{ display:block; }
 
-    /* Default board layout (Option 2): two independent stacks */
-.moduleGrid{
-  display:flex;
-  gap:12px;
-  align-items:flex-start;
-}
+    /* Option 2 layout: two independent stacks (no grid-row gaps) */
+    .moduleGrid{
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+      min-width:0;
+    }
+    .col{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      min-width:0;
+    }
+    .col.left{ flex: 1 1 auto; }
+    .col.right{ flex: 0 0 360px; width:360px; }
+    .span2{ width:100%; }
 
-/* Each column is its own vertical flow (no grid-row gaps) */
-.col{
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-  min-width:0; /* prevents overflow pushing page wide */
-}
-.col.left{ flex: 1 1 auto; }
-.col.right{ flex: 0 0 360px; width:360px; }
-
-/* span2 is harmless now (kept for compatibility) */
-.span2{ width:100%; }
-
-/* Sticky is now safe (it won’t overlap the left column) */
-.sticky{ position:sticky; top:14px; z-index:2; }
-
-@media (max-width: 1100px){
-  .moduleGrid{ flex-direction:column; }
-  .col.right{ width:auto; flex: 1 1 auto; }
-  .sticky{ position:static !important; top:auto !important; }
-}
-.card{ z-index:1; }
+    @media (max-width: 1100px){
+      .moduleGrid{ flex-direction:column; }
+      .col.right{ width:auto; flex: 1 1 auto; }
+    }
 
     .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
 
@@ -209,6 +204,7 @@
       padding:12px; background: var(--soft);
       border:1px solid var(--line); border-radius:16px;
       min-width: 220px;
+      min-width:0;
     }
     .k{color:var(--muted); font-size:12px}
     .v{font-size:14px}
@@ -219,6 +215,7 @@
       padding:12px;
       background: var(--soft2);
       box-shadow: var(--shadow2);
+      min-width:0;
     }
 
     .tape{display:flex; gap:8px; align-items:center; overflow-x:auto; padding:4px 0; scrollbar-width:none}
@@ -247,64 +244,73 @@
     .mildneg{color:var(--warn)}
 
     /* Numeric pills (subtle) */
-.pillNum{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  min-width:56px;
-  padding:3px 10px;
-  border-radius:999px;
-  border:1px solid var(--line);
-  background: rgba(255,255,255,0.65);
-  font-weight:800;
-  font-size:13px;
-}
-html[data-theme="dark"] .pillNum{
-  background: rgba(10,14,20,0.25);
-}
+    .pillNum{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width:56px;
+      padding:3px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,0.65);
+      font-weight:800;
+      font-size:13px;
+      white-space:nowrap;
+    }
+    html[data-theme="dark"] .pillNum{
+      background: rgba(10,14,20,0.25);
+    }
+    .pillNum.pos{
+      color: var(--good);
+      border-color: rgba(22,163,74,0.25);
+      background: rgba(22,163,74,0.10);
+    }
+    .pillNum.mildneg{
+      color: var(--warn);
+      border-color: rgba(245,158,11,0.25);
+      background: rgba(245,158,11,0.10);
+    }
+    .pillNum.neg{
+      color: var(--bad);
+      border-color: rgba(220,38,38,0.25);
+      background: rgba(220,38,38,0.10);
+    }
+    .pillNum.neutral{
+      color: var(--text);
+      background: var(--chip);
+    }
 
-.pillNum.pos{
-  color: var(--good);
-  border-color: rgba(22,163,74,0.25);
-  background: rgba(22,163,74,0.10);
-}
-.pillNum.mildneg{
-  color: var(--warn);
-  border-color: rgba(245,158,11,0.25);
-  background: rgba(245,158,11,0.10);
-}
-.pillNum.neg{
-  color: var(--bad);
-  border-color: rgba(220,38,38,0.25);
-  background: rgba(220,38,38,0.10);
-}
-.pillNum.neutral{
-  color: var(--text);
-  background: var(--chip);
-}
-
-/* Slightly larger Highlights table */
-#highlightsCard table{ font-size:13.5px; }
-
-    table{width:100%; border-collapse:collapse; font-size:12.5px}
+    table{width:100%; border-collapse:collapse; font-size:12.5px; min-width:0}
     th,td{border-bottom:1px solid rgba(226,232,240,0.95); padding:9px 7px; vertical-align:top}
     html[data-theme="dark"] th, html[data-theme="dark"] td{border-bottom:1px solid rgba(34,48,71,0.65)}
     th{color:var(--muted); font-weight:600; text-align:left}
     td.num{text-align:right; font-variant-numeric: tabular-nums}
 
+    /* Prevent sidebar tables from forcing horizontal overflow */
+    #benchCard .detailsBox{ overflow:hidden; }
+    #benchCard table{ table-layout:fixed; width:100%; }
+    #benchCard th, #benchCard td{ overflow:hidden; text-overflow:ellipsis; }
+    #benchCard td.num{ white-space:nowrap; }
+
+    #highlightsCard table{ table-layout:fixed; width:100%; }
+    #highlightsCard td.num{ white-space:nowrap; }
+
     .search{
       display:flex; gap:8px; align-items:center; width:100%;
       padding:10px 12px; background: var(--soft);
       border:1px solid var(--line); border-radius:16px;
+      min-width:0;
     }
     input[type="text"]{
       flex:1; background:transparent; border:0; outline:none;
       color:var(--text); font-size:14px;
+      min-width:0;
     }
     textarea{
       flex:1; background:transparent; border:0; outline:none;
       color:var(--text); font-size:14px;
       resize:vertical; min-height:70px;
+      min-width:0;
     }
 
     /* Tabs */
@@ -355,7 +361,7 @@ html[data-theme="dark"] .pillNum{
     .fgTicks{display:flex; justify-content:space-between; color:var(--muted); font-size:11px}
 
     /* News with photos */
-    .cols{display:grid; grid-template-columns: 1fr 1fr; gap:12px}
+    .cols{display:grid; grid-template-columns: 1fr 1fr; gap:12px; min-width:0}
     @media (max-width: 980px){ .cols{grid-template-columns:1fr} }
 
     .newsScroll{max-height: 340px; overflow:auto; padding-right:4px}
@@ -369,6 +375,7 @@ html[data-theme="dark"] .pillNum{
       border-radius:14px;
       background: rgba(255,255,255,0.82);
       box-shadow: var(--shadow2);
+      min-width:0;
     }
     html[data-theme="dark"] .newsRow{
       border:1px solid rgba(34,48,71,0.65);
@@ -491,9 +498,8 @@ html[data-theme="dark"] .pillNum{
   </div>
 
   <div class="moduleGrid" id="moduleGrid">
-      <!-- Option 2 layout: JS moves cards into these two stacks -->
-  <div class="col left" id="colLeft"></div>
-  <div class="col right" id="colRight"></div>
+    <div class="col left" id="colLeft"></div>
+    <div class="col right" id="colRight"></div>
 
     <!-- Full ticker page (linkable): shown when #page=TICKER -->
     <div class="card span2 hidden" id="tickerPageCard" data-mod="tickerPage">
@@ -619,7 +625,7 @@ html[data-theme="dark"] .pillNum{
     </div>
 
     <!-- Ticker (right) -->
-    <div class="card sticky" id="tickerCard" data-mod="ticker">
+    <div class="card" id="tickerCard" data-mod="ticker">
       <div class="sectionTitle">
         <h2>Ticker</h2>
         <div class="row" style="gap:8px">
@@ -655,29 +661,29 @@ html[data-theme="dark"] .pillNum{
       </div>
 
       <div class="cardBody" id="highlightsBody">
-        <div class="small muted">Short list of examples to review. Use evidence + context before concluding anything.</div>
+        <div class="small muted">Quick movers list (derived from the highlighted subsets you already compute). Not the full universe.</div>
 
         <div class="tabs">
-          <button class="tabBtn active" id="tabSetups">Setups</button>
-          <button class="tabBtn" id="tabRisk">Breakdowns</button>
-          <button class="tabBtn" id="tabMixed">Mixed</button>
+          <button class="tabBtn active" id="tabSetups">Gainers</button>
+          <button class="tabBtn" id="tabRisk">Losers</button>
+          <button class="tabBtn" id="tabMixed">Big moves</button>
         </div>
 
         <div id="hlTableHost"></div>
       </div>
     </div>
 
-    <!-- Benchmarks (right sidebar, not sticky so it doesn’t trap scroll too much) -->
+    <!-- Benchmarks (right sidebar) -->
     <div class="card" id="benchCard" data-mod="benchmarks">
       <div class="sectionTitle">
         <h2>Benchmarks</h2>
         <div class="row" style="gap:8px">
-          <div class="small" id="benchStatus">Collapsed</div>
-          <button class="iconBtn" data-collapse="benchBody" title="Collapse/expand">+</button>
+          <div class="small" id="benchStatus">—</div>
+          <button class="iconBtn" data-collapse="benchBody" title="Collapse/expand">–</button>
         </div>
       </div>
 
-      <div class="cardBody hidden" id="benchBody">
+      <div class="cardBody" id="benchBody">
         <div class="small muted" style="margin-bottom:10px">Reference points.</div>
         <div id="benchTables"></div>
       </div>
@@ -689,11 +695,11 @@ html[data-theme="dark"] .pillNum{
         <h2>News</h2>
         <div class="row" style="gap:8px">
           <div class="small" id="newsMeta">—</div>
-          <button class="iconBtn" data-collapse="newsBody" title="Collapse/expand">+</button>
+          <button class="iconBtn" data-collapse="newsBody" title="Collapse/expand">–</button>
         </div>
       </div>
 
-      <div class="cardBody hidden" id="newsBody">
+      <div class="cardBody" id="newsBody">
         <div class="row" style="gap:8px; margin-bottom:10px">
           <button class="btn" id="newsMoreBtn">Show more</button>
           <button class="btn" id="newsLessBtn">Show fewer</button>
@@ -790,12 +796,8 @@ function showErrorBanner(msg){
   t.textContent = msg || "Unknown error";
   b.style.display = "block";
 }
-window.addEventListener("error", (e) => {
-  showErrorBanner(e?.message || "Script error");
-});
-window.addEventListener("unhandledrejection", (e) => {
-  showErrorBanner(String(e?.reason || "Promise rejection"));
-});
+window.addEventListener("error", (e) => { showErrorBanner(e?.message || "Script error"); });
+window.addEventListener("unhandledrejection", (e) => { showErrorBanner(String(e?.reason || "Promise rejection")); });
 
 /* ----------------------------
    Theme
@@ -812,8 +814,9 @@ function initTheme(){
   const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
   applyTheme(prefersDark ? "dark" : "light");
 }
+
 /* ----------------------------
-   Option 2 layout: two independent stacks (no grid gaps)
+   Option 2 layout: two independent stacks
 ---------------------------- */
 function mountTwoColumnStacks(){
   const grid = document.getElementById("moduleGrid");
@@ -821,23 +824,16 @@ function mountTwoColumnStacks(){
   const right = document.getElementById("colRight");
   if (!grid || !left || !right) return;
 
-  // Ensure columns stay at the top even if something appended nodes
-  if (left.parentElement !== grid) grid.appendChild(left);
-  if (right.parentElement !== grid) grid.appendChild(right);
-  grid.prepend(right);
-  grid.prepend(left);
-
-  // Decide which cards live on the right
+  // Right side modules
   const rightMods = new Set(["ticker","benchmarks"]);
 
-  // Move all cards into the two stacks
+  // Move all cards into the correct column
   const cards = Array.from(grid.querySelectorAll(".card[data-mod]"));
   for (const card of cards){
     const mod = card.getAttribute("data-mod") || "";
     (rightMods.has(mod) ? right : left).appendChild(card);
   }
 
-  // Initial ordering preference: show Benchmarks first until a ticker is loaded
   reorderRightColumn();
 }
 
@@ -847,7 +843,6 @@ function reorderRightColumn(){
   const benchCard  = document.getElementById("benchCard");
   if (!right || !tickerCard || !benchCard) return;
 
-  // If a ticker is loaded, keep Ticker on top; otherwise Benchmarks on top
   const hasTicker = !!window.__LAST_SYMBOL;
   if (hasTicker){
     right.prepend(tickerCard);
@@ -857,6 +852,7 @@ function reorderRightColumn(){
     right.appendChild(tickerCard);
   }
 }
+
 /* ----------------------------
    Layout drag/drop (HANDLE ONLY)
 ---------------------------- */
@@ -871,18 +867,17 @@ function setLayoutMode(edit){
   document.getElementById("layoutResetBtn").classList.toggle("hidden", !__LAYOUT_EDIT);
 }
 
-function getGridCards(){
+function getAllCards(){
   const grid = document.getElementById("moduleGrid");
   return Array.from(grid.querySelectorAll(".card[data-mod]"));
 }
 
 function saveLayoutOrder(){
-  const ids = getGridCards().map(c => c.getAttribute("data-mod")).filter(Boolean);
+  const ids = getAllCards().map(c => c.getAttribute("data-mod")).filter(Boolean);
   try{ localStorage.setItem(LS_LAYOUT_ORDER, JSON.stringify(ids)); }catch{}
 }
 
 function applySavedLayoutOrder(){
-  const grid = document.getElementById("moduleGrid");
   let arr = null;
   try{
     const raw = localStorage.getItem(LS_LAYOUT_ORDER);
@@ -890,23 +885,32 @@ function applySavedLayoutOrder(){
   }catch{}
   if (!Array.isArray(arr) || !arr.length) return;
 
-  const map = new Map();
-  for (const c of getGridCards()) map.set(c.getAttribute("data-mod"), c);
+  const idx = new Map();
+  arr.forEach((id, i) => idx.set(String(id), i));
 
-  for (const id of arr){
-    const node = map.get(id);
-    if (node) grid.appendChild(node);
-  }
-  for (const [id, node] of map.entries()){
-    if (!arr.includes(id)) grid.appendChild(node);
-  }
+  const left = document.getElementById("colLeft");
+  const right = document.getElementById("colRight");
+
+  const reorderCol = (col) => {
+    if (!col) return;
+    const cards = Array.from(col.querySelectorAll(".card[data-mod]"));
+    cards.sort((a,b) => {
+      const am = a.getAttribute("data-mod") || "";
+      const bm = b.getAttribute("data-mod") || "";
+      const ai = idx.has(am) ? idx.get(am) : 1e9;
+      const bi = idx.has(bm) ? idx.get(bm) : 1e9;
+      return ai - bi;
+    });
+    for (const c of cards) col.appendChild(c);
+  };
+
+  reorderCol(left);
+  reorderCol(right);
 }
 
 function injectDragHandles(){
-  for (const card of getGridCards()){
-    // cards should NOT be draggable (prevents click-eating)
+  for (const card of getAllCards()){
     card.setAttribute("draggable","false");
-
     const headerRow = card.querySelector(".sectionTitle .row");
     if (!headerRow) continue;
     if (headerRow.querySelector(".dragHandle")) continue;
@@ -928,14 +932,13 @@ function injectDragHandles(){
     handle.addEventListener("dragend", () => {
       card.classList.remove("dragging");
       __DRAGGING_CARD = null;
-      for (const c of getGridCards()) c.classList.remove("dropTarget");
+      for (const c of getAllCards()) c.classList.remove("dropTarget");
       saveLayoutOrder();
     });
 
     headerRow.insertBefore(handle, headerRow.firstChild);
   }
 
-  // Prevent any accidental dragstart from inputs/buttons/links
   document.querySelectorAll("input, textarea, button, a").forEach(el => {
     el.addEventListener("dragstart", (e) => e.preventDefault());
   });
@@ -952,19 +955,16 @@ function initDragDrop(){
     if (!dragging) return;
 
     const target = e.target.closest(".card[data-mod]");
-for (const c of getGridCards()) c.classList.remove("dropTarget");
+    for (const c of getAllCards()) c.classList.remove("dropTarget");
 
-// If hovering a column blank area, append to that column
-const col = e.target.closest(".col");
-if (!target){
-  if (col && dragging) col.appendChild(dragging);
-  return;
-}
-
-if (target === dragging) return;
+    const col = e.target.closest(".col");
+    if (!target){
+      if (col && dragging) col.appendChild(dragging);
+      return;
+    }
+    if (target === dragging) return;
 
     target.classList.add("dropTarget");
-
     const rect = target.getBoundingClientRect();
     const after = (e.clientY - rect.top) > (rect.height / 2);
     if (after) target.after(dragging);
@@ -974,7 +974,7 @@ if (target === dragging) return;
   grid.addEventListener("drop", (e) => {
     if (!__LAYOUT_EDIT) return;
     e.preventDefault();
-    for (const c of getGridCards()) c.classList.remove("dropTarget");
+    for (const c of getAllCards()) c.classList.remove("dropTarget");
     saveLayoutOrder();
   });
 }
@@ -1005,19 +1005,13 @@ function fmtInt(x){
   if (!Number.isFinite(n)) return "—";
   return String(Math.trunc(n));
 }
-
-// Percent-point formatting contract:
-// - pct_change_1d is ALWAYS percent points (e.g., -0.17 means -0.17%)
-// - live quote pct is also treated as percent points
 function fmtPctPoints(x, digits=2){
   if (x === null || x === undefined) return "—";
   const v = Number(x);
   if (!Number.isFinite(v)) return "—";
   return `${v.toFixed(digits)}%`;
 }
-function fmtPctChange1d(x){
-  return fmtPctPoints(x, 2);
-}
+function fmtPctChange1d(x){ return fmtPctPoints(x, 2); }
 function pctClass(v){
   if (v === null || v === undefined) return "";
   const n = Number(v);
@@ -1026,17 +1020,8 @@ function pctClass(v){
   if (n >= -10) return "mildneg";
   return "neg";
 }
-// atr_pct contract (based on your packs): atr_pct is percent points (e.g., 2.38 means 2.38%)
-function fmtAtrPct(x){
-  return fmtPctPoints(x, 2);
-}
-
-function quoteUrl(sym){
-  return `https://finance.yahoo.com/quote/${encodeURIComponent(sym)}`;
-}
-function normalizeTicker(sym){
-  return String(sym || "").trim().toUpperCase().replace(/\s+/g,"");
-}
+function quoteUrl(sym){ return `https://finance.yahoo.com/quote/${encodeURIComponent(sym)}`; }
+function normalizeTicker(sym){ return String(sym || "").trim().toUpperCase().replace(/\s+/g,""); }
 
 function formatLA(iso){
   if (!iso) return "—";
@@ -1054,11 +1039,6 @@ function formatLA(iso){
   const hh = get("hour"), mi = get("minute"), ss = get("second");
   const tz = get("timeZoneName") || "PT";
   return `${mm}/${dd}/${yyyy} ${tz}: ${hh}:${mi}:${ss}`;
-}
-function pillNum(text, cls="", title=""){
-  const attrs = { class: `mono pillNum ${cls}`.trim() };
-  if (title) attrs.title = title;
-  return el("span", attrs, [text]);
 }
 function el(tag, attrs={}, children=[]){
   const e = document.createElement(tag);
@@ -1126,9 +1106,7 @@ function showModal(title, html){
   document.getElementById("modalBody").innerHTML = html || "";
   document.getElementById("modalBack").style.display = "flex";
 }
-function hideModal(){
-  document.getElementById("modalBack").style.display = "none";
-}
+function hideModal(){ document.getElementById("modalBack").style.display = "none"; }
 
 /* ----------------------------
    Collapse
@@ -1142,9 +1120,7 @@ function applyCollapse(panelId, collapsed){
   });
 }
 function initCollapseButtons(){
-  // Nothing collapsed by default
-  const defaults = new Set(["liveSettingsBody"]);
-
+  const defaults = new Set(["liveSettingsBody"]); // only this one collapsed by default
   document.querySelectorAll("[data-collapse]").forEach(btn => {
     const panelId = btn.getAttribute("data-collapse");
     const collapsed = defaults.has(panelId);
@@ -1226,23 +1202,10 @@ const BENCHMARK_GROUPS = [
 ];
 
 const BENCHMARK_META = {
-  "SPY":"S&P 500",
-  "QQQ":"Nasdaq 100",
-  "DIA":"Dow 30",
-  "IWM":"US small-cap",
-  "VTI":"US total market",
-  "VT":"World",
-  "VXUS":"Intl ex-US",
-  "VEA":"Developed ex-US",
-  "VWO":"Emerging markets",
-  "BND":"US bonds",
-  "TLT":"Long Treasuries",
-  "UUP":"US dollar proxy",
-  "VXX":"Volatility proxy",
-  "GLD":"Gold",
-  "SLV":"Silver",
-  "USO":"Oil proxy",
-  "BTC-USD":"Bitcoin",
+  "SPY":"S&P 500","QQQ":"Nasdaq 100","DIA":"Dow 30","IWM":"US small-cap","VTI":"US total market",
+  "VT":"World","VXUS":"Intl ex-US","VEA":"Developed ex-US","VWO":"Emerging markets",
+  "BND":"US bonds","TLT":"Long Treasuries","UUP":"US dollar proxy","VXX":"Volatility proxy",
+  "GLD":"Gold","SLV":"Silver","USO":"Oil proxy","BTC-USD":"Bitcoin",
 };
 
 /* ----------------------------
@@ -1273,9 +1236,7 @@ function renderFearGreedWidget(score, rating, whenIso, sourceUrl){
   const top = el("div", {class:"fgTop"}, [
     el("div", {}, [
       el("div", {class:"fgSub"}, ["Sentiment (Fear & Greed)"]),
-      el("div", {class:"fgValue"}, [
-        hasScore ? `${s} (${bucket})` : "Unavailable"
-      ]),
+      el("div", {class:"fgValue"}, [ hasScore ? `${s} (${bucket})` : "Unavailable" ]),
       el("div", {class:"small muted", style:"margin-top:3px"}, [
         hasScore ? when : "Feed not available (worker /market)"
       ]),
@@ -1326,33 +1287,31 @@ function renderMarket(state){
     el("div", {class:"small"}, [conf ? `Evidence: ${conf}` : ""])
   ]));
 
-  // Fear & Greed container (filled by refreshMarketPulse)
   topRow.appendChild(el("div", {class:"kv", style:"flex:1; min-width:280px"}, [
     el("div", {id:"fgHost"}, ["—"])
   ]));
 
   const pullPct = sample?.pullback_density_pct ?? null;
   const fragPct = sample?.fragility_presence_pct ?? null;
-
   const denom = sample?.denom_used_for_presence ?? null;
-const pullN = (denom!==null && pullPct!==null) ? Math.round(Number(denom) * Number(pullPct) / 100) : null;
-const fragN = (denom!==null && fragPct!==null) ? Math.round(Number(denom) * Number(fragPct) / 100) : null;
 
-let explain = "—";
-if (pullPct !== null && fragPct !== null){
-  const a = `Across ${denom ?? "—"} tracked: stabilizing pullback traits ${Number(pullPct).toFixed(1)}%${pullN!==null ? ` (${pullN})` : ""}`;
-  const b = `breakdown-style traits ${Number(fragPct).toFixed(1)}%${fragN!==null ? ` (${fragN})` : ""}.`;
+  const pullN = (denom!==null && pullPct!==null) ? Math.round(Number(denom) * Number(pullPct) / 100) : null;
+  const fragN = (denom!==null && fragPct!==null) ? Math.round(Number(denom) * Number(fragPct) / 100) : null;
 
-  let tilt = "";
-  if (pullPct > fragPct) tilt = "Breadth tilt: more stabilizing pullbacks than breakdowns.";
-  else if (fragPct > pullPct) tilt = "Breadth tilt: more breakdowns than stabilizing pullbacks.";
-  else tilt = "Breadth tilt: roughly balanced.";
+  let explain = "—";
+  if (pullPct !== null && fragPct !== null){
+    const a = `Across ${denom ?? "—"} tracked: stabilizing pullback traits ${Number(pullPct).toFixed(1)}%${pullN!==null ? ` (${pullN})` : ""}`;
+    const b = `breakdown-style traits ${Number(fragPct).toFixed(1)}%${fragN!==null ? ` (${fragN})` : ""}.`;
 
-  explain = `${a} • ${b} ${tilt} (Descriptive, not a forecast.)`;
-}
-document.getElementById("marketExplain").textContent = explain;
+    let tilt = "";
+    if (pullPct > fragPct) tilt = "Breadth tilt: more stabilizing pullbacks than breakdowns.";
+    else if (fragPct > pullPct) tilt = "Breadth tilt: more breakdowns than stabilizing pullbacks.";
+    else tilt = "Breadth tilt: roughly balanced.";
 
-  // bars (details)
+    explain = `${a} • ${b} ${tilt} (Descriptive, not a forecast.)`;
+  }
+  document.getElementById("marketExplain").textContent = explain;
+
   const bars = document.getElementById("bars");
   bars.innerHTML = "";
 
@@ -1379,7 +1338,6 @@ document.getElementById("marketExplain").textContent = explain;
 async function refreshMarketPulse(){
   try{
     const data = await fetchJsonWorker(HMONEY_MARKET_ENDPOINT, null, 20000);
-    // Expect: { ok:true, fear_greed:{score, rating, timestamp_utc}, source_url }
     const fg = data?.fear_greed || null;
     if (!data?.ok || !fg){
       setDot("dotSent", "warn");
@@ -1624,7 +1582,7 @@ function scheduleNewsLoop(){
 }
 
 /* ----------------------------
-   Highlights
+   Highlights (Movers)
 ---------------------------- */
 function setActiveTab(tab){
   __HL_TAB = tab;
@@ -1633,9 +1591,7 @@ function setActiveTab(tab){
   document.getElementById("tabMixed").classList.toggle("active", tab === "mixed");
   renderHighlightsTable(__STATE);
 }
-
 function setTickerRoute(sym, mode="t"){
-  // mode: "t" loads in ticker card; "page" opens the full ticker page
   const s = normalizeTicker(sym);
   if (!s) return;
   if (mode === "page") location.hash = `#page=${encodeURIComponent(s)}`;
@@ -1646,17 +1602,7 @@ function renderHighlightsTable(state){
   const host = document.getElementById("hlTableHost");
   if (!host) return;
 
-  // Rename tab labels (no HTML edits needed)
-  const bG = document.getElementById("tabSetups");
-  const bL = document.getElementById("tabRisk");
-  const bM = document.getElementById("tabMixed");
-  if (bG) bG.textContent = "Gainers";
-  if (bL) bL.textContent = "Losers";
-  if (bM) bM.textContent = "Big moves";
-
-  // Header meta text (right side)
   const meta = document.getElementById("hlMeta");
-
   host.innerHTML = "";
 
   if (!state){
@@ -1665,199 +1611,18 @@ function renderHighlightsTable(state){
     return;
   }
 
-  // --- Helpers ---
-  const toPct = (x) => {
-    if (x === null || x === undefined) return null;
-    let v = Number(x);
-    if (!Number.isFinite(v)) return null;
-    // Accept either 0.0123 or 1.23 as input; normalize to percent
-    if (Math.abs(v) <= 0.25) v *= 100;
-    return v;
-  };
-
   const canonicalTicker = (sym) => {
     const s = normalizeTicker(sym);
-    // Keep Highlights consistent with your “vol proxy” decision
     if (s === "^VIX" || s === "VIX") return "VXX";
     return s;
   };
 
-  const pill = (text, kind /* pos|mildneg|neg */) => {
-    // Theme-friendly using CSS vars
-    const bg =
-      kind === "pos" ? "rgba(22,163,74,0.14)" :
-      kind === "neg" ? "rgba(220,38,38,0.12)" :
-      "rgba(245,158,11,0.14)";
-
-    const border =
-      kind === "pos" ? "rgba(22,163,74,0.28)" :
-      kind === "neg" ? "rgba(220,38,38,0.26)" :
-      "rgba(245,158,11,0.26)";
-
-    const color =
-      kind === "pos" ? "var(--good)" :
-      kind === "neg" ? "var(--bad)" :
-      "var(--warn)";
-
-    return el("span", {
-      class: "mono",
-      style: [
-        "display:inline-block",
-        "padding:5px 10px",
-        "border-radius:999px",
-        `background:${bg}`,
-        `border:1px solid ${border}`,
-        `color:${color}`,
-        "font-weight:800",
-        "font-size:12.5px",
-        "min-width:84px",
-        "text-align:center",
-        "line-height:1.1",
-        "white-space:nowrap"
-      ].join(";")
-    }, [text]);
-  };
-
-  const rightArrow = (sym) => {
-    const a = el("a", { href:"#", class:"mono", title:"Load ticker" }, ["↗"]);
-    a.addEventListener("click", (e) => {
-      e.preventDefault();
-      setTickerRoute(sym, "t");
-    });
-    return a;
-  };
-
-  // --- Pull candidate rows ---
-  // We only use price + %1D (no scores).
-  // If later you add a full-universe movers file, we can swap this to be exact.
-  const tables = state.tables || {};
-  const pulled = Array.isArray(tables?.pulled_back?.rows) ? tables.pulled_back.rows : [];
-  const fragile = Array.isArray(tables?.fragile?.rows) ? tables.fragile.rows : [];
-  const mixed  = Array.isArray(tables?.mixed?.rows) ? tables.mixed.rows : [];
-
-  // Combine + dedupe by canonical ticker.
-  // If multiple entries exist, keep the one with the largest absolute 1D move.
-  const bySym = new Map();
-  const ingest = (rows) => {
-    for (const r of (rows || [])){
-      const rawSym = normalizeTicker(r?.ticker);
-      if (!rawSym) continue;
-
-      const sym = canonicalTicker(rawSym);
-      const pct = toPct(r?.pct_change_1d);
-      const last = (r?.last === null || r?.last === undefined) ? null : Number(r.last);
-      if (pct === null) continue;
-
-      const prev = bySym.get(sym);
-      const cand = {
-        sym,
-        rawSym,
-        isProxy: (sym !== rawSym),
-        last: Number.isFinite(last) ? last : null,
-        pct
-      };
-
-      if (!prev || Math.abs(cand.pct) > Math.abs(prev.pct)) bySym.set(sym, cand);
-    }
-  };
-
-  ingest(pulled);
-  ingest(fragile);
-  ingest(mixed);
-
-  let rows = Array.from(bySym.values());
-  if (!rows.length){
-    host.appendChild(el("div", {class:"small muted", style:"margin-top:8px"}, ["No items right now."]));
-    if (meta) meta.textContent = "—";
-    return;
-  }
-
-  // --- Sort for tab ---
-  let title = "—";
-  if (__HL_TAB === "setups"){
-    // Gainers
-    rows.sort((a,b) => (b.pct - a.pct));
-    title = "Top gainers (1D)";
-  } else if (__HL_TAB === "risk"){
-    // Losers
-    rows.sort((a,b) => (a.pct - b.pct));
-    title = "Top losers (1D)";
-  } else {
-    // Big moves (absolute)
-    rows.sort((a,b) => (Math.abs(b.pct) - Math.abs(a.pct)));
-    title = "Biggest moves (1D)";
-  }
-  if (meta) meta.textContent = title;
-
-  // --- Render table ---
-  const tbl = el("table", { style:"table-layout:fixed; width:100%;" }, []);
-  const thead = el("thead", {}, [el("tr", {}, [
-    el("th", {}, ["Ticker"]),
-    el("th", {class:"num"}, ["Last"]),
-    el("th", {class:"num"}, ["%1D"]),
-    el("th", {class:"num", style:"width:34px"}, [""])
-  ])]);
-
-  const tbody = el("tbody", {}, []);
-
-  for (const r of rows.slice(0, 12)){
-    const sym = r.sym;
-
-    const packHref = `${HMONEY_WORKER_BASE}/pack?ticker=${encodeURIComponent(sym)}`;
-
-    const tickCell = el("div", {style:"display:flex; gap:8px; align-items:center; flex-wrap:wrap"}, [
-      el("a", {href:"#", class:"mono"}, [sym]),
-      r.isProxy ? el("span", {class:"tag tiny warn"}, ["proxy"]) : null,
-      el("span", {class:"small muted"}, ["·"]),
-      link(packHref, "pack", {class:"small mono"}),
-    ].filter(Boolean));
-
-    // internal navigation click
-    tickCell.querySelector("a").addEventListener("click", (e) => {
-      e.preventDefault();
-      setTickerRoute(sym, "t");
-    });
-
-    const pctKind = (r.pct > 0) ? "pos" : (r.pct >= -10 ? "mildneg" : "neg");
-    const pctText = `${r.pct.toFixed(2)}%`;
-
-    tbody.appendChild(el("tr", {}, [
-      el("td", {}, [tickCell]),
-      el("td", {class:"num"}, [
-        el("span", {class:"mono"}, [(r.last === null) ? "—" : fmt(r.last, 2)])
-      ]),
-      el("td", {class:"num"}, [pill(pctText, pctKind)]),
-      el("td", {class:"num"}, [rightArrow(sym)]),
-    ]));
-  }
-
-  tbl.appendChild(thead);
-  tbl.appendChild(tbody);
-  host.appendChild(tbl);
-
-  // Small note (optional) if you want to be explicit about coverage:
-  // host.appendChild(el("div",{class:"small muted",style:"margin-top:8px"},["Note: this list is derived from the dashboard’s highlighted subsets, not the full universe."]));
-}
-
-/* ----------------------------
-   Benchmarks
----------------------------- */
-async function renderBenchmarks(){
-  if (__BENCH_LOADED) return;
-  __BENCH_LOADED = true;
-
-  const benchTables = document.getElementById("benchTables");
-  benchTables.innerHTML = "";
-  document.getElementById("benchStatus").textContent = "Loading…";
-
-  // percent pill (same look as highlights)
-  const pctPill = (pct) => {
-    const p = (pct === null || pct === undefined) ? null : Number(pct);
-    if (!Number.isFinite(p)) return el("span", {class:"mono"}, ["—"]);
-
-    // normalize 0.0123 vs 1.23
-    const v = (Math.abs(p) <= 0.25) ? (p * 100) : p;
-    const kind = (v > 0) ? "pos" : (v >= -10 ? "mildneg" : "neg");
+  const pill = (v) => {
+    if (v === null || v === undefined) return el("span", {class:"mono"}, ["—"]);
+    const n = Number(v);
+    if (!Number.isFinite(n)) return el("span", {class:"mono"}, ["—"]);
+    const kind = (n > 0) ? "pos" : (n >= -10 ? "mildneg" : "neg");
+    const text = `${n.toFixed(2)}%`;
 
     const bg =
       kind === "pos" ? "rgba(22,163,74,0.14)" :
@@ -1877,19 +1642,142 @@ async function renderBenchmarks(){
     return el("span", {
       class:"mono",
       style:[
-        "display:inline-block",
-        "padding:5px 10px",
-        "border-radius:999px",
-        `background:${bg}`,
-        `border:1px solid ${border}`,
-        `color:${color}`,
-        "font-weight:800",
-        "font-size:12.5px",
-        "min-width:84px",
-        "text-align:center",
+        "display:inline-block","padding:5px 10px","border-radius:999px",
+        `background:${bg}`,`border:1px solid ${border}`,`color:${color}`,
+        "font-weight:800","font-size:12.5px","min-width:84px","text-align:center",
+        "line-height:1.1","white-space:nowrap"
+      ].join(";")
+    }, [text]);
+  };
+
+  const rightArrow = (sym) => {
+    const a = el("a", { href:"#", class:"mono", title:"Load ticker" }, ["↗"]);
+    a.addEventListener("click", (e) => { e.preventDefault(); setTickerRoute(sym, "t"); });
+    return a;
+  };
+
+  // Pull rows from your existing highlight subsets and present them as movers
+  const tables = state.tables || {};
+  const a = Array.isArray(tables?.pulled_back?.rows) ? tables.pulled_back.rows : [];
+  const b = Array.isArray(tables?.fragile?.rows) ? tables.fragile.rows : [];
+  const c = Array.isArray(tables?.mixed?.rows) ? tables.mixed.rows : [];
+
+  const bySym = new Map();
+  const ingest = (rows) => {
+    for (const r of (rows || [])){
+      const rawSym = normalizeTicker(r?.ticker);
+      if (!rawSym) continue;
+      const sym = canonicalTicker(rawSym);
+
+      const pct = (r?.pct_change_1d === null || r?.pct_change_1d === undefined) ? null : Number(r.pct_change_1d);
+      if (pct === null || !Number.isFinite(pct)) continue;
+
+      const last = (r?.last === null || r?.last === undefined) ? null : Number(r.last);
+
+      const prev = bySym.get(sym);
+      const cand = { sym, rawSym, isProxy:(sym!==rawSym), pct, last: Number.isFinite(last) ? last : null };
+
+      if (!prev || Math.abs(cand.pct) > Math.abs(prev.pct)) bySym.set(sym, cand);
+    }
+  };
+
+  ingest(a); ingest(b); ingest(c);
+
+  let rows = Array.from(bySym.values());
+  if (!rows.length){
+    host.appendChild(el("div", {class:"small muted", style:"margin-top:8px"}, ["No items right now."]));
+    if (meta) meta.textContent = "—";
+    return;
+  }
+
+  let title = "—";
+  if (__HL_TAB === "setups"){
+    rows.sort((x,y) => y.pct - x.pct);
+    title = "Top gainers (1D)";
+  } else if (__HL_TAB === "risk"){
+    rows.sort((x,y) => x.pct - y.pct);
+    title = "Top losers (1D)";
+  } else {
+    rows.sort((x,y) => Math.abs(y.pct) - Math.abs(x.pct));
+    title = "Biggest moves (1D)";
+  }
+  if (meta) meta.textContent = title;
+
+  const tbl = el("table", {}, []);
+  tbl.appendChild(el("thead", {}, [el("tr", {}, [
+    el("th", {}, ["Ticker"]),
+    el("th", {class:"num"}, ["Last"]),
+    el("th", {class:"num"}, ["%1D"]),
+    el("th", {class:"num", style:"width:34px"}, [""])
+  ])]));
+
+  const tbody = el("tbody", {}, []);
+  for (const r of rows.slice(0, 12)){
+    const sym = r.sym;
+    const packHref = `${HMONEY_WORKER_BASE}/pack?ticker=${encodeURIComponent(sym)}`;
+
+    const tickLink = el("a", {href:"#", class:"mono"}, [sym]);
+    tickLink.addEventListener("click", (e) => { e.preventDefault(); setTickerRoute(sym, "t"); });
+
+    const tickCell = el("div", {style:"display:flex; gap:8px; align-items:center; flex-wrap:wrap"}, [
+      tickLink,
+      r.isProxy ? el("span", {class:"tag tiny warn"}, ["proxy"]) : null,
+      el("span", {class:"small muted"}, ["·"]),
+      link(packHref, "pack", {class:"small mono"})
+    ].filter(Boolean));
+
+    tbody.appendChild(el("tr", {}, [
+      el("td", {}, [tickCell]),
+      el("td", {class:"num"}, [el("span", {class:"mono"}, [(r.last === null) ? "—" : fmt(r.last, 2)])]),
+      el("td", {class:"num"}, [pill(r.pct)]),
+      el("td", {class:"num"}, [rightArrow(sym)])
+    ]));
+  }
+  tbl.appendChild(tbody);
+  host.appendChild(tbl);
+}
+
+/* ----------------------------
+   Benchmarks (expanded until ticker selected)
+---------------------------- */
+async function renderBenchmarks(){
+  if (__BENCH_LOADED) return;
+  __BENCH_LOADED = true;
+
+  const benchTables = document.getElementById("benchTables");
+  benchTables.innerHTML = "";
+  document.getElementById("benchStatus").textContent = "Loading…";
+
+  const pctPill = (pct) => {
+    const p = (pct === null || pct === undefined) ? null : Number(pct);
+    if (!Number.isFinite(p)) return el("span", {class:"mono"}, ["—"]);
+
+    const kind = (p > 0) ? "pos" : (p >= -10 ? "mildneg" : "neg");
+
+    const bg =
+      kind === "pos" ? "rgba(22,163,74,0.14)" :
+      kind === "neg" ? "rgba(220,38,38,0.12)" :
+      "rgba(245,158,11,0.14)";
+
+    const border =
+      kind === "pos" ? "rgba(22,163,74,0.28)" :
+      kind === "neg" ? "rgba(220,38,38,0.26)" :
+      "rgba(245,158,11,0.26)";
+
+    const color =
+      kind === "pos" ? "var(--good)" :
+      kind === "neg" ? "var(--bad)" :
+      "var(--warn)";
+
+    return el("span", {
+      class:"mono",
+      style:[
+        "display:inline-block","padding:5px 10px","border-radius:999px",
+        `background:${bg}`,`border:1px solid ${border}`,`color:${color}`,
+        "font-weight:800","font-size:12.5px","min-width:84px","text-align:center",
         "white-space:nowrap"
       ].join(";")
-    }, [`${v.toFixed(2)}%`]);
+    }, [`${p.toFixed(2)}%`]);
   };
 
   let totalExpected = 0;
@@ -1903,11 +1791,12 @@ async function renderBenchmarks(){
     ]);
 
     const tbl = el("table", {style:"table-layout:fixed; width:100%;"}, []);
-    const thead = el("thead", {}, [el("tr", {}, [
+    tbl.appendChild(el("thead", {}, [el("tr", {}, [
       el("th", {style:"width:56%;"}, ["Ticker"]),
       el("th", {class:"num", style:"width:20%;"}, ["Last"]),
       el("th", {class:"num", style:"width:24%;"}, ["%1D"]),
-    ])]);
+    ])]));
+
     const tbody = el("tbody", {}, []);
 
     const jobs = symbols.map(async (sym) => {
@@ -1932,12 +1821,12 @@ async function renderBenchmarks(){
 
       if (r.ok){
         totalFound += 1;
-
         const pack = r.res.pack || {};
         const m = pack.market || {};
 
         const last = m.last_price ?? m.last ?? null;
         const pct1d = m.pct_change_1d ?? null;
+
         const offHigh = (m.pct_off_52w_high!=null) ? (Number(m.pct_off_52w_high)*100) : null;
 
         let dist200 = null;
@@ -1977,7 +1866,6 @@ async function renderBenchmarks(){
       }
     }
 
-    tbl.appendChild(thead);
     tbl.appendChild(tbody);
     box.appendChild(tbl);
     benchTables.appendChild(box);
@@ -2022,9 +1910,9 @@ function renderSnapshot(state){
 
   const denom = sample.denom_used_for_presence ?? null;
   snap.appendChild(el("div", {class:"kv", style:"min-width:160px"}, [
-  el("div", {class:"k"}, ["Breadth base"]),
-  el("div", {class:"v mono"}, [denom !== null ? fmtInt(denom) : "—"])
-]));
+    el("div", {class:"k"}, ["Breadth base"]),
+    el("div", {class:"v mono"}, [denom !== null ? fmtInt(denom) : "—"])
+  ]));
 }
 
 /* ----------------------------
@@ -2036,7 +1924,6 @@ async function loadPack(sym){
   if (!res?.ok || !res?.found || !res?.pack) return null;
   return res;
 }
-
 async function loadLiveOne(sym){
   const p = loadLivePrefs();
   const headers = buildLiveHeaders();
@@ -2130,10 +2017,14 @@ async function doLoadTicker(sym){
 
   __LAST_SYMBOL = s;
   window.__LAST_SYMBOL = __LAST_SYMBOL;
-reorderRightColumn();
+
+  reorderRightColumn();
+
+  // Once a ticker is selected, collapse Benchmarks to reduce crowding
+  applyCollapse("benchBody", true);
+
   document.getElementById("tickerInput").value = s;
 
-  // show loading
   const drawer = document.getElementById("drawer");
   drawer.style.display = "block";
   drawer.innerHTML = `<div class="small muted">Loading…</div>`;
@@ -2172,7 +2063,7 @@ function showTickerPage(sym){
         <button class="btn" id="tickerPageReloadBtn">Reload data</button>
       </div>
       <div class="small muted" style="margin-top:10px">
-        This page is built from the best available evidence pack (or live quote if packs are missing).
+        This page is built from the best available evidence pack (or a live quote if packs are missing).
       </div>
     </div>
 
@@ -2188,7 +2079,6 @@ function showTickerPage(sym){
     await renderTickerPageContent(sym);
   });
 
-  // fill content
   renderTickerPageContent(sym);
 }
 
@@ -2281,7 +2171,6 @@ function parseHash(){
     const [k,v] = p.split("=");
     if (k && v) obj[k] = decodeURIComponent(v);
   }
-  // allow #t= or #page=
   if (obj.t) return { mode:"t", sym: normalizeTicker(obj.t) };
   if (obj.page) return { mode:"page", sym: normalizeTicker(obj.page) };
   return null;
@@ -2290,12 +2179,16 @@ function parseHash(){
 async function handleRoute(){
   const r = parseHash();
   if (!r){
-  __LAST_SYMBOL = null;
-  window.__LAST_SYMBOL = __LAST_SYMBOL;
-  reorderRightColumn();
-  hideTickerPage();
-  return;
-}
+    __LAST_SYMBOL = null;
+    window.__LAST_SYMBOL = __LAST_SYMBOL;
+    reorderRightColumn();
+    hideTickerPage();
+
+    // No ticker selected -> keep Benchmarks expanded
+    applyCollapse("benchBody", false);
+
+    return;
+  }
   if (!r.sym) return;
 
   await doLoadTicker(r.sym);
@@ -2363,7 +2256,6 @@ function appendToHistory(role, content){
   if (remember) saveHistoryToStorage(__AI_HISTORY);
   updateMemoryMeta();
 }
-
 function extractTickersFromText(text){
   const raw = (text || "").toUpperCase();
   const tokens = raw.match(/[A-Z^][A-Z0-9^.-]{0,14}/g) || [];
@@ -2380,11 +2272,8 @@ function extractTickersFromText(text){
   }
   return out.slice(0, 6);
 }
-
 function slimStateForAI(state){
-  // Keep only what’s needed for reasoning; avoid large tables/blobs.
   const posture = state?.posture ?? null;
-
   const breadth = state?.breadth ? {
     sample: state.breadth.sample ?? null,
     thresholds: state.breadth.thresholds ?? null,
@@ -2400,7 +2289,6 @@ function slimStateForAI(state){
     skipped_tickers_count: state.quality.skipped_tickers_count ?? null,
   } : null;
 
-  // Include only a small preview of each table (top 5 rows max)
   const tablesIn = state?.tables || {};
   const pickRows = (rows) => Array.isArray(rows) ? rows.slice(0, 5) : [];
   const tables = {
@@ -2412,66 +2300,17 @@ function slimStateForAI(state){
   return {
     generated_at_utc: state?.generated_at_utc ?? null,
     as_of_utc: state?.as_of_utc ?? null,
-    posture,
-    breadth,
-    universe,
-    quality,
-    tables,
+    posture, breadth, universe, quality, tables,
   };
-}
-
-function slimPackForAI(pack){
-  if (!pack || typeof pack !== "object") return null;
-
-  const asset = pack.asset ? {
-    ticker: pack.asset.ticker ?? null,
-    name: pack.asset.name ?? null,
-    type: pack.asset.type ?? null,
-    exchange: pack.asset.exchange ?? null,
-  } : null;
-
-  const m = pack.market || {};
-  const market = {
-    last_price: m.last_price ?? m.last ?? null,
-    pct_change_1d: m.pct_change_1d ?? null,
-    pct_off_52w_high: m.pct_off_52w_high ?? null,
-    ma_200: m.ma_200 ?? null,
-    atr_pct: m.atr_pct ?? null,
-    dollar_volume_20d: m.dollar_volume_20d ?? null,
-  };
-
-  const s = pack.scores || {};
-  const scores = {
-    opportunity_score: s.opportunity_score ?? null,
-    structural_risk_score: s.structural_risk_score ?? null,
-  };
-
-  const c = pack.classification || {};
-  const classification = {
-    label: c.label ?? null,
-    tags: c.tags ?? null,
-  };
-
-  // Keep links small/useful; skip field_links/explainability if they’re huge
-  const links = pack.links ?? null;
-
-  return { asset, market, scores, classification, links };
 }
 function slimPackForAI(pack){
   if (!pack || typeof pack !== "object") return null;
-
   const a = pack.asset || {};
   const m = pack.market || {};
   const s = pack.scores || {};
   const c = pack.classification || {};
-
   return {
-    asset: {
-      ticker: a.ticker ?? null,
-      name: a.name ?? null,
-      type: a.type ?? null,
-      exchange: a.exchange ?? null,
-    },
+    asset: { ticker:a.ticker??null, name:a.name??null, type:a.type??null, exchange:a.exchange??null },
     market: {
       last_price: m.last_price ?? m.last ?? null,
       pct_change_1d: m.pct_change_1d ?? null,
@@ -2484,13 +2323,11 @@ function slimPackForAI(pack){
       opportunity_score: s.opportunity_score ?? null,
       structural_risk_score: s.structural_risk_score ?? null,
     },
-    classification: {
-      label: c.label ?? null,
-      tags: c.tags ?? null,
-    },
+    classification: { label:c.label??null, tags:c.tags??null },
     links: pack.links ?? null,
   };
 }
+
 async function doAskAI(){
   const qEl = document.getElementById("aiQuestion");
   const btn = document.getElementById("aiAskBtn");
@@ -2574,7 +2411,10 @@ async function doAskAI(){
 async function init(){
   initTheme();
 
-  // Apply saved module order
+  // Build stable 2-column layout FIRST
+  mountTwoColumnStacks();
+
+  // Apply saved order safely within columns
   applySavedLayoutOrder();
 
   // Setup drag handles + DnD
@@ -2623,7 +2463,7 @@ async function init(){
   document.getElementById("marketInfoBtn").addEventListener("click", () => {
     showModal("Definitions (short)", `
       <div class="body">
-        <p><b>Setup</b> is a pullback + stabilization style read (relative to the asset’s own history).</p>
+        <p><b>Condition</b> summarizes broad posture from breadth signals. It is descriptive, not predictive.</p>
         <p><b>Fear &amp; Greed</b> is CNN’s published score + label; we display it as a simple bar + marker.</p>
       </div>
     `);
@@ -2632,10 +2472,8 @@ async function init(){
   document.getElementById("hlInfoBtn").addEventListener("click", () => {
     showModal("Highlights", `
       <div class="body">
-        <p><b>Setups</b>: pulled-back + stabilizing traits.</p>
-        <p><b>Breakdowns</b>: persistent downtrend / instability traits (examples to review).</p>
-        <p><b>Mixed</b>: cross-currents (not a clean read).</p>
-        <p>These are examples to review — not recommendations.</p>
+        <p><b>Gainers / Losers / Big moves</b> are derived from the highlighted subsets already produced by the pipeline.</p>
+        <p>This is a quick movers list to review — not the full universe and not a recommendation.</p>
       </div>
     `);
   });
@@ -2669,9 +2507,6 @@ async function init(){
     updateLiveSettingsStatus("saved");
     await refreshLive();
     await refreshBenchTape();
-    // Benchmarks: load immediately (default open)
-document.getElementById("benchStatus").textContent = "Loading…";
-renderBenchmarks();
   });
 
   document.getElementById("liveClearBtn").addEventListener("click", async () => {
@@ -2688,9 +2523,9 @@ renderBenchmarks();
   });
 
   // Benchmarks: load immediately + show
-applyCollapse("benchBody", false);
-document.getElementById("benchStatus").textContent = "Loading…";
-await renderBenchmarks();
+  applyCollapse("benchBody", false);
+  document.getElementById("benchStatus").textContent = "Loading…";
+  await renderBenchmarks();
 
   // Ticker lookup
   const input = document.getElementById("tickerInput");
@@ -2711,7 +2546,6 @@ await renderBenchmarks();
 
   // Ticker page close
   document.getElementById("tickerPageCloseBtn").addEventListener("click", () => {
-    // clear hash
     history.pushState("", document.title, window.location.pathname + window.location.search);
     hideTickerPage();
   });
