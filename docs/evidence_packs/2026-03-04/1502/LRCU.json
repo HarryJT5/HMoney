@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "d76ad339-3c99-4c93-8250-9cd961c6325d",
+  "run_id": "2026-03-04/1502",
+  "generated_at_utc": "2026-03-04T15:05:08Z",
+  "as_of_utc": "2026-03-04T15:02:09Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "LRCU",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 103.79000091552734,
+    "pct_change_1d": 4.827793835131877,
+    "currency": "USD",
+    "volume": 9500.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 69.14408104559955,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.24218753046382105,
+    "atr_pct": 9.707168733531125
+  },
+  "scores": {
+    "opportunity_score": 66,
+    "structural_risk_score": 69,
+    "discount_score": 62
+  },
+  "classification": {
+    "label": "\ud83d\udfe1",
+    "confidence": 0.9
+  },
+  "deployment_bias": "watch",
+  "explainability": {
+    "reason_codes": [
+      "OPP_MID",
+      "RISK_OK",
+      "CLASS_YELLOW"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/LRCU",
+    "profile": "https://finance.yahoo.com/quote/LRCU/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/LRCU",
+    "market.last_price": "https://finance.yahoo.com/quote/LRCU",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/LRCU",
+    "market.volume": "https://finance.yahoo.com/quote/LRCU",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/LRCU",
+    "market.ma_50": "https://finance.yahoo.com/quote/LRCU",
+    "market.ma_200": "https://finance.yahoo.com/quote/LRCU",
+    "market.rsi_14": "https://finance.yahoo.com/quote/LRCU",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/LRCU",
+    "market.atr_pct": "https://finance.yahoo.com/quote/LRCU",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
