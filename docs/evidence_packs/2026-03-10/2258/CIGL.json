@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "3bcd7cb3-33b0-4cca-9fdb-97a5c1a2a94f",
+  "run_id": "2026-03-10/2258",
+  "generated_at_utc": "2026-03-10T23:00:50Z",
+  "as_of_utc": "2026-03-10T22:58:08Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "CIGL",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 1.6399999856948853,
+    "pct_change_1d": -2.958584013766763,
+    "currency": "USD",
+    "volume": 21449.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 3.5207150012254713,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.9418026980860724,
+    "atr_pct": 10.888502356340888
+  },
+  "scores": {
+    "opportunity_score": 45,
+    "structural_risk_score": 88,
+    "discount_score": 95
+  },
+  "classification": {
+    "label": "\ud83d\udd34",
+    "confidence": 0.9
+  },
+  "deployment_bias": "avoid",
+  "explainability": {
+    "reason_codes": [
+      "OPP_LOW",
+      "RISK_VERY_HIGH",
+      "CLASS_RED"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/CIGL",
+    "profile": "https://finance.yahoo.com/quote/CIGL/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/CIGL",
+    "market.last_price": "https://finance.yahoo.com/quote/CIGL",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/CIGL",
+    "market.volume": "https://finance.yahoo.com/quote/CIGL",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/CIGL",
+    "market.ma_50": "https://finance.yahoo.com/quote/CIGL",
+    "market.ma_200": "https://finance.yahoo.com/quote/CIGL",
+    "market.rsi_14": "https://finance.yahoo.com/quote/CIGL",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/CIGL",
+    "market.atr_pct": "https://finance.yahoo.com/quote/CIGL",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
