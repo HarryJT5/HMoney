@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "2035077c-6282-4bca-8c4a-7b21b19834c6",
+  "run_id": "2026-03-12/1929",
+  "generated_at_utc": "2026-03-12T19:30:58Z",
+  "as_of_utc": "2026-03-12T19:29:35Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "PCTTU",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 6.199999809265137,
+    "pct_change_1d": -27.823053560746725,
+    "currency": "USD",
+    "volume": 398.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 14.950149598121643,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.7400419408763519,
+    "atr_pct": 4.066820093971202
+  },
+  "scores": {
+    "opportunity_score": 48,
+    "structural_risk_score": 73,
+    "discount_score": 88
+  },
+  "classification": {
+    "label": "\ud83d\udfe0",
+    "confidence": 0.9
+  },
+  "deployment_bias": "reduce",
+  "explainability": {
+    "reason_codes": [
+      "OPP_LOW",
+      "RISK_HIGH",
+      "CLASS_ORANGE"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/PCTTU",
+    "profile": "https://finance.yahoo.com/quote/PCTTU/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/PCTTU",
+    "market.last_price": "https://finance.yahoo.com/quote/PCTTU",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/PCTTU",
+    "market.volume": "https://finance.yahoo.com/quote/PCTTU",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/PCTTU",
+    "market.ma_50": "https://finance.yahoo.com/quote/PCTTU",
+    "market.ma_200": "https://finance.yahoo.com/quote/PCTTU",
+    "market.rsi_14": "https://finance.yahoo.com/quote/PCTTU",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/PCTTU",
+    "market.atr_pct": "https://finance.yahoo.com/quote/PCTTU",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
