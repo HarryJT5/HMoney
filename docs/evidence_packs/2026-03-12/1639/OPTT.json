@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "c739849d-e97d-4d05-a518-05306c3ac269",
+  "run_id": "2026-03-12/1639",
+  "generated_at_utc": "2026-03-12T16:41:21Z",
+  "as_of_utc": "2026-03-12T16:39:01Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "OPTT",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 0.42989999055862427,
+    "pct_change_1d": -0.023259672620801197,
+    "currency": "USD",
+    "volume": 2973757.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 0.4887499967217445,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.4880952135978635,
+    "atr_pct": 8.803986089266251
+  },
+  "scores": {
+    "opportunity_score": 46,
+    "structural_risk_score": 74,
+    "discount_score": 80
+  },
+  "classification": {
+    "label": "\ud83d\udfe0",
+    "confidence": 0.9
+  },
+  "deployment_bias": "reduce",
+  "explainability": {
+    "reason_codes": [
+      "OPP_LOW",
+      "RISK_HIGH",
+      "CLASS_ORANGE"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/OPTT",
+    "profile": "https://finance.yahoo.com/quote/OPTT/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/OPTT",
+    "market.last_price": "https://finance.yahoo.com/quote/OPTT",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/OPTT",
+    "market.volume": "https://finance.yahoo.com/quote/OPTT",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/OPTT",
+    "market.ma_50": "https://finance.yahoo.com/quote/OPTT",
+    "market.ma_200": "https://finance.yahoo.com/quote/OPTT",
+    "market.rsi_14": "https://finance.yahoo.com/quote/OPTT",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/OPTT",
+    "market.atr_pct": "https://finance.yahoo.com/quote/OPTT",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
