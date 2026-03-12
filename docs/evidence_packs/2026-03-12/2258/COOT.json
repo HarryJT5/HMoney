@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "5e2d7676-2214-49a2-9092-09cc3399f320",
+  "run_id": "2026-03-12/2258",
+  "generated_at_utc": "2026-03-12T23:00:12Z",
+  "as_of_utc": "2026-03-12T22:58:50Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "COOT",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 0.8600999712944031,
+    "pct_change_1d": 14.986623220088235,
+    "currency": "USD",
+    "volume": 3014123.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 0.7733754977583885,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.6742045692738249,
+    "atr_pct": 13.103959128796616
+  },
+  "scores": {
+    "opportunity_score": 70,
+    "structural_risk_score": 83,
+    "discount_score": 85
+  },
+  "classification": {
+    "label": "\ud83d\udfe0",
+    "confidence": 0.9
+  },
+  "deployment_bias": "reduce",
+  "explainability": {
+    "reason_codes": [
+      "OPP_MID",
+      "RISK_HIGH",
+      "CLASS_ORANGE"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/COOT",
+    "profile": "https://finance.yahoo.com/quote/COOT/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/COOT",
+    "market.last_price": "https://finance.yahoo.com/quote/COOT",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/COOT",
+    "market.volume": "https://finance.yahoo.com/quote/COOT",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/COOT",
+    "market.ma_50": "https://finance.yahoo.com/quote/COOT",
+    "market.ma_200": "https://finance.yahoo.com/quote/COOT",
+    "market.rsi_14": "https://finance.yahoo.com/quote/COOT",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/COOT",
+    "market.atr_pct": "https://finance.yahoo.com/quote/COOT",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
