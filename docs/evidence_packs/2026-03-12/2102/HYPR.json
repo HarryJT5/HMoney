@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "394eabe8-a262-4881-a3d0-11e4b89cc1e7",
+  "run_id": "2026-03-12/2102",
+  "generated_at_utc": "2026-03-12T21:04:12Z",
+  "as_of_utc": "2026-03-12T21:02:47Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "HYPR",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 1.1699999570846558,
+    "pct_change_1d": -0.8474568565903118,
+    "currency": "USD",
+    "volume": 384785.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 1.1166049981117248,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.4681818492156408,
+    "atr_pct": 6.3858373711296945
+  },
+  "scores": {
+    "opportunity_score": 66,
+    "structural_risk_score": 70,
+    "discount_score": 74
+  },
+  "classification": {
+    "label": "\ud83d\udfe0",
+    "confidence": 0.9
+  },
+  "deployment_bias": "reduce",
+  "explainability": {
+    "reason_codes": [
+      "OPP_MID",
+      "RISK_HIGH",
+      "CLASS_ORANGE"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/HYPR",
+    "profile": "https://finance.yahoo.com/quote/HYPR/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/HYPR",
+    "market.last_price": "https://finance.yahoo.com/quote/HYPR",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/HYPR",
+    "market.volume": "https://finance.yahoo.com/quote/HYPR",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/HYPR",
+    "market.ma_50": "https://finance.yahoo.com/quote/HYPR",
+    "market.ma_200": "https://finance.yahoo.com/quote/HYPR",
+    "market.rsi_14": "https://finance.yahoo.com/quote/HYPR",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/HYPR",
+    "market.atr_pct": "https://finance.yahoo.com/quote/HYPR",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
