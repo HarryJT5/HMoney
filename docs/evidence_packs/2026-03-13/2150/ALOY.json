@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "8e0ffb2a-4039-4e67-9177-882e3dce0f8c",
+  "run_id": "2026-03-13/2150",
+  "generated_at_utc": "2026-03-13T21:53:04Z",
+  "as_of_utc": "2026-03-13T21:50:18Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "ALOY",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 11.984999656677246,
+    "pct_change_1d": -15.717303575118379,
+    "currency": "USD",
+    "volume": 2665747.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 8.655420024394989,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.5369010801651729,
+    "atr_pct": 34.145657668184555
+  },
+  "scores": {
+    "opportunity_score": 71,
+    "structural_risk_score": 78,
+    "discount_score": 80
+  },
+  "classification": {
+    "label": "\ud83d\udfe0",
+    "confidence": 0.9
+  },
+  "deployment_bias": "reduce",
+  "explainability": {
+    "reason_codes": [
+      "OPP_MID",
+      "RISK_HIGH",
+      "CLASS_ORANGE"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/ALOY",
+    "profile": "https://finance.yahoo.com/quote/ALOY/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/ALOY",
+    "market.last_price": "https://finance.yahoo.com/quote/ALOY",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/ALOY",
+    "market.volume": "https://finance.yahoo.com/quote/ALOY",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/ALOY",
+    "market.ma_50": "https://finance.yahoo.com/quote/ALOY",
+    "market.ma_200": "https://finance.yahoo.com/quote/ALOY",
+    "market.rsi_14": "https://finance.yahoo.com/quote/ALOY",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/ALOY",
+    "market.atr_pct": "https://finance.yahoo.com/quote/ALOY",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
