@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "8de29579-5c7c-4e35-baa5-71452ccd64ae",
+  "run_id": "2026-03-17/1956",
+  "generated_at_utc": "2026-03-17T19:58:22Z",
+  "as_of_utc": "2026-03-17T19:56:24Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "EONR",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 1.0255000591278076,
+    "pct_change_1d": -23.470146747521405,
+    "currency": "USD",
+    "volume": 39981883.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 0.44348999932408334,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.3169934793296542,
+    "atr_pct": 24.94805412216044
+  },
+  "scores": {
+    "opportunity_score": 67,
+    "structural_risk_score": 73,
+    "discount_score": 68
+  },
+  "classification": {
+    "label": "\ud83d\udfe0",
+    "confidence": 0.9
+  },
+  "deployment_bias": "reduce",
+  "explainability": {
+    "reason_codes": [
+      "OPP_MID",
+      "RISK_HIGH",
+      "CLASS_ORANGE"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/EONR",
+    "profile": "https://finance.yahoo.com/quote/EONR/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/EONR",
+    "market.last_price": "https://finance.yahoo.com/quote/EONR",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/EONR",
+    "market.volume": "https://finance.yahoo.com/quote/EONR",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/EONR",
+    "market.ma_50": "https://finance.yahoo.com/quote/EONR",
+    "market.ma_200": "https://finance.yahoo.com/quote/EONR",
+    "market.rsi_14": "https://finance.yahoo.com/quote/EONR",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/EONR",
+    "market.atr_pct": "https://finance.yahoo.com/quote/EONR",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
