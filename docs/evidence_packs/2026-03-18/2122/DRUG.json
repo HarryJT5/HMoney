@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "f9adc339-3d13-49a9-8031-c94816f8bfb5",
+  "run_id": "2026-03-18/2122",
+  "generated_at_utc": "2026-03-18T21:25:26Z",
+  "as_of_utc": "2026-03-18T21:22:32Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "DRUG",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 69.8499984741211,
+    "pct_change_1d": -3.160957806897513,
+    "currency": "USD",
+    "volume": 78055.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 57.846725149154665,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.2722821479402264,
+    "atr_pct": 6.707639145406058
+  },
+  "scores": {
+    "opportunity_score": 67,
+    "structural_risk_score": 62,
+    "discount_score": 62
+  },
+  "classification": {
+    "label": "\ud83d\udfe1",
+    "confidence": 0.9
+  },
+  "deployment_bias": "watch",
+  "explainability": {
+    "reason_codes": [
+      "OPP_MID",
+      "RISK_OK",
+      "CLASS_YELLOW"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/DRUG",
+    "profile": "https://finance.yahoo.com/quote/DRUG/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/DRUG",
+    "market.last_price": "https://finance.yahoo.com/quote/DRUG",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/DRUG",
+    "market.volume": "https://finance.yahoo.com/quote/DRUG",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/DRUG",
+    "market.ma_50": "https://finance.yahoo.com/quote/DRUG",
+    "market.ma_200": "https://finance.yahoo.com/quote/DRUG",
+    "market.rsi_14": "https://finance.yahoo.com/quote/DRUG",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/DRUG",
+    "market.atr_pct": "https://finance.yahoo.com/quote/DRUG",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
