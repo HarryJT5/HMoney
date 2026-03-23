@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "7a99644e-04b8-42a4-b109-201cc181694e",
+  "run_id": "2026-03-23/2358",
+  "generated_at_utc": "2026-03-23T23:59:43Z",
+  "as_of_utc": "2026-03-23T23:58:09Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "QNCX",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 0.10159999877214432,
+    "pct_change_1d": 27.00000130385163,
+    "currency": "USD",
+    "volume": 17172825.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 1.7564430052042008,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.9769090916886309,
+    "atr_pct": 14.412260492037731
+  },
+  "scores": {
+    "opportunity_score": 41,
+    "structural_risk_score": 83,
+    "discount_score": 98
+  },
+  "classification": {
+    "label": "\ud83d\udfe0",
+    "confidence": 0.9
+  },
+  "deployment_bias": "reduce",
+  "explainability": {
+    "reason_codes": [
+      "OPP_LOW",
+      "RISK_HIGH",
+      "CLASS_ORANGE"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/QNCX",
+    "profile": "https://finance.yahoo.com/quote/QNCX/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/QNCX",
+    "market.last_price": "https://finance.yahoo.com/quote/QNCX",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/QNCX",
+    "market.volume": "https://finance.yahoo.com/quote/QNCX",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/QNCX",
+    "market.ma_50": "https://finance.yahoo.com/quote/QNCX",
+    "market.ma_200": "https://finance.yahoo.com/quote/QNCX",
+    "market.rsi_14": "https://finance.yahoo.com/quote/QNCX",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/QNCX",
+    "market.atr_pct": "https://finance.yahoo.com/quote/QNCX",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
