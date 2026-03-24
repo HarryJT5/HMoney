@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "43655b5d-e56c-46f2-a871-a91ec856a48c",
+  "run_id": "2026-03-24/1939",
+  "generated_at_utc": "2026-03-24T19:42:25Z",
+  "as_of_utc": "2026-03-24T19:39:19Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "WETO",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 0.5701000094413757,
+    "pct_change_1d": -10.502356722650429,
+    "currency": "USD",
+    "volume": 313446.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 1.4010904976725578,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.8674186083363995,
+    "atr_pct": 24.844012211162912
+  },
+  "scores": {
+    "opportunity_score": 41,
+    "structural_risk_score": 84,
+    "discount_score": 93
+  },
+  "classification": {
+    "label": "\ud83d\udfe0",
+    "confidence": 0.9
+  },
+  "deployment_bias": "reduce",
+  "explainability": {
+    "reason_codes": [
+      "OPP_LOW",
+      "RISK_HIGH",
+      "CLASS_ORANGE"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/WETO",
+    "profile": "https://finance.yahoo.com/quote/WETO/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/WETO",
+    "market.last_price": "https://finance.yahoo.com/quote/WETO",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/WETO",
+    "market.volume": "https://finance.yahoo.com/quote/WETO",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/WETO",
+    "market.ma_50": "https://finance.yahoo.com/quote/WETO",
+    "market.ma_200": "https://finance.yahoo.com/quote/WETO",
+    "market.rsi_14": "https://finance.yahoo.com/quote/WETO",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/WETO",
+    "market.atr_pct": "https://finance.yahoo.com/quote/WETO",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
