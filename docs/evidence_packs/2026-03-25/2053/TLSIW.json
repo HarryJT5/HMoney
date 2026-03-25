@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "f4c63130-3d08-4d7c-acc5-420a0f41c822",
+  "run_id": "2026-03-25/2053",
+  "generated_at_utc": "2026-03-25T20:55:24Z",
+  "as_of_utc": "2026-03-25T20:53:23Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "TLSIW",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 1.090000033378601,
+    "pct_change_1d": -8.40336294398446,
+    "currency": "USD",
+    "volume": 1359.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 1.4779049974679948,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.5458333374725446,
+    "atr_pct": 10.87811450469065
+  },
+  "scores": {
+    "opportunity_score": 42,
+    "structural_risk_score": 89,
+    "discount_score": 83
+  },
+  "classification": {
+    "label": "\ud83d\udd34",
+    "confidence": 0.9
+  },
+  "deployment_bias": "avoid",
+  "explainability": {
+    "reason_codes": [
+      "OPP_LOW",
+      "RISK_VERY_HIGH",
+      "CLASS_RED"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/TLSIW",
+    "profile": "https://finance.yahoo.com/quote/TLSIW/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/TLSIW",
+    "market.last_price": "https://finance.yahoo.com/quote/TLSIW",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/TLSIW",
+    "market.volume": "https://finance.yahoo.com/quote/TLSIW",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/TLSIW",
+    "market.ma_50": "https://finance.yahoo.com/quote/TLSIW",
+    "market.ma_200": "https://finance.yahoo.com/quote/TLSIW",
+    "market.rsi_14": "https://finance.yahoo.com/quote/TLSIW",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/TLSIW",
+    "market.atr_pct": "https://finance.yahoo.com/quote/TLSIW",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
