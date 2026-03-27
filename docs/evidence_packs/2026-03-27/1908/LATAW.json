@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "56beeb4a-a985-4925-8c96-4bd6b6522df9",
+  "run_id": "2026-03-27/1908",
+  "generated_at_utc": "2026-03-27T19:10:39Z",
+  "as_of_utc": "2026-03-27T19:08:07Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "LATAW",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 0.3000999987125397,
+    "pct_change_1d": -24.975001439824673,
+    "currency": "USD",
+    "volume": 15920.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 0.4804609205530978,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.39980000257492065,
+    "atr_pct": 2.3777790183392744
+  },
+  "scores": {
+    "opportunity_score": 46,
+    "structural_risk_score": 60,
+    "discount_score": 70
+  },
+  "classification": {
+    "label": "\ud83d\udd35",
+    "confidence": 0.9
+  },
+  "deployment_bias": "hold",
+  "explainability": {
+    "reason_codes": [
+      "OPP_LOW",
+      "RISK_OK",
+      "CLASS_BLUE"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/LATAW",
+    "profile": "https://finance.yahoo.com/quote/LATAW/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/LATAW",
+    "market.last_price": "https://finance.yahoo.com/quote/LATAW",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/LATAW",
+    "market.volume": "https://finance.yahoo.com/quote/LATAW",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/LATAW",
+    "market.ma_50": "https://finance.yahoo.com/quote/LATAW",
+    "market.ma_200": "https://finance.yahoo.com/quote/LATAW",
+    "market.rsi_14": "https://finance.yahoo.com/quote/LATAW",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/LATAW",
+    "market.atr_pct": "https://finance.yahoo.com/quote/LATAW",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
