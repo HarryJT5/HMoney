@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "198f107f-703a-43ce-b281-185cae6fd48c",
+  "run_id": "2026-04-10/1509",
+  "generated_at_utc": "2026-04-10T15:11:58Z",
+  "as_of_utc": "2026-04-10T15:09:45Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "LPTH",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 13.0649995803833,
+    "pct_change_1d": 7.442432107955943,
+    "currency": "USD",
+    "volume": 1366046.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 7.984099985361099,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.08513609724523219,
+    "atr_pct": 8.379645565481342
+  },
+  "scores": {
+    "opportunity_score": 62,
+    "structural_risk_score": 61,
+    "discount_score": 48
+  },
+  "classification": {
+    "label": "\ud83d\udfe1",
+    "confidence": 0.9
+  },
+  "deployment_bias": "watch",
+  "explainability": {
+    "reason_codes": [
+      "OPP_MID",
+      "RISK_OK",
+      "CLASS_YELLOW"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/LPTH",
+    "profile": "https://finance.yahoo.com/quote/LPTH/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/LPTH",
+    "market.last_price": "https://finance.yahoo.com/quote/LPTH",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/LPTH",
+    "market.volume": "https://finance.yahoo.com/quote/LPTH",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/LPTH",
+    "market.ma_50": "https://finance.yahoo.com/quote/LPTH",
+    "market.ma_200": "https://finance.yahoo.com/quote/LPTH",
+    "market.rsi_14": "https://finance.yahoo.com/quote/LPTH",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/LPTH",
+    "market.atr_pct": "https://finance.yahoo.com/quote/LPTH",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
