@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "0511d58e-4df0-46a4-af97-d6821c0a4c3e",
+  "run_id": "2026-04-14/2040",
+  "generated_at_utc": "2026-04-14T20:42:48Z",
+  "as_of_utc": "2026-04-14T20:40:13Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "ROLR",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 7.409999847412109,
+    "pct_change_1d": 45.579560417982876,
+    "currency": "USD",
+    "volume": 90104693.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 3.5046449971199034,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.6880000064247533,
+    "atr_pct": 11.898014448929203
+  },
+  "scores": {
+    "opportunity_score": 77,
+    "structural_risk_score": 76,
+    "discount_score": 89
+  },
+  "classification": {
+    "label": "\ud83d\udfe0",
+    "confidence": 0.9
+  },
+  "deployment_bias": "reduce",
+  "explainability": {
+    "reason_codes": [
+      "OPP_HIGH",
+      "RISK_HIGH",
+      "CLASS_ORANGE"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/ROLR",
+    "profile": "https://finance.yahoo.com/quote/ROLR/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/ROLR",
+    "market.last_price": "https://finance.yahoo.com/quote/ROLR",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/ROLR",
+    "market.volume": "https://finance.yahoo.com/quote/ROLR",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/ROLR",
+    "market.ma_50": "https://finance.yahoo.com/quote/ROLR",
+    "market.ma_200": "https://finance.yahoo.com/quote/ROLR",
+    "market.rsi_14": "https://finance.yahoo.com/quote/ROLR",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/ROLR",
+    "market.atr_pct": "https://finance.yahoo.com/quote/ROLR",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
