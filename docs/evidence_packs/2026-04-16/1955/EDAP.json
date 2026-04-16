@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "09794885-87f4-4b62-9d1d-97a4ff2a91b6",
+  "run_id": "2026-04-16/1955",
+  "generated_at_utc": "2026-04-16T19:57:34Z",
+  "as_of_utc": "2026-04-16T19:55:18Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "EDAP",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 3.569999933242798,
+    "pct_change_1d": 1.4204531985003932,
+    "currency": "USD",
+    "volume": 59647.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 2.7926499992609024,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.2729124146257518,
+    "atr_pct": 6.942777774942112
+  },
+  "scores": {
+    "opportunity_score": 68,
+    "structural_risk_score": 77,
+    "discount_score": 68
+  },
+  "classification": {
+    "label": "\ud83d\udfe0",
+    "confidence": 0.9
+  },
+  "deployment_bias": "reduce",
+  "explainability": {
+    "reason_codes": [
+      "OPP_MID",
+      "RISK_HIGH",
+      "CLASS_ORANGE"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/EDAP",
+    "profile": "https://finance.yahoo.com/quote/EDAP/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/EDAP",
+    "market.last_price": "https://finance.yahoo.com/quote/EDAP",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/EDAP",
+    "market.volume": "https://finance.yahoo.com/quote/EDAP",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/EDAP",
+    "market.ma_50": "https://finance.yahoo.com/quote/EDAP",
+    "market.ma_200": "https://finance.yahoo.com/quote/EDAP",
+    "market.rsi_14": "https://finance.yahoo.com/quote/EDAP",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/EDAP",
+    "market.atr_pct": "https://finance.yahoo.com/quote/EDAP",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
