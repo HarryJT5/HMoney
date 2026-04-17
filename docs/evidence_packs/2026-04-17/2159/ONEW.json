@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "bcf950c2-8b0a-48e1-8d04-baa1d6ad743c",
+  "run_id": "2026-04-17/2159",
+  "generated_at_utc": "2026-04-17T22:01:15Z",
+  "as_of_utc": "2026-04-17T21:59:35Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "ONEW",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 11.149999618530273,
+    "pct_change_1d": 14.476384810533105,
+    "currency": "USD",
+    "volume": 301243.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 13.422574982643127,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.3613974683168183,
+    "atr_pct": 6.108264655543212
+  },
+  "scores": {
+    "opportunity_score": 42,
+    "structural_risk_score": 69,
+    "discount_score": 72
+  },
+  "classification": {
+    "label": "\ud83d\udd35",
+    "confidence": 0.9
+  },
+  "deployment_bias": "hold",
+  "explainability": {
+    "reason_codes": [
+      "OPP_LOW",
+      "RISK_OK",
+      "CLASS_BLUE"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/ONEW",
+    "profile": "https://finance.yahoo.com/quote/ONEW/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/ONEW",
+    "market.last_price": "https://finance.yahoo.com/quote/ONEW",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/ONEW",
+    "market.volume": "https://finance.yahoo.com/quote/ONEW",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/ONEW",
+    "market.ma_50": "https://finance.yahoo.com/quote/ONEW",
+    "market.ma_200": "https://finance.yahoo.com/quote/ONEW",
+    "market.rsi_14": "https://finance.yahoo.com/quote/ONEW",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/ONEW",
+    "market.atr_pct": "https://finance.yahoo.com/quote/ONEW",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
