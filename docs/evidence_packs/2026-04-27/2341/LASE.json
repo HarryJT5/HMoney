@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "cd09f653-c64a-490b-b0dd-928379de4bc3",
+  "run_id": "2026-04-27/2341",
+  "generated_at_utc": "2026-04-27T23:43:55Z",
+  "as_of_utc": "2026-04-27T23:41:35Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "LASE",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 0.7857000231742859,
+    "pct_change_1d": -19.415384209085506,
+    "currency": "USD",
+    "volume": 8419302.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 2.5114385029673576,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.8793087564438936,
+    "atr_pct": 15.22754762543627
+  },
+  "scores": {
+    "opportunity_score": 41,
+    "structural_risk_score": 84,
+    "discount_score": 94
+  },
+  "classification": {
+    "label": "\ud83d\udfe0",
+    "confidence": 0.9
+  },
+  "deployment_bias": "reduce",
+  "explainability": {
+    "reason_codes": [
+      "OPP_LOW",
+      "RISK_HIGH",
+      "CLASS_ORANGE"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/LASE",
+    "profile": "https://finance.yahoo.com/quote/LASE/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/LASE",
+    "market.last_price": "https://finance.yahoo.com/quote/LASE",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/LASE",
+    "market.volume": "https://finance.yahoo.com/quote/LASE",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/LASE",
+    "market.ma_50": "https://finance.yahoo.com/quote/LASE",
+    "market.ma_200": "https://finance.yahoo.com/quote/LASE",
+    "market.rsi_14": "https://finance.yahoo.com/quote/LASE",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/LASE",
+    "market.atr_pct": "https://finance.yahoo.com/quote/LASE",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
