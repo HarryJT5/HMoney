@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "5d328eb9-a8ca-4354-a46b-13bfc6cf6a72",
+  "run_id": "2026-04-29/1653",
+  "generated_at_utc": "2026-04-29T16:56:06Z",
+  "as_of_utc": "2026-04-29T16:53:53Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "TEAD",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 0.8413000106811523,
+    "pct_change_1d": -9.244873437861578,
+    "currency": "USD",
+    "volume": 369122.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 1.1900440010428428,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.7727567631134244,
+    "atr_pct": 7.557428740897129
+  },
+  "scores": {
+    "opportunity_score": 45,
+    "structural_risk_score": 83,
+    "discount_score": 90
+  },
+  "classification": {
+    "label": "\ud83d\udfe0",
+    "confidence": 0.9
+  },
+  "deployment_bias": "reduce",
+  "explainability": {
+    "reason_codes": [
+      "OPP_LOW",
+      "RISK_HIGH",
+      "CLASS_ORANGE"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/TEAD",
+    "profile": "https://finance.yahoo.com/quote/TEAD/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/TEAD",
+    "market.last_price": "https://finance.yahoo.com/quote/TEAD",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/TEAD",
+    "market.volume": "https://finance.yahoo.com/quote/TEAD",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/TEAD",
+    "market.ma_50": "https://finance.yahoo.com/quote/TEAD",
+    "market.ma_200": "https://finance.yahoo.com/quote/TEAD",
+    "market.rsi_14": "https://finance.yahoo.com/quote/TEAD",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/TEAD",
+    "market.atr_pct": "https://finance.yahoo.com/quote/TEAD",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
