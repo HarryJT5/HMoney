@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "dddb8566-3e80-48a6-b013-8d1c9ed94de4",
+  "run_id": "2026-04-29/2151",
+  "generated_at_utc": "2026-04-29T21:53:11Z",
+  "as_of_utc": "2026-04-29T21:51:47Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "GITS",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 1.3799999952316284,
+    "pct_change_1d": -1.4285700905079524,
+    "currency": "USD",
+    "volume": 19367.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 2.045284996330738,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.6842105191371015,
+    "atr_pct": 17.769152271270787
+  },
+  "scores": {
+    "opportunity_score": 42,
+    "structural_risk_score": 90,
+    "discount_score": 89
+  },
+  "classification": {
+    "label": "\ud83d\udd34",
+    "confidence": 0.9
+  },
+  "deployment_bias": "avoid",
+  "explainability": {
+    "reason_codes": [
+      "OPP_LOW",
+      "RISK_VERY_HIGH",
+      "CLASS_RED"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/GITS",
+    "profile": "https://finance.yahoo.com/quote/GITS/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/GITS",
+    "market.last_price": "https://finance.yahoo.com/quote/GITS",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/GITS",
+    "market.volume": "https://finance.yahoo.com/quote/GITS",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/GITS",
+    "market.ma_50": "https://finance.yahoo.com/quote/GITS",
+    "market.ma_200": "https://finance.yahoo.com/quote/GITS",
+    "market.rsi_14": "https://finance.yahoo.com/quote/GITS",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/GITS",
+    "market.atr_pct": "https://finance.yahoo.com/quote/GITS",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
