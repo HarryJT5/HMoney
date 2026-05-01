@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "a79ad3e9-e772-4f25-9882-2c8b9c34a883",
+  "run_id": "2026-05-01/1813",
+  "generated_at_utc": "2026-05-01T18:15:49Z",
+  "as_of_utc": "2026-05-01T18:13:50Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "NBIS",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 154.98500061035156,
+    "pct_change_1d": 12.121106417334904,
+    "currency": "USD",
+    "volume": 11978236.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 98.83737554550171,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.07177550467137425,
+    "atr_pct": 7.458011118272215
+  },
+  "scores": {
+    "opportunity_score": 62,
+    "structural_risk_score": 58,
+    "discount_score": 50
+  },
+  "classification": {
+    "label": "\ud83d\udfe1",
+    "confidence": 0.9
+  },
+  "deployment_bias": "watch",
+  "explainability": {
+    "reason_codes": [
+      "OPP_MID",
+      "RISK_OK",
+      "CLASS_YELLOW"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/NBIS",
+    "profile": "https://finance.yahoo.com/quote/NBIS/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/NBIS",
+    "market.last_price": "https://finance.yahoo.com/quote/NBIS",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/NBIS",
+    "market.volume": "https://finance.yahoo.com/quote/NBIS",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/NBIS",
+    "market.ma_50": "https://finance.yahoo.com/quote/NBIS",
+    "market.ma_200": "https://finance.yahoo.com/quote/NBIS",
+    "market.rsi_14": "https://finance.yahoo.com/quote/NBIS",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/NBIS",
+    "market.atr_pct": "https://finance.yahoo.com/quote/NBIS",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
