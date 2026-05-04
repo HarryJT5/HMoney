@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "6cc720c5-fd3c-4900-a452-e55684ec1e05",
+  "run_id": "2026-05-04/1824",
+  "generated_at_utc": "2026-05-04T18:26:51Z",
+  "as_of_utc": "2026-05-04T18:24:02Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "EPSM",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 1.3401000499725342,
+    "pct_change_1d": -5.626754192032568,
+    "currency": "USD",
+    "volume": 17744.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 11.301810472607613,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.9902891300726628,
+    "atr_pct": 8.160371619541127
+  },
+  "scores": {
+    "opportunity_score": 43,
+    "structural_risk_score": 90,
+    "discount_score": 99
+  },
+  "classification": {
+    "label": "\ud83d\udd34",
+    "confidence": 0.9
+  },
+  "deployment_bias": "avoid",
+  "explainability": {
+    "reason_codes": [
+      "OPP_LOW",
+      "RISK_VERY_HIGH",
+      "CLASS_RED"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/EPSM",
+    "profile": "https://finance.yahoo.com/quote/EPSM/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/EPSM",
+    "market.last_price": "https://finance.yahoo.com/quote/EPSM",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/EPSM",
+    "market.volume": "https://finance.yahoo.com/quote/EPSM",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/EPSM",
+    "market.ma_50": "https://finance.yahoo.com/quote/EPSM",
+    "market.ma_200": "https://finance.yahoo.com/quote/EPSM",
+    "market.rsi_14": "https://finance.yahoo.com/quote/EPSM",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/EPSM",
+    "market.atr_pct": "https://finance.yahoo.com/quote/EPSM",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
