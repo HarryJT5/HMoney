@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "42553ac3-ba6a-409f-943d-b66c1850ff73",
+  "run_id": "2026-05-06/1850",
+  "generated_at_utc": "2026-05-06T18:53:00Z",
+  "as_of_utc": "2026-05-06T18:50:31Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "CNC",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 55.220001220703125,
+    "pct_change_1d": 4.228013774671768,
+    "currency": "USD",
+    "volume": 3985145.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 37.128124961853025,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.12213918916461038,
+    "atr_pct": 4.079969854573357
+  },
+  "scores": {
+    "opportunity_score": 68,
+    "structural_risk_score": 49,
+    "discount_score": 56
+  },
+  "classification": {
+    "label": "\ud83d\udfe1",
+    "confidence": 0.9
+  },
+  "deployment_bias": "watch",
+  "explainability": {
+    "reason_codes": [
+      "OPP_MID",
+      "RISK_OK",
+      "CLASS_YELLOW"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/CNC",
+    "profile": "https://finance.yahoo.com/quote/CNC/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/CNC",
+    "market.last_price": "https://finance.yahoo.com/quote/CNC",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/CNC",
+    "market.volume": "https://finance.yahoo.com/quote/CNC",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/CNC",
+    "market.ma_50": "https://finance.yahoo.com/quote/CNC",
+    "market.ma_200": "https://finance.yahoo.com/quote/CNC",
+    "market.rsi_14": "https://finance.yahoo.com/quote/CNC",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/CNC",
+    "market.atr_pct": "https://finance.yahoo.com/quote/CNC",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
