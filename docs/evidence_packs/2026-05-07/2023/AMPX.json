@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "fd047485-d65d-48ab-b60e-a0dda590a6db",
+  "run_id": "2026-05-07/2023",
+  "generated_at_utc": "2026-05-07T20:25:23Z",
+  "as_of_utc": "2026-05-07T20:23:41Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "AMPX",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 16.110000610351562,
+    "pct_change_1d": -27.399728604667494,
+    "currency": "USD",
+    "volume": 29301877.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 12.155600018501282,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.28999558258403285,
+    "atr_pct": 12.760043897600903
+  },
+  "scores": {
+    "opportunity_score": 67,
+    "structural_risk_score": 69,
+    "discount_score": 71
+  },
+  "classification": {
+    "label": "\ud83d\udfe1",
+    "confidence": 0.9
+  },
+  "deployment_bias": "watch",
+  "explainability": {
+    "reason_codes": [
+      "OPP_MID",
+      "RISK_OK",
+      "CLASS_YELLOW"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/AMPX",
+    "profile": "https://finance.yahoo.com/quote/AMPX/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/AMPX",
+    "market.last_price": "https://finance.yahoo.com/quote/AMPX",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/AMPX",
+    "market.volume": "https://finance.yahoo.com/quote/AMPX",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/AMPX",
+    "market.ma_50": "https://finance.yahoo.com/quote/AMPX",
+    "market.ma_200": "https://finance.yahoo.com/quote/AMPX",
+    "market.rsi_14": "https://finance.yahoo.com/quote/AMPX",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/AMPX",
+    "market.atr_pct": "https://finance.yahoo.com/quote/AMPX",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
