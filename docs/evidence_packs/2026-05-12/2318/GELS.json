@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "7d40d4c9-3257-4088-a064-bfeb8f7caaaa",
+  "run_id": "2026-05-12/2318",
+  "generated_at_utc": "2026-05-12T23:20:08Z",
+  "as_of_utc": "2026-05-12T23:18:11Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "GELS",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 0.42989999055862427,
+    "pct_change_1d": -4.466666233981087,
+    "currency": "USD",
+    "volume": 2588059.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 1.0298994979262353,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.8542711919967007,
+    "atr_pct": 15.899046153343367
+  },
+  "scores": {
+    "opportunity_score": 41,
+    "structural_risk_score": 92,
+    "discount_score": 94
+  },
+  "classification": {
+    "label": "\ud83d\udd34",
+    "confidence": 0.9
+  },
+  "deployment_bias": "avoid",
+  "explainability": {
+    "reason_codes": [
+      "OPP_LOW",
+      "RISK_VERY_HIGH",
+      "CLASS_RED"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/GELS",
+    "profile": "https://finance.yahoo.com/quote/GELS/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/GELS",
+    "market.last_price": "https://finance.yahoo.com/quote/GELS",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/GELS",
+    "market.volume": "https://finance.yahoo.com/quote/GELS",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/GELS",
+    "market.ma_50": "https://finance.yahoo.com/quote/GELS",
+    "market.ma_200": "https://finance.yahoo.com/quote/GELS",
+    "market.rsi_14": "https://finance.yahoo.com/quote/GELS",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/GELS",
+    "market.atr_pct": "https://finance.yahoo.com/quote/GELS",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
