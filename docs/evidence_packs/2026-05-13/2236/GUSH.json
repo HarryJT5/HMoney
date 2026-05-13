@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "a284b7eb-96ca-444c-b264-79f9e8508cbb",
+  "run_id": "2026-05-13/2236",
+  "generated_at_utc": "2026-05-13T22:38:44Z",
+  "as_of_utc": "2026-05-13T22:36:42Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "GUSH",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 37.029998779296875,
+    "pct_change_1d": -1.7771935545985884,
+    "currency": "USD",
+    "volume": 712066.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 27.97704998970032,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.21828162097821016,
+    "atr_pct": 6.0001550544026685
+  },
+  "scores": {
+    "opportunity_score": 68,
+    "structural_risk_score": 62,
+    "discount_score": 68
+  },
+  "classification": {
+    "label": "\ud83d\udfe1",
+    "confidence": 0.9
+  },
+  "deployment_bias": "watch",
+  "explainability": {
+    "reason_codes": [
+      "OPP_MID",
+      "RISK_OK",
+      "CLASS_YELLOW"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/GUSH",
+    "profile": "https://finance.yahoo.com/quote/GUSH/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/GUSH",
+    "market.last_price": "https://finance.yahoo.com/quote/GUSH",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/GUSH",
+    "market.volume": "https://finance.yahoo.com/quote/GUSH",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/GUSH",
+    "market.ma_50": "https://finance.yahoo.com/quote/GUSH",
+    "market.ma_200": "https://finance.yahoo.com/quote/GUSH",
+    "market.rsi_14": "https://finance.yahoo.com/quote/GUSH",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/GUSH",
+    "market.atr_pct": "https://finance.yahoo.com/quote/GUSH",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
