@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "9d88f253-9ba1-4623-960c-2a1092231e87",
+  "run_id": "2026-05-15/1846",
+  "generated_at_utc": "2026-05-15T18:49:04Z",
+  "as_of_utc": "2026-05-15T18:46:58Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "TDIC",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 0.8985000252723694,
+    "pct_change_1d": 12.312501485459482,
+    "currency": "USD",
+    "volume": 131029761.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 6.631560987532139,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.9753177434380383,
+    "atr_pct": 434.8043117152511
+  },
+  "scores": {
+    "opportunity_score": 40,
+    "structural_risk_score": 81,
+    "discount_score": 98
+  },
+  "classification": {
+    "label": "\ud83d\udfe0",
+    "confidence": 0.9
+  },
+  "deployment_bias": "reduce",
+  "explainability": {
+    "reason_codes": [
+      "OPP_LOW",
+      "RISK_HIGH",
+      "CLASS_ORANGE"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/TDIC",
+    "profile": "https://finance.yahoo.com/quote/TDIC/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/TDIC",
+    "market.last_price": "https://finance.yahoo.com/quote/TDIC",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/TDIC",
+    "market.volume": "https://finance.yahoo.com/quote/TDIC",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/TDIC",
+    "market.ma_50": "https://finance.yahoo.com/quote/TDIC",
+    "market.ma_200": "https://finance.yahoo.com/quote/TDIC",
+    "market.rsi_14": "https://finance.yahoo.com/quote/TDIC",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/TDIC",
+    "market.atr_pct": "https://finance.yahoo.com/quote/TDIC",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
