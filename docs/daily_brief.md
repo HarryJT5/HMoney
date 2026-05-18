@@ -1,9 +1,9 @@
-# Daily Brief — UTC 2026-05-18 16:24:46Z | Local 2026-05-18 09:24:46 America/Los_Angeles
+# Daily Brief — UTC 2026-05-18 18:18:43Z | Local 2026-05-18 11:18:43 America/Los_Angeles
 
 ## Run Snapshot (diagnostic)
 - Universe: **1083** tracked (target 1100)
-- Coverage: **96.4%** success | missing bars: 39 | skipped: 0
-- Presence denominator (for %): **1044** (rows with ≥1 score available)
+- Coverage: **96.2%** success | missing bars: 41 | skipped: 0
+- Presence denominator (for %): **1042** (rows with ≥1 score available)
 
 ## Benchmarks (context)
 
@@ -14,70 +14,70 @@ _% Chg 1D updates during the session and can be noisy._
 ### US Equity
 | Ticker | What it represents | Opp | Risk | % Chg 1D | % off High (drawdown) | Δ200DMA (trend) |
 |---|---|---:|---:|---:|---:|---:|
-| **SPY** | S&P 500 (US large-cap) | 53 | 18 | -19.1% | 1.5% | 9.0% |
-| **QQQ** | Nasdaq 100 (US growth/tech tilt) | 56 | 25 | -0.6% | 2.2% | 15.2% |
-| **DIA** | Dow 30 (US large-cap) | 47 | 18 | 5.7% | 1.2% | 4.3% |
-| **IWM** | US small-cap (Russell 2000) | 59 | 30 | -0.3% | 3.7% | 10.1% |
-| **VTI** | US total market | 53 | 19 | -15.7% | 1.5% | 8.6% |
+| **SPY** | S&P 500 (US large-cap) | 54 | 19 | -0.5% | 1.8% | 8.7% |
+| **QQQ** | Nasdaq 100 (US growth/tech tilt) | 57 | 27 | -1.2% | 2.7% | 14.5% |
+| **DIA** | Dow 30 (US large-cap) | 47 | 19 | -14.9% | 1.5% | 4.1% |
+| **IWM** | US small-cap (Russell 2000) | 58 | 31 | -1.1% | 4.3% | 9.2% |
+| **VTI** | US total market | 53 | 20 | -0.6% | 1.9% | 8.1% |
 
 ### Global Equity
 | Ticker | What it represents | Opp | Risk | % Chg 1D | % off High (drawdown) | Δ200DMA (trend) |
 |---|---|---:|---:|---:|---:|---:|
-| **VT** | Total world (US + Intl) | 52 | 21 | 5.2% | 1.6% | 8.6% |
-| **VXUS** | International ex-US | 54 | 27 | 0.4% | 2.6% | 8.7% |
-| **VEA** | Developed markets ex-US | 53 | 26 | 0.6% | 2.0% | 9.6% |
-| **VWO** | Emerging markets | 56 | 29 | 2.6% | 3.8% | 6.2% |
+| **VT** | Total world (US + Intl) | 53 | 22 | -0.4% | 2.0% | 8.1% |
+| **VXUS** | International ex-US | 54 | 28 | 0.6% | 3.0% | 8.2% |
+| **VEA** | Developed markets ex-US | 54 | 27 | 11.6% | 2.5% | 9.1% |
+| **VWO** | Emerging markets | 55 | 29 | -0.3% | 4.2% | 5.9% |
 
 ### Rates / USD / Vol
 | Ticker | What it represents | Opp | Risk | % Chg 1D | % off High (drawdown) | Δ200DMA (trend) |
 |---|---|---:|---:|---:|---:|---:|
-| **BND** | US total bond market | 47 | 17 | 2.1% | 3.2% | -1.8% |
-| **TLT** | Long-duration US Treasuries | 49 | 26 | 5.4% | 9.1% | -5.0% |
-| **UUP** | US dollar strength proxy | 49 | 19 | -0.3% | 2.6% | 0.5% |
-| **^VIX** | Volatility index (VIX) | 56 | 82 | 1.2% | 40.0% | 1.4% |
+| **BND** | US total bond market | 46 | 16 | -12.4% | 3.4% | -2.0% |
+| **TLT** | Long-duration US Treasuries | 49 | 26 | -17.9% | 9.3% | -5.2% |
+| **UUP** | US dollar strength proxy | 48 | 18 | -24.0% | 2.5% | 0.6% |
+| **^VIX** | Volatility index (VIX) | 52 | 81 | -1.1% | 40.9% | -0.9% |
 
 ### Real Assets
 | Ticker | What it represents | Opp | Risk | % Chg 1D | % off High (drawdown) | Δ200DMA (trend) |
 |---|---|---:|---:|---:|---:|---:|
-| **GLD** | Gold | 61 | 37 | 1.9% | 15.8% | 4.9% |
-| **SLV** | Silver | 70 | 56 | 0.7% | 34.1% | 19.0% |
-| **USO** | Oil (WTI proxy) | 47 | 35 | 1.5% | 0.0% | 72.0% |
+| **GLD** | Gold | 61 | 38 | -5.1% | 15.9% | 4.8% |
+| **SLV** | Silver | 70 | 55 | 0.6% | 34.3% | 18.8% |
+| **USO** | Oil (WTI proxy) | 47 | 34 | 2.7% | 0.0% | 74.0% |
 
 ### Crypto (context)
 | Ticker | What it represents | Opp | Risk | % Chg 1D | % off High (drawdown) | Δ200DMA (trend) |
 |---|---|---:|---:|---:|---:|---:|
-| **BTC-USD** | Bitcoin (risk appetite proxy) | 53 | 47 | -1.1% | 38.7% | -6.0% |
+| **BTC-USD** | Bitcoin (risk appetite proxy) | 53 | 47 | -1.4% | 38.8% | -6.3% |
 
 ## Market Posture (macro / cross-sectional, not advice)
 **Posture:** Quiet
 **Plain English:** Across the tracked universe, neither pullback/stabilization patterns nor fragility/breakdown patterns are especially widespread right now.
 
 ### Evidence (why this posture)
-- Setup-like presence (pullback + stabilization): **125/1044** (≈12.0%)
-- Fragility-like presence (weakness + instability): **240/1044** (≈23.0%)
-- Net balance: **-11.0** pct-pts (setup-like minus fragility-like)
-- Medians vs thresholds: Opportunity **48.5** (≥60) | Risk **47.0** (≥70)
-- Quadrants (both scores available: **1044**):
-  - hi-opp/lo-risk: 10.2%
-  - lo-opp/hi-risk: 21.3%
-  - hi-opp/hi-risk: 1.7%
-  - lo-opp/lo-risk: 66.8%
+- Setup-like presence (pullback + stabilization): **142/1042** (≈13.6%)
+- Fragility-like presence (weakness + instability): **237/1042** (≈22.7%)
+- Net balance: **-9.1** pct-pts (setup-like minus fragility-like)
+- Medians vs thresholds: Opportunity **48.0** (≥60) | Risk **47.0** (≥70)
+- Quadrants (both scores available: **1042**):
+  - hi-opp/lo-risk: 11.7%
+  - lo-opp/hi-risk: 20.8%
+  - hi-opp/hi-risk: 1.9%
+  - lo-opp/lo-risk: 65.5%
 - Dispersion (middle 50% of tickers):
   - Opportunity Q25–Q75: 45.0–54.0 (IQR 9.0)
   - Risk Q25–Q75: 31.0–67.0 (IQR 36.0)
 
 **Auto explanation (short):**
 - Macro/inter-firm summary of how common setup-like vs fragility-like patterns are (not a forecast).
-- Presence: setup-like 125/1044 (~12.0%); fragility-like 240/1044 (~23.0%); net balance -11.0 pct-pts.
-- Medians vs thresholds: Opportunity 48.5 (≥60); Risk 47.0 (≥70).
-- Quadrants (both scores present, n=1044): hi-opp/lo-risk 10.2%, lo-opp/hi-risk 21.3%, hi-opp/hi-risk 1.7%, lo-opp/lo-risk 66.8%.
+- Presence: setup-like 142/1042 (~13.6%); fragility-like 237/1042 (~22.7%); net balance -9.1 pct-pts.
+- Medians vs thresholds: Opportunity 48.0 (≥60); Risk 47.0 (≥70).
+- Quadrants (both scores present, n=1042): hi-opp/lo-risk 11.7%, lo-opp/hi-risk 20.8%, hi-opp/hi-risk 1.9%, lo-opp/lo-risk 65.5%.
 
 _Full explanation is available in public/state.json (posture.explanation)._
 
 ### Signal bars (descriptive)
-- Pullback/Stabilization presence: ⚪⚪⚪⚪⚪  **12.0%**
-- Breakdown/Fragility presence: 🟥⚪⚪⚪⚪  **23.0%**
-- Net tilt: 🟨⚪⚪⚪⚪  **-11.0** pct-pts
+- Pullback/Stabilization presence: ⚪⚪⚪⚪⚪  **13.6%**
+- Breakdown/Fragility presence: 🟥⚪⚪⚪⚪  **22.7%**
+- Net tilt: 🟨🟨⚪⚪⚪  **-9.1** pct-pts
 
 > **How to read:** This is macro (inter-firm) breadth. “Setup-like” and “fragility-like” describe price behavior relative to each asset’s own history. Not forecasts.
 
@@ -98,34 +98,34 @@ _None currently._
 ### 🔴 Breakdown / Fragile (Top)
 | Ticker | State | Opp | Risk | % Chg 1D | Discount | % off High | RSI | Δ200DMA |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
-| **DTSTW** | 🔴 Structural Risk | 40 | 99 | -97.4% | 98 | 97.4% | — | -97.3% |
-| **CAPT** | 🔴 Structural Risk | 40 | 98 | 0.0% | 99 | 99.7% | — | -99.1% |
-| **BTMWW** | 🔴 Structural Risk | 39 | 97 | -91.2% | 96 | 92.0% | — | -91.0% |
-| **EVGOW** | 🔴 Structural Risk | 40 | 97 | 1.0% | 97 | 96.5% | — | -90.3% |
-| **RNWWW** | 🔴 Structural Risk | 41 | 97 | -7.1% | 97 | 96.6% | — | -73.4% |
-| **KITTW** | 🔴 Structural Risk | 38 | 96 | -82.1% | 92 | 82.1% | — | -81.2% |
-| **USGOW** | 🔴 Structural Risk | 38 | 96 | -82.7% | 92 | 82.7% | — | -82.1% |
-| **WORX** | 🔴 Structural Risk | 40 | 96 | -7.2% | 98 | 96.7% | — | -89.9% |
-| **MVSTW** | 🔴 Structural Risk | 38 | 94 | -75.5% | 90 | 75.5% | — | -74.9% |
-| **WGSWW** | 🔴 Structural Risk | 39 | 94 | -67.9% | 90 | 75.0% | — | -67.9% |
-| **ASNS** | 🔴 Structural Risk | 41 | 94 | 10.7% | 99 | 98.7% | — | -95.7% |
-| **SLXN** | 🔴 Structural Risk | 40 | 93 | -8.4% | 98 | 98.3% | — | -90.9% |
+| **DTSTW** | 🔴 Structural Risk | 39 | 98 | -93.6% | 97 | 93.6% | — | -93.5% |
+| **BTMWW** | 🔴 Structural Risk | 39 | 97 | -91.8% | 96 | 92.6% | — | -91.7% |
+| **USGOW** | 🔴 Structural Risk | 38 | 96 | -84.0% | 93 | 84.0% | — | -83.4% |
+| **KITTW** | 🔴 Structural Risk | 39 | 96 | -82.1% | 93 | 82.1% | — | -81.2% |
+| **MVSTW** | 🔴 Structural Risk | 38 | 95 | -76.6% | 91 | 76.6% | — | -76.0% |
+| **ASNS** | 🔴 Structural Risk | 41 | 95 | 10.1% | 99 | 98.7% | — | -95.7% |
+| **HPAIW** | 🔴 Structural Risk | 38 | 94 | -70.8% | 89 | 70.8% | — | -70.4% |
+| **ASTLW** | 🔴 Structural Risk | 39 | 94 | -70.0% | 91 | 77.3% | — | -70.2% |
+| **WGSWW** | 🔴 Structural Risk | 39 | 94 | -65.4% | 90 | 73.0% | — | -65.3% |
+| **SLXNW** | 🔴 Structural Risk | 39 | 93 | -67.7% | 88 | 67.9% | — | -67.1% |
+| **SELX** | 🔴 Structural Risk | 40 | 93 | -3.8% | 94 | 85.9% | — | -67.6% |
+| **AKTX** | 🔴 Structural Risk | 41 | 93 | -0.6% | 97 | 93.9% | — | -81.4% |
 
 ### 🟡 High Opportunity + High Risk (Cross-currents)
 | Ticker | State | Opp | Risk | % Chg 1D | Discount | % off High | RSI | Δ200DMA |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
-| **GSIW** | 🟠 Deterioration | 78 | 76 | -1.3% | 95 | 91.4% | — | 12.1% |
-| **SKK** | 🟠 Deterioration | 72 | 81 | -11.1% | 87 | 65.5% | — | 23.7% |
-| **STAK** | 🟠 Deterioration | 71 | 82 | -3.1% | 83 | 55.5% | — | 37.2% |
-| **BBGI** | 🟠 Deterioration | 70 | 79 | 1.6% | 72 | 37.6% | — | 112.4% |
-| **HCHL** | 🟠 Deterioration | 68 | 80 | -1.2% | 74 | 39.3% | — | 25.0% |
-| **KULR** | 🟠 Deterioration | 71 | 77 | 14.3% | 86 | 59.9% | — | 15.4% |
-| **WKEY** | 🟠 Deterioration | 67 | 78 | -7.1% | 81 | 51.8% | — | 10.7% |
-| **SKLZ** | 🟠 Deterioration | 68 | 74 | 7.4% | 78 | 46.2% | — | 19.0% |
-| **CNTX** | 🟠 Deterioration | 70 | 71 | 0.9% | 71 | 35.4% | — | 31.2% |
-| **CVV** | 🟠 Deterioration | 64 | 76 | 20.4% | 62 | 22.6% | — | 56.4% |
-| **PIII** | 🟠 Deterioration | 67 | 72 | -31.2% | 69 | 31.2% | — | 49.5% |
-| **WYFI** | 🟠 Deterioration | 65 | 73 | -6.2% | 75 | 41.4% | — | 12.1% |
+| **MSW** | 🔴 Structural Risk | 70 | 86 | -3.3% | 88 | 67.9% | — | 12.1% |
+| **QVCGP** | 🟠 Deterioration | 70 | 84 | -3.6% | 87 | 66.9% | — | 16.6% |
+| **SKK** | 🟠 Deterioration | 71 | 81 | -9.9% | 87 | 64.7% | — | 25.4% |
+| **RGC** | 🟠 Deterioration | 74 | 76 | -1.4% | 86 | 63.9% | — | 30.9% |
+| **SNSE** | 🟠 Deterioration | 68 | 81 | -2.1% | 77 | 43.0% | — | 28.6% |
+| **KULR** | 🟠 Deterioration | 68 | 77 | 8.3% | 86 | 61.3% | — | 9.4% |
+| **CVV** | 🟠 Deterioration | 66 | 78 | 13.1% | 67 | 27.0% | — | 46.9% |
+| **AEVA** | 🟠 Deterioration | 70 | 73 | -6.7% | 80 | 49.3% | — | 29.2% |
+| **SKLZ** | 🟠 Deterioration | 67 | 75 | 6.5% | 79 | 47.1% | — | 18.1% |
+| **POET** | 🟠 Deterioration | 69 | 70 | -14.4% | 71 | 33.6% | — | 104.0% |
+| **HIVE** | 🟠 Deterioration | 67 | 70 | 27.3% | 81 | 50.9% | — | 9.5% |
+| **PIII** | 🟠 Deterioration | 66 | 71 | -24.7% | 66 | 25.7% | — | 63.4% |
 
 
 _Disclaimer: Diagnostic view of cross-sectional price behavior. Not investment advice._
