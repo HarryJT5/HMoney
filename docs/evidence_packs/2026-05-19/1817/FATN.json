@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "815f4896-b7b1-4cf1-bb3d-3e49b0a4069e",
+  "run_id": "2026-05-19/1817",
+  "generated_at_utc": "2026-05-19T18:20:42Z",
+  "as_of_utc": "2026-05-19T18:17:22Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "FATN",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 4.710000038146973,
+    "pct_change_1d": -8.543690273253613,
+    "currency": "USD",
+    "volume": 453311.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 3.497054998874664,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.593264242730704,
+    "atr_pct": 13.166516234692507
+  },
+  "scores": {
+    "opportunity_score": 72,
+    "structural_risk_score": 78,
+    "discount_score": 84
+  },
+  "classification": {
+    "label": "\ud83d\udfe0",
+    "confidence": 0.9
+  },
+  "deployment_bias": "reduce",
+  "explainability": {
+    "reason_codes": [
+      "OPP_MID",
+      "RISK_HIGH",
+      "CLASS_ORANGE"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/FATN",
+    "profile": "https://finance.yahoo.com/quote/FATN/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/FATN",
+    "market.last_price": "https://finance.yahoo.com/quote/FATN",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/FATN",
+    "market.volume": "https://finance.yahoo.com/quote/FATN",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/FATN",
+    "market.ma_50": "https://finance.yahoo.com/quote/FATN",
+    "market.ma_200": "https://finance.yahoo.com/quote/FATN",
+    "market.rsi_14": "https://finance.yahoo.com/quote/FATN",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/FATN",
+    "market.atr_pct": "https://finance.yahoo.com/quote/FATN",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
