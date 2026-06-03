@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "3c9c7d68-91bf-42ca-aa9d-d097e42b431b",
+  "run_id": "2026-06-03/0022",
+  "generated_at_utc": "2026-06-03T00:23:24Z",
+  "as_of_utc": "2026-06-03T00:22:27Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "ALVOW",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 0.16539999842643738,
+    "pct_change_1d": -49.89397198599751,
+    "currency": "USD",
+    "volume": 14162.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 0.3278114751714175,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.5472214657651838,
+    "atr_pct": 7.121264744884473
+  },
+  "scores": {
+    "opportunity_score": 40,
+    "structural_risk_score": 84,
+    "discount_score": 83
+  },
+  "classification": {
+    "label": "\ud83d\udfe0",
+    "confidence": 0.9
+  },
+  "deployment_bias": "reduce",
+  "explainability": {
+    "reason_codes": [
+      "OPP_LOW",
+      "RISK_HIGH",
+      "CLASS_ORANGE"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/ALVOW",
+    "profile": "https://finance.yahoo.com/quote/ALVOW/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/ALVOW",
+    "market.last_price": "https://finance.yahoo.com/quote/ALVOW",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/ALVOW",
+    "market.volume": "https://finance.yahoo.com/quote/ALVOW",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/ALVOW",
+    "market.ma_50": "https://finance.yahoo.com/quote/ALVOW",
+    "market.ma_200": "https://finance.yahoo.com/quote/ALVOW",
+    "market.rsi_14": "https://finance.yahoo.com/quote/ALVOW",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/ALVOW",
+    "market.atr_pct": "https://finance.yahoo.com/quote/ALVOW",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
