@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "bee296be-c8f6-474a-87b1-9ffd2b689d1f",
+  "run_id": "2026-06-05/2222",
+  "generated_at_utc": "2026-06-05T22:25:07Z",
+  "as_of_utc": "2026-06-05T22:22:34Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "EFOI",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 3.5799999237060547,
+    "pct_change_1d": -12.254902189944817,
+    "currency": "USD",
+    "volume": 46323.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 2.621399992108345,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.4483821186500203,
+    "atr_pct": 7.302473913429659
+  },
+  "scores": {
+    "opportunity_score": 72,
+    "structural_risk_score": 78,
+    "discount_score": 80
+  },
+  "classification": {
+    "label": "\ud83d\udfe0",
+    "confidence": 0.9
+  },
+  "deployment_bias": "reduce",
+  "explainability": {
+    "reason_codes": [
+      "OPP_MID",
+      "RISK_HIGH",
+      "CLASS_ORANGE"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/EFOI",
+    "profile": "https://finance.yahoo.com/quote/EFOI/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/EFOI",
+    "market.last_price": "https://finance.yahoo.com/quote/EFOI",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/EFOI",
+    "market.volume": "https://finance.yahoo.com/quote/EFOI",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/EFOI",
+    "market.ma_50": "https://finance.yahoo.com/quote/EFOI",
+    "market.ma_200": "https://finance.yahoo.com/quote/EFOI",
+    "market.rsi_14": "https://finance.yahoo.com/quote/EFOI",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/EFOI",
+    "market.atr_pct": "https://finance.yahoo.com/quote/EFOI",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
