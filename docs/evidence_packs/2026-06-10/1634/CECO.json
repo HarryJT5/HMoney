@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "a216af9d-d9fd-4323-9a87-b11e164ddc8b",
+  "run_id": "2026-06-10/1634",
+  "generated_at_utc": "2026-06-10T16:36:06Z",
+  "as_of_utc": "2026-06-10T16:34:47Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "CECO",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 94.86499786376953,
+    "pct_change_1d": -0.6128853883461849,
+    "currency": "USD",
+    "volume": 646480.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 61.38477481842041,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.006128853883461854,
+    "atr_pct": 6.763737503233464
+  },
+  "scores": {
+    "opportunity_score": 47,
+    "structural_risk_score": 46,
+    "discount_score": 14
+  },
+  "classification": {
+    "label": "\ud83d\udd35",
+    "confidence": 0.9
+  },
+  "deployment_bias": "hold",
+  "explainability": {
+    "reason_codes": [
+      "OPP_LOW",
+      "RISK_OK",
+      "CLASS_BLUE"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/CECO",
+    "profile": "https://finance.yahoo.com/quote/CECO/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/CECO",
+    "market.last_price": "https://finance.yahoo.com/quote/CECO",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/CECO",
+    "market.volume": "https://finance.yahoo.com/quote/CECO",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/CECO",
+    "market.ma_50": "https://finance.yahoo.com/quote/CECO",
+    "market.ma_200": "https://finance.yahoo.com/quote/CECO",
+    "market.rsi_14": "https://finance.yahoo.com/quote/CECO",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/CECO",
+    "market.atr_pct": "https://finance.yahoo.com/quote/CECO",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
