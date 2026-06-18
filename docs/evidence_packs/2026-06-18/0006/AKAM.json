@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "ae88ac78-1f74-4625-92c3-9a41c8c63166",
+  "run_id": "2026-06-18/0006",
+  "generated_at_utc": "2026-06-18T00:07:53Z",
+  "as_of_utc": "2026-06-18T00:06:15Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "AKAM",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 127.8550033569336,
+    "pct_change_1d": -3.3670881141746323,
+    "currency": "USD",
+    "volume": 3438971.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 98.84517490386963,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.2065594896288243,
+    "atr_pct": 6.040883480939582
+  },
+  "scores": {
+    "opportunity_score": 66,
+    "structural_risk_score": 57,
+    "discount_score": 62
+  },
+  "classification": {
+    "label": "\ud83d\udfe1",
+    "confidence": 0.9
+  },
+  "deployment_bias": "watch",
+  "explainability": {
+    "reason_codes": [
+      "OPP_MID",
+      "RISK_OK",
+      "CLASS_YELLOW"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/AKAM",
+    "profile": "https://finance.yahoo.com/quote/AKAM/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/AKAM",
+    "market.last_price": "https://finance.yahoo.com/quote/AKAM",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/AKAM",
+    "market.volume": "https://finance.yahoo.com/quote/AKAM",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/AKAM",
+    "market.ma_50": "https://finance.yahoo.com/quote/AKAM",
+    "market.ma_200": "https://finance.yahoo.com/quote/AKAM",
+    "market.rsi_14": "https://finance.yahoo.com/quote/AKAM",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/AKAM",
+    "market.atr_pct": "https://finance.yahoo.com/quote/AKAM",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
