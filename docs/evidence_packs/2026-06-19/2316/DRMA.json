@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "ce75edef-6a57-42dc-ae1f-84cb86c94d50",
+  "run_id": "2026-06-19/2316",
+  "generated_at_utc": "2026-06-19T23:19:32Z",
+  "as_of_utc": "2026-06-19T23:16:46Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "DRMA",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 1.1699999570846558,
+    "pct_change_1d": -12.030081253228397,
+    "currency": "USD",
+    "volume": 123000.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 2.440950010418892,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.8397260374637228,
+    "atr_pct": 7.399268474132828
+  },
+  "scores": {
+    "opportunity_score": 46,
+    "structural_risk_score": 78,
+    "discount_score": 88
+  },
+  "classification": {
+    "label": "\ud83d\udfe0",
+    "confidence": 0.9
+  },
+  "deployment_bias": "reduce",
+  "explainability": {
+    "reason_codes": [
+      "OPP_LOW",
+      "RISK_HIGH",
+      "CLASS_ORANGE"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/DRMA",
+    "profile": "https://finance.yahoo.com/quote/DRMA/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/DRMA",
+    "market.last_price": "https://finance.yahoo.com/quote/DRMA",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/DRMA",
+    "market.volume": "https://finance.yahoo.com/quote/DRMA",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/DRMA",
+    "market.ma_50": "https://finance.yahoo.com/quote/DRMA",
+    "market.ma_200": "https://finance.yahoo.com/quote/DRMA",
+    "market.rsi_14": "https://finance.yahoo.com/quote/DRMA",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/DRMA",
+    "market.atr_pct": "https://finance.yahoo.com/quote/DRMA",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
