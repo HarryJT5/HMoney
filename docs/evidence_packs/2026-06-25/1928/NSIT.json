@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "c87ce395-6ce4-4aa5-afde-140748362a27",
+  "run_id": "2026-06-25/1928",
+  "generated_at_utc": "2026-06-25T19:29:39Z",
+  "as_of_utc": "2026-06-25T19:28:14Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "NSIT",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 113.77999877929688,
+    "pct_change_1d": 0.42365023354835607,
+    "currency": "USD",
+    "volume": 203835.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 90.96274997711181,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.22296470585787248,
+    "atr_pct": 4.588696565868635
+  },
+  "scores": {
+    "opportunity_score": 66,
+    "structural_risk_score": 52,
+    "discount_score": 59
+  },
+  "classification": {
+    "label": "\ud83d\udfe1",
+    "confidence": 0.9
+  },
+  "deployment_bias": "watch",
+  "explainability": {
+    "reason_codes": [
+      "OPP_MID",
+      "RISK_OK",
+      "CLASS_YELLOW"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/NSIT",
+    "profile": "https://finance.yahoo.com/quote/NSIT/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/NSIT",
+    "market.last_price": "https://finance.yahoo.com/quote/NSIT",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/NSIT",
+    "market.volume": "https://finance.yahoo.com/quote/NSIT",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/NSIT",
+    "market.ma_50": "https://finance.yahoo.com/quote/NSIT",
+    "market.ma_200": "https://finance.yahoo.com/quote/NSIT",
+    "market.rsi_14": "https://finance.yahoo.com/quote/NSIT",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/NSIT",
+    "market.atr_pct": "https://finance.yahoo.com/quote/NSIT",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
