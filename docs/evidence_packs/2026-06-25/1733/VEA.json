@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "c22c9be9-f967-4130-aceb-1ee7f06f2864",
+  "run_id": "2026-06-25/1733",
+  "generated_at_utc": "2026-06-25T17:35:27Z",
+  "as_of_utc": "2026-06-25T17:33:36Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "VEA",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 71.23989868164062,
+    "pct_change_1d": 1.3658223093574007,
+    "currency": "USD",
+    "volume": 5367296.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 65.04552507400513,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.01595522570845658,
+    "atr_pct": 1.9362484986244612
+  },
+  "scores": {
+    "opportunity_score": 51,
+    "structural_risk_score": 25,
+    "discount_score": 21
+  },
+  "classification": {
+    "label": "\ud83d\udd35",
+    "confidence": 0.9
+  },
+  "deployment_bias": "hold",
+  "explainability": {
+    "reason_codes": [
+      "OPP_LOW",
+      "RISK_OK",
+      "CLASS_BLUE"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/VEA",
+    "profile": "https://finance.yahoo.com/quote/VEA/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/VEA",
+    "market.last_price": "https://finance.yahoo.com/quote/VEA",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/VEA",
+    "market.volume": "https://finance.yahoo.com/quote/VEA",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/VEA",
+    "market.ma_50": "https://finance.yahoo.com/quote/VEA",
+    "market.ma_200": "https://finance.yahoo.com/quote/VEA",
+    "market.rsi_14": "https://finance.yahoo.com/quote/VEA",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/VEA",
+    "market.atr_pct": "https://finance.yahoo.com/quote/VEA",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
