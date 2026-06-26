@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "549b9ac7-0e98-4810-854f-7d8f1eec7396",
+  "run_id": "2026-06-26/2353",
+  "generated_at_utc": "2026-06-26T23:55:59Z",
+  "as_of_utc": "2026-06-26T23:53:10Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "TSOL",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 7.099999904632568,
+    "pct_change_1d": 10.920166837134149,
+    "currency": "USD",
+    "volume": 13806.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 9.774306637446086,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.5212407322212406,
+    "atr_pct": 5.245473613620649
+  },
+  "scores": {
+    "opportunity_score": 46,
+    "structural_risk_score": 75,
+    "discount_score": 78
+  },
+  "classification": {
+    "label": "\ud83d\udfe0",
+    "confidence": 0.9
+  },
+  "deployment_bias": "reduce",
+  "explainability": {
+    "reason_codes": [
+      "OPP_LOW",
+      "RISK_HIGH",
+      "CLASS_ORANGE"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/TSOL",
+    "profile": "https://finance.yahoo.com/quote/TSOL/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/TSOL",
+    "market.last_price": "https://finance.yahoo.com/quote/TSOL",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/TSOL",
+    "market.volume": "https://finance.yahoo.com/quote/TSOL",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/TSOL",
+    "market.ma_50": "https://finance.yahoo.com/quote/TSOL",
+    "market.ma_200": "https://finance.yahoo.com/quote/TSOL",
+    "market.rsi_14": "https://finance.yahoo.com/quote/TSOL",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/TSOL",
+    "market.atr_pct": "https://finance.yahoo.com/quote/TSOL",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
