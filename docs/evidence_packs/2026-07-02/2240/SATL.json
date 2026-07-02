@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "093fcc33-0b30-4eb6-b5c5-45f711040741",
+  "run_id": "2026-07-02/2240",
+  "generated_at_utc": "2026-07-02T22:44:36Z",
+  "as_of_utc": "2026-07-02T22:40:50Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "SATL",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 5.429999828338623,
+    "pct_change_1d": -1.9855619904663557,
+    "currency": "USD",
+    "volume": 5776498.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 4.334000003933906,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.4944134130299619,
+    "atr_pct": 12.088925052072915
+  },
+  "scores": {
+    "opportunity_score": 70,
+    "structural_risk_score": 73,
+    "discount_score": 81
+  },
+  "classification": {
+    "label": "\ud83d\udfe0",
+    "confidence": 0.9
+  },
+  "deployment_bias": "reduce",
+  "explainability": {
+    "reason_codes": [
+      "OPP_MID",
+      "RISK_HIGH",
+      "CLASS_ORANGE"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/SATL",
+    "profile": "https://finance.yahoo.com/quote/SATL/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/SATL",
+    "market.last_price": "https://finance.yahoo.com/quote/SATL",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/SATL",
+    "market.volume": "https://finance.yahoo.com/quote/SATL",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/SATL",
+    "market.ma_50": "https://finance.yahoo.com/quote/SATL",
+    "market.ma_200": "https://finance.yahoo.com/quote/SATL",
+    "market.rsi_14": "https://finance.yahoo.com/quote/SATL",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/SATL",
+    "market.atr_pct": "https://finance.yahoo.com/quote/SATL",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
