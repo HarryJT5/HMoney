@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "ab1472ce-88c6-40e9-aabd-17f6a9cab520",
+  "run_id": "2026-07-10/2016",
+  "generated_at_utc": "2026-07-10T20:18:11Z",
+  "as_of_utc": "2026-07-10T20:16:00Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "TAP-A",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 40.310001373291016,
+    "pct_change_1d": -14.814028670207168,
+    "currency": "USD",
+    "volume": 632.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 47.95054996490479,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.2791487358152879,
+    "atr_pct": 4.220858891558544
+  },
+  "scores": {
+    "opportunity_score": 43,
+    "structural_risk_score": 65,
+    "discount_score": 60
+  },
+  "classification": {
+    "label": "\ud83d\udd35",
+    "confidence": 0.9
+  },
+  "deployment_bias": "hold",
+  "explainability": {
+    "reason_codes": [
+      "OPP_LOW",
+      "RISK_OK",
+      "CLASS_BLUE"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/TAP-A",
+    "profile": "https://finance.yahoo.com/quote/TAP-A/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/TAP-A",
+    "market.last_price": "https://finance.yahoo.com/quote/TAP-A",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/TAP-A",
+    "market.volume": "https://finance.yahoo.com/quote/TAP-A",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/TAP-A",
+    "market.ma_50": "https://finance.yahoo.com/quote/TAP-A",
+    "market.ma_200": "https://finance.yahoo.com/quote/TAP-A",
+    "market.rsi_14": "https://finance.yahoo.com/quote/TAP-A",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/TAP-A",
+    "market.atr_pct": "https://finance.yahoo.com/quote/TAP-A",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
