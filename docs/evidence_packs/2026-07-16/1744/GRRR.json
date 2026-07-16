@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "63c5b383-b4a1-4185-a58a-59820c6a0b77",
+  "run_id": "2026-07-16/1744",
+  "generated_at_utc": "2026-07-16T17:48:27Z",
+  "as_of_utc": "2026-07-16T17:44:58Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "GRRR",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 10.899999618530273,
+    "pct_change_1d": -8.326330497950318,
+    "currency": "USD",
+    "volume": 1852236.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 14.264074997901917,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.49862260183538076,
+    "atr_pct": 16.015830319831473
+  },
+  "scores": {
+    "opportunity_score": 40,
+    "structural_risk_score": 75,
+    "discount_score": 75
+  },
+  "classification": {
+    "label": "\ud83d\udfe0",
+    "confidence": 0.9
+  },
+  "deployment_bias": "reduce",
+  "explainability": {
+    "reason_codes": [
+      "OPP_LOW",
+      "RISK_HIGH",
+      "CLASS_ORANGE"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/GRRR",
+    "profile": "https://finance.yahoo.com/quote/GRRR/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/GRRR",
+    "market.last_price": "https://finance.yahoo.com/quote/GRRR",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/GRRR",
+    "market.volume": "https://finance.yahoo.com/quote/GRRR",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/GRRR",
+    "market.ma_50": "https://finance.yahoo.com/quote/GRRR",
+    "market.ma_200": "https://finance.yahoo.com/quote/GRRR",
+    "market.rsi_14": "https://finance.yahoo.com/quote/GRRR",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/GRRR",
+    "market.atr_pct": "https://finance.yahoo.com/quote/GRRR",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
