@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "5c665549-5a39-4627-987e-51a2cbefe393",
+  "run_id": "2026-07-17/2126",
+  "generated_at_utc": "2026-07-17T21:29:32Z",
+  "as_of_utc": "2026-07-17T21:26:46Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "ISRG",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 345.4200134277344,
+    "pct_change_1d": -14.145098561851588,
+    "currency": "USD",
+    "volume": 11547187.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 486.56070098876955,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.4173567889813239,
+    "atr_pct": 5.242685062617046
+  },
+  "scores": {
+    "opportunity_score": 42,
+    "structural_risk_score": 56,
+    "discount_score": 72
+  },
+  "classification": {
+    "label": "\ud83d\udd35",
+    "confidence": 0.9
+  },
+  "deployment_bias": "hold",
+  "explainability": {
+    "reason_codes": [
+      "OPP_LOW",
+      "RISK_OK",
+      "CLASS_BLUE"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/ISRG",
+    "profile": "https://finance.yahoo.com/quote/ISRG/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/ISRG",
+    "market.last_price": "https://finance.yahoo.com/quote/ISRG",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/ISRG",
+    "market.volume": "https://finance.yahoo.com/quote/ISRG",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/ISRG",
+    "market.ma_50": "https://finance.yahoo.com/quote/ISRG",
+    "market.ma_200": "https://finance.yahoo.com/quote/ISRG",
+    "market.rsi_14": "https://finance.yahoo.com/quote/ISRG",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/ISRG",
+    "market.atr_pct": "https://finance.yahoo.com/quote/ISRG",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
