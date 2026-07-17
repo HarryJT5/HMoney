@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "591a6685-0504-4409-9716-e5266bed9b68",
+  "run_id": "2026-07-17/2222",
+  "generated_at_utc": "2026-07-17T22:25:15Z",
+  "as_of_utc": "2026-07-17T22:22:04Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "WALDW",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 0.04470000043511391,
+    "pct_change_1d": 11.750003585591994,
+    "currency": "USD",
+    "volume": 9825.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 0.041498499885201455,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.42692308316863253,
+    "atr_pct": 18.328540598788322
+  },
+  "scores": {
+    "opportunity_score": 59,
+    "structural_risk_score": 89,
+    "discount_score": 72
+  },
+  "classification": {
+    "label": "\ud83d\udd34",
+    "confidence": 0.9
+  },
+  "deployment_bias": "avoid",
+  "explainability": {
+    "reason_codes": [
+      "OPP_LOW",
+      "RISK_VERY_HIGH",
+      "CLASS_RED"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/WALDW",
+    "profile": "https://finance.yahoo.com/quote/WALDW/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/WALDW",
+    "market.last_price": "https://finance.yahoo.com/quote/WALDW",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/WALDW",
+    "market.volume": "https://finance.yahoo.com/quote/WALDW",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/WALDW",
+    "market.ma_50": "https://finance.yahoo.com/quote/WALDW",
+    "market.ma_200": "https://finance.yahoo.com/quote/WALDW",
+    "market.rsi_14": "https://finance.yahoo.com/quote/WALDW",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/WALDW",
+    "market.atr_pct": "https://finance.yahoo.com/quote/WALDW",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
