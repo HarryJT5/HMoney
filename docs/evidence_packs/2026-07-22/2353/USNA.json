@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "ac082351-2df0-4dd7-8968-8e5901ac3719",
+  "run_id": "2026-07-22/2353",
+  "generated_at_utc": "2026-07-22T23:55:11Z",
+  "as_of_utc": "2026-07-22T23:53:05Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "USNA",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 22.15999984741211,
+    "pct_change_1d": 0.18082733571946896,
+    "currency": "USD",
+    "volume": 67520.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 19.8923499584198,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.374541358833269,
+    "atr_pct": 4.254770160676418
+  },
+  "scores": {
+    "opportunity_score": 69,
+    "structural_risk_score": 65,
+    "discount_score": 74
+  },
+  "classification": {
+    "label": "\ud83d\udfe1",
+    "confidence": 0.9
+  },
+  "deployment_bias": "watch",
+  "explainability": {
+    "reason_codes": [
+      "OPP_MID",
+      "RISK_OK",
+      "CLASS_YELLOW"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/USNA",
+    "profile": "https://finance.yahoo.com/quote/USNA/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/USNA",
+    "market.last_price": "https://finance.yahoo.com/quote/USNA",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/USNA",
+    "market.volume": "https://finance.yahoo.com/quote/USNA",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/USNA",
+    "market.ma_50": "https://finance.yahoo.com/quote/USNA",
+    "market.ma_200": "https://finance.yahoo.com/quote/USNA",
+    "market.rsi_14": "https://finance.yahoo.com/quote/USNA",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/USNA",
+    "market.atr_pct": "https://finance.yahoo.com/quote/USNA",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
