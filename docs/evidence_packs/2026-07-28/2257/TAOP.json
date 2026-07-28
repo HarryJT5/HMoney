@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "d48c83a7-14a7-4f60-beca-83249332e403",
+  "run_id": "2026-07-28/2257",
+  "generated_at_utc": "2026-07-28T23:00:31Z",
+  "as_of_utc": "2026-07-28T22:57:59Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "TAOP",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 0.7300000190734863,
+    "pct_change_1d": -12.04818870457489,
+    "currency": "USD",
+    "volume": 69873.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 1.6220000022649765,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.8325688080919701,
+    "atr_pct": 16.684928316260045
+  },
+  "scores": {
+    "opportunity_score": 42,
+    "structural_risk_score": 92,
+    "discount_score": 90
+  },
+  "classification": {
+    "label": "\ud83d\udd34",
+    "confidence": 0.9
+  },
+  "deployment_bias": "avoid",
+  "explainability": {
+    "reason_codes": [
+      "OPP_LOW",
+      "RISK_VERY_HIGH",
+      "CLASS_RED"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/TAOP",
+    "profile": "https://finance.yahoo.com/quote/TAOP/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/TAOP",
+    "market.last_price": "https://finance.yahoo.com/quote/TAOP",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/TAOP",
+    "market.volume": "https://finance.yahoo.com/quote/TAOP",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/TAOP",
+    "market.ma_50": "https://finance.yahoo.com/quote/TAOP",
+    "market.ma_200": "https://finance.yahoo.com/quote/TAOP",
+    "market.rsi_14": "https://finance.yahoo.com/quote/TAOP",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/TAOP",
+    "market.atr_pct": "https://finance.yahoo.com/quote/TAOP",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
