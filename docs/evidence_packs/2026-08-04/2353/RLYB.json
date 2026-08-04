@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "e3d3dcb5-0909-4bbb-8242-c849bf0bd815",
+  "run_id": "2026-08-04/2353",
+  "generated_at_utc": "2026-08-04T23:55:50Z",
+  "as_of_utc": "2026-08-04T23:53:16Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "RLYB",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 15.960000038146973,
+    "pct_change_1d": 0.06269736051047747,
+    "currency": "USD",
+    "volume": 44796.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 9.411339983940124,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.05617976450842629,
+    "atr_pct": 3.0757703888581407
+  },
+  "scores": {
+    "opportunity_score": 65,
+    "structural_risk_score": 45,
+    "discount_score": 35
+  },
+  "classification": {
+    "label": "\ud83d\udfe1",
+    "confidence": 0.9
+  },
+  "deployment_bias": "watch",
+  "explainability": {
+    "reason_codes": [
+      "OPP_MID",
+      "RISK_OK",
+      "CLASS_YELLOW"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/RLYB",
+    "profile": "https://finance.yahoo.com/quote/RLYB/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/RLYB",
+    "market.last_price": "https://finance.yahoo.com/quote/RLYB",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/RLYB",
+    "market.volume": "https://finance.yahoo.com/quote/RLYB",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/RLYB",
+    "market.ma_50": "https://finance.yahoo.com/quote/RLYB",
+    "market.ma_200": "https://finance.yahoo.com/quote/RLYB",
+    "market.rsi_14": "https://finance.yahoo.com/quote/RLYB",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/RLYB",
+    "market.atr_pct": "https://finance.yahoo.com/quote/RLYB",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
