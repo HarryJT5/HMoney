@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "e8b7975e-6b00-4438-ab19-5ee3372ea88d",
+  "run_id": "2026-08-05/1957",
+  "generated_at_utc": "2026-08-05T19:58:59Z",
+  "as_of_utc": "2026-08-05T19:57:05Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "AMDW",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 85.61209869384766,
+    "pct_change_1d": -8.37746526437354,
+    "currency": "USD",
+    "volume": 78683.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 67.74322547912598,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.2545097403002915,
+    "atr_pct": 10.268490382547972
+  },
+  "scores": {
+    "opportunity_score": 63,
+    "structural_risk_score": 67,
+    "discount_score": 59
+  },
+  "classification": {
+    "label": "\ud83d\udfe1",
+    "confidence": 0.9
+  },
+  "deployment_bias": "watch",
+  "explainability": {
+    "reason_codes": [
+      "OPP_MID",
+      "RISK_OK",
+      "CLASS_YELLOW"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/AMDW",
+    "profile": "https://finance.yahoo.com/quote/AMDW/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/AMDW",
+    "market.last_price": "https://finance.yahoo.com/quote/AMDW",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/AMDW",
+    "market.volume": "https://finance.yahoo.com/quote/AMDW",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/AMDW",
+    "market.ma_50": "https://finance.yahoo.com/quote/AMDW",
+    "market.ma_200": "https://finance.yahoo.com/quote/AMDW",
+    "market.rsi_14": "https://finance.yahoo.com/quote/AMDW",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/AMDW",
+    "market.atr_pct": "https://finance.yahoo.com/quote/AMDW",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
