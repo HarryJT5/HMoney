@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "6b6a4919-fad0-4207-9d83-6bc81f14f7ad",
+  "run_id": "2026-08-05/1511",
+  "generated_at_utc": "2026-08-05T15:13:23Z",
+  "as_of_utc": "2026-08-05T15:11:22Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "AMIX",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 14.78909969329834,
+    "pct_change_1d": -24.158463111290562,
+    "currency": "USD",
+    "volume": 10953538.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 10.656450484991074,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.4624100483368315,
+    "atr_pct": 18.807240121170903
+  },
+  "scores": {
+    "opportunity_score": 64,
+    "structural_risk_score": 69,
+    "discount_score": 66
+  },
+  "classification": {
+    "label": "\ud83d\udfe1",
+    "confidence": 0.9
+  },
+  "deployment_bias": "watch",
+  "explainability": {
+    "reason_codes": [
+      "OPP_MID",
+      "RISK_OK",
+      "CLASS_YELLOW"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/AMIX",
+    "profile": "https://finance.yahoo.com/quote/AMIX/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/AMIX",
+    "market.last_price": "https://finance.yahoo.com/quote/AMIX",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/AMIX",
+    "market.volume": "https://finance.yahoo.com/quote/AMIX",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/AMIX",
+    "market.ma_50": "https://finance.yahoo.com/quote/AMIX",
+    "market.ma_200": "https://finance.yahoo.com/quote/AMIX",
+    "market.rsi_14": "https://finance.yahoo.com/quote/AMIX",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/AMIX",
+    "market.atr_pct": "https://finance.yahoo.com/quote/AMIX",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
