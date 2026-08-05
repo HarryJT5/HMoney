@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "a7267011-9032-48f0-9ee7-c649d4bc8625",
+  "run_id": "2026-08-05/1653",
+  "generated_at_utc": "2026-08-05T16:54:09Z",
+  "as_of_utc": "2026-08-05T16:53:01Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "BATRA",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 51.06999969482422,
+    "pct_change_1d": -6.80656860249329,
+    "currency": "USD",
+    "volume": 110437.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 48.53892499923706,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.11567100095542478,
+    "atr_pct": 2.313770925960598
+  },
+  "scores": {
+    "opportunity_score": 54,
+    "structural_risk_score": 37,
+    "discount_score": 38
+  },
+  "classification": {
+    "label": "\ud83d\udd35",
+    "confidence": 0.9
+  },
+  "deployment_bias": "hold",
+  "explainability": {
+    "reason_codes": [
+      "OPP_LOW",
+      "RISK_OK",
+      "CLASS_BLUE"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/BATRA",
+    "profile": "https://finance.yahoo.com/quote/BATRA/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/BATRA",
+    "market.last_price": "https://finance.yahoo.com/quote/BATRA",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/BATRA",
+    "market.volume": "https://finance.yahoo.com/quote/BATRA",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/BATRA",
+    "market.ma_50": "https://finance.yahoo.com/quote/BATRA",
+    "market.ma_200": "https://finance.yahoo.com/quote/BATRA",
+    "market.rsi_14": "https://finance.yahoo.com/quote/BATRA",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/BATRA",
+    "market.atr_pct": "https://finance.yahoo.com/quote/BATRA",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
