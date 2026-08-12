@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "a493cc17-906f-40d2-8ffc-1e4b319cbdc5",
+  "run_id": "2026-08-12/1419",
+  "generated_at_utc": "2026-08-12T14:20:19Z",
+  "as_of_utc": "2026-08-12T14:19:06Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "FF",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 5.860799789428711,
+    "pct_change_1d": -7.993722217872213,
+    "currency": "USD",
+    "volume": 367344.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 4.021404007673263,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.07993722217872216,
+    "atr_pct": 6.3009423768745965
+  },
+  "scores": {
+    "opportunity_score": 62,
+    "structural_risk_score": 53,
+    "discount_score": 41
+  },
+  "classification": {
+    "label": "\ud83d\udfe1",
+    "confidence": 0.9
+  },
+  "deployment_bias": "watch",
+  "explainability": {
+    "reason_codes": [
+      "OPP_MID",
+      "RISK_OK",
+      "CLASS_YELLOW"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/FF",
+    "profile": "https://finance.yahoo.com/quote/FF/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/FF",
+    "market.last_price": "https://finance.yahoo.com/quote/FF",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/FF",
+    "market.volume": "https://finance.yahoo.com/quote/FF",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/FF",
+    "market.ma_50": "https://finance.yahoo.com/quote/FF",
+    "market.ma_200": "https://finance.yahoo.com/quote/FF",
+    "market.rsi_14": "https://finance.yahoo.com/quote/FF",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/FF",
+    "market.atr_pct": "https://finance.yahoo.com/quote/FF",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
