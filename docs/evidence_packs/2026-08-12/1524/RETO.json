@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "025a7adf-f228-41b3-93ce-f3875aa60980",
+  "run_id": "2026-08-12/1524",
+  "generated_at_utc": "2026-08-12T15:25:47Z",
+  "as_of_utc": "2026-08-12T15:24:33Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "RETO",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 1.100000023841858,
+    "pct_change_1d": -8.33333498901785,
+    "currency": "USD",
+    "volume": 181980.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 5.297834995985031,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.9751136357134039,
+    "atr_pct": 28.506197840882646
+  },
+  "scores": {
+    "opportunity_score": 41,
+    "structural_risk_score": 91,
+    "discount_score": 96
+  },
+  "classification": {
+    "label": "\ud83d\udd34",
+    "confidence": 0.9
+  },
+  "deployment_bias": "avoid",
+  "explainability": {
+    "reason_codes": [
+      "OPP_LOW",
+      "RISK_VERY_HIGH",
+      "CLASS_RED"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/RETO",
+    "profile": "https://finance.yahoo.com/quote/RETO/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/RETO",
+    "market.last_price": "https://finance.yahoo.com/quote/RETO",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/RETO",
+    "market.volume": "https://finance.yahoo.com/quote/RETO",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/RETO",
+    "market.ma_50": "https://finance.yahoo.com/quote/RETO",
+    "market.ma_200": "https://finance.yahoo.com/quote/RETO",
+    "market.rsi_14": "https://finance.yahoo.com/quote/RETO",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/RETO",
+    "market.atr_pct": "https://finance.yahoo.com/quote/RETO",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
