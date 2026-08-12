@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "80358c36-1a13-46a7-aa08-068a58ca7dad",
+  "run_id": "2026-08-12/2329",
+  "generated_at_utc": "2026-08-12T23:30:47Z",
+  "as_of_utc": "2026-08-12T23:29:17Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "IREZ",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 10.460000038146973,
+    "pct_change_1d": -19.999998541224727,
+    "currency": "USD",
+    "volume": 1507545.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 45.433350229263304,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.9030673738933455,
+    "atr_pct": 49.651803375071886
+  },
+  "scores": {
+    "opportunity_score": 40,
+    "structural_risk_score": 81,
+    "discount_score": 93
+  },
+  "classification": {
+    "label": "\ud83d\udfe0",
+    "confidence": 0.9
+  },
+  "deployment_bias": "reduce",
+  "explainability": {
+    "reason_codes": [
+      "OPP_LOW",
+      "RISK_HIGH",
+      "CLASS_ORANGE"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/IREZ",
+    "profile": "https://finance.yahoo.com/quote/IREZ/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/IREZ",
+    "market.last_price": "https://finance.yahoo.com/quote/IREZ",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/IREZ",
+    "market.volume": "https://finance.yahoo.com/quote/IREZ",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/IREZ",
+    "market.ma_50": "https://finance.yahoo.com/quote/IREZ",
+    "market.ma_200": "https://finance.yahoo.com/quote/IREZ",
+    "market.rsi_14": "https://finance.yahoo.com/quote/IREZ",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/IREZ",
+    "market.atr_pct": "https://finance.yahoo.com/quote/IREZ",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
