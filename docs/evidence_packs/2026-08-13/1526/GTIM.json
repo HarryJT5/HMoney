@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "ea78a6e7-20b4-4b87-8443-93603fbfe5eb",
+  "run_id": "2026-08-13/1526",
+  "generated_at_utc": "2026-08-13T15:28:10Z",
+  "as_of_utc": "2026-08-13T15:26:20Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "GTIM",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 1.5989999771118164,
+    "pct_change_1d": 6.599998474121094,
+    "currency": "USD",
+    "volume": 129107.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 1.2851999980211257,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.2068965334995138,
+    "atr_pct": 3.1943202475347556
+  },
+  "scores": {
+    "opportunity_score": 67,
+    "structural_risk_score": 54,
+    "discount_score": 50
+  },
+  "classification": {
+    "label": "\ud83d\udfe1",
+    "confidence": 0.9
+  },
+  "deployment_bias": "watch",
+  "explainability": {
+    "reason_codes": [
+      "OPP_MID",
+      "RISK_OK",
+      "CLASS_YELLOW"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/GTIM",
+    "profile": "https://finance.yahoo.com/quote/GTIM/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/GTIM",
+    "market.last_price": "https://finance.yahoo.com/quote/GTIM",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/GTIM",
+    "market.volume": "https://finance.yahoo.com/quote/GTIM",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/GTIM",
+    "market.ma_50": "https://finance.yahoo.com/quote/GTIM",
+    "market.ma_200": "https://finance.yahoo.com/quote/GTIM",
+    "market.rsi_14": "https://finance.yahoo.com/quote/GTIM",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/GTIM",
+    "market.atr_pct": "https://finance.yahoo.com/quote/GTIM",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
