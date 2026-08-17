@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "e3e54293-a006-43f9-b9d3-4946219576b4",
+  "run_id": "2026-08-17/1650",
+  "generated_at_utc": "2026-08-17T16:52:23Z",
+  "as_of_utc": "2026-08-17T16:50:24Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "NIVF",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 0.650600016117096,
+    "pct_change_1d": 11.023888747223332,
+    "currency": "USD",
+    "volume": 3531804.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 19.272108098566534,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.9982614504462753,
+    "atr_pct": 15.237580820523574
+  },
+  "scores": {
+    "opportunity_score": 42,
+    "structural_risk_score": 90,
+    "discount_score": 99
+  },
+  "classification": {
+    "label": "\ud83d\udd34",
+    "confidence": 0.9
+  },
+  "deployment_bias": "avoid",
+  "explainability": {
+    "reason_codes": [
+      "OPP_LOW",
+      "RISK_VERY_HIGH",
+      "CLASS_RED"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/NIVF",
+    "profile": "https://finance.yahoo.com/quote/NIVF/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/NIVF",
+    "market.last_price": "https://finance.yahoo.com/quote/NIVF",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/NIVF",
+    "market.volume": "https://finance.yahoo.com/quote/NIVF",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/NIVF",
+    "market.ma_50": "https://finance.yahoo.com/quote/NIVF",
+    "market.ma_200": "https://finance.yahoo.com/quote/NIVF",
+    "market.rsi_14": "https://finance.yahoo.com/quote/NIVF",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/NIVF",
+    "market.atr_pct": "https://finance.yahoo.com/quote/NIVF",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
