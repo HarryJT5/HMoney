@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "d2714e5e-e0a7-40d6-931c-d65b78fea090",
+  "run_id": "2026-08-19/1531",
+  "generated_at_utc": "2026-08-19T15:32:26Z",
+  "as_of_utc": "2026-08-19T15:31:01Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "LINT",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 102.18499755859375,
+    "pct_change_1d": -7.524889087245478,
+    "currency": "USD",
+    "volume": 103546.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 93.24235835559865,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.6157303234103392,
+    "atr_pct": 13.778371989914495
+  },
+  "scores": {
+    "opportunity_score": 62,
+    "structural_risk_score": 74,
+    "discount_score": 77
+  },
+  "classification": {
+    "label": "\ud83d\udfe0",
+    "confidence": 0.9
+  },
+  "deployment_bias": "reduce",
+  "explainability": {
+    "reason_codes": [
+      "OPP_MID",
+      "RISK_HIGH",
+      "CLASS_ORANGE"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/LINT",
+    "profile": "https://finance.yahoo.com/quote/LINT/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/LINT",
+    "market.last_price": "https://finance.yahoo.com/quote/LINT",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/LINT",
+    "market.volume": "https://finance.yahoo.com/quote/LINT",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/LINT",
+    "market.ma_50": "https://finance.yahoo.com/quote/LINT",
+    "market.ma_200": "https://finance.yahoo.com/quote/LINT",
+    "market.rsi_14": "https://finance.yahoo.com/quote/LINT",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/LINT",
+    "market.atr_pct": "https://finance.yahoo.com/quote/LINT",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
