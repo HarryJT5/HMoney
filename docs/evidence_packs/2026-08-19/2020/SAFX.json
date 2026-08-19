@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "6ea0f064-a670-46f3-909a-7f72540b798a",
+  "run_id": "2026-08-19/2020",
+  "generated_at_utc": "2026-08-19T20:22:16Z",
+  "as_of_utc": "2026-08-19T20:20:48Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "SAFX",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 0.34279999136924744,
+    "pct_change_1d": -18.767772813077997,
+    "currency": "USD",
+    "volume": 10276519.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 0.414864000454545,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.7635862206233379,
+    "atr_pct": 14.356560627601455
+  },
+  "scores": {
+    "opportunity_score": 45,
+    "structural_risk_score": 81,
+    "discount_score": 85
+  },
+  "classification": {
+    "label": "\ud83d\udfe0",
+    "confidence": 0.9
+  },
+  "deployment_bias": "reduce",
+  "explainability": {
+    "reason_codes": [
+      "OPP_LOW",
+      "RISK_HIGH",
+      "CLASS_ORANGE"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/SAFX",
+    "profile": "https://finance.yahoo.com/quote/SAFX/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/SAFX",
+    "market.last_price": "https://finance.yahoo.com/quote/SAFX",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/SAFX",
+    "market.volume": "https://finance.yahoo.com/quote/SAFX",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/SAFX",
+    "market.ma_50": "https://finance.yahoo.com/quote/SAFX",
+    "market.ma_200": "https://finance.yahoo.com/quote/SAFX",
+    "market.rsi_14": "https://finance.yahoo.com/quote/SAFX",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/SAFX",
+    "market.atr_pct": "https://finance.yahoo.com/quote/SAFX",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
