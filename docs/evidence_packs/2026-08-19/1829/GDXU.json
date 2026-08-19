@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "d8cbf86f-62b1-40db-9dea-9a30a7a58440",
+  "run_id": "2026-08-19/1829",
+  "generated_at_utc": "2026-08-19T18:31:52Z",
+  "as_of_utc": "2026-08-19T18:29:47Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "GDXU",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 150.19000244140625,
+    "pct_change_1d": 20.95514589366281,
+    "currency": "USD",
+    "volume": 2454525.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 209.29960029602051,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.7144759986514136,
+    "atr_pct": 9.893351271790058
+  },
+  "scores": {
+    "opportunity_score": 45,
+    "structural_risk_score": 66,
+    "discount_score": 81
+  },
+  "classification": {
+    "label": "\ud83d\udd35",
+    "confidence": 0.9
+  },
+  "deployment_bias": "hold",
+  "explainability": {
+    "reason_codes": [
+      "OPP_LOW",
+      "RISK_OK",
+      "CLASS_BLUE"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/GDXU",
+    "profile": "https://finance.yahoo.com/quote/GDXU/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/GDXU",
+    "market.last_price": "https://finance.yahoo.com/quote/GDXU",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/GDXU",
+    "market.volume": "https://finance.yahoo.com/quote/GDXU",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/GDXU",
+    "market.ma_50": "https://finance.yahoo.com/quote/GDXU",
+    "market.ma_200": "https://finance.yahoo.com/quote/GDXU",
+    "market.rsi_14": "https://finance.yahoo.com/quote/GDXU",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/GDXU",
+    "market.atr_pct": "https://finance.yahoo.com/quote/GDXU",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
