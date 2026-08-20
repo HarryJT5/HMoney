@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "fba19a60-e239-49a3-abbb-91f79ce7e2b6",
+  "run_id": "2026-08-20/1604",
+  "generated_at_utc": "2026-08-20T16:06:38Z",
+  "as_of_utc": "2026-08-20T16:04:16Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "LYRA",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 0.00039999998989515007,
+    "pct_change_1d": -98.87323950197488,
+    "currency": "USD",
+    "volume": 520.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 1.6492934509586485,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.9999505562444561,
+    "atr_pct": 21385.714296108512
+  },
+  "scores": {
+    "opportunity_score": 40,
+    "structural_risk_score": 100,
+    "discount_score": 100
+  },
+  "classification": {
+    "label": "\ud83d\udd34",
+    "confidence": 0.9
+  },
+  "deployment_bias": "avoid",
+  "explainability": {
+    "reason_codes": [
+      "OPP_LOW",
+      "RISK_VERY_HIGH",
+      "CLASS_RED"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/LYRA",
+    "profile": "https://finance.yahoo.com/quote/LYRA/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/LYRA",
+    "market.last_price": "https://finance.yahoo.com/quote/LYRA",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/LYRA",
+    "market.volume": "https://finance.yahoo.com/quote/LYRA",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/LYRA",
+    "market.ma_50": "https://finance.yahoo.com/quote/LYRA",
+    "market.ma_200": "https://finance.yahoo.com/quote/LYRA",
+    "market.rsi_14": "https://finance.yahoo.com/quote/LYRA",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/LYRA",
+    "market.atr_pct": "https://finance.yahoo.com/quote/LYRA",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
