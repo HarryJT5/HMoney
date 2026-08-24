@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "4301117a-f513-48d1-bf76-d4226ca1875d",
+  "run_id": "2026-08-24/1632",
+  "generated_at_utc": "2026-08-24T16:34:42Z",
+  "as_of_utc": "2026-08-24T16:32:12Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "INOD",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 58.18000030517578,
+    "pct_change_1d": -9.391058815253995,
+    "currency": "USD",
+    "volume": 1119201.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 61.002700119018556,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.520740744508343,
+    "atr_pct": 8.533894125000241
+  },
+  "scores": {
+    "opportunity_score": 46,
+    "structural_risk_score": 69,
+    "discount_score": 80
+  },
+  "classification": {
+    "label": "\ud83d\udd35",
+    "confidence": 0.9
+  },
+  "deployment_bias": "hold",
+  "explainability": {
+    "reason_codes": [
+      "OPP_LOW",
+      "RISK_OK",
+      "CLASS_BLUE"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/INOD",
+    "profile": "https://finance.yahoo.com/quote/INOD/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/INOD",
+    "market.last_price": "https://finance.yahoo.com/quote/INOD",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/INOD",
+    "market.volume": "https://finance.yahoo.com/quote/INOD",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/INOD",
+    "market.ma_50": "https://finance.yahoo.com/quote/INOD",
+    "market.ma_200": "https://finance.yahoo.com/quote/INOD",
+    "market.rsi_14": "https://finance.yahoo.com/quote/INOD",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/INOD",
+    "market.atr_pct": "https://finance.yahoo.com/quote/INOD",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
