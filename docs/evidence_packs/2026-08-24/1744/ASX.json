@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "95ccfd4c-f219-47b2-a627-b7198f5bdd32",
+  "run_id": "2026-08-24/1744",
+  "generated_at_utc": "2026-08-24T17:46:18Z",
+  "as_of_utc": "2026-08-24T17:44:13Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "ASX",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 36.05500030517578,
+    "pct_change_1d": -1.2462285326621636,
+    "currency": "USD",
+    "volume": 2695575.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 27.083449926376343,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.2007978229846845,
+    "atr_pct": 4.974842902167527
+  },
+  "scores": {
+    "opportunity_score": 67,
+    "structural_risk_score": 50,
+    "discount_score": 55
+  },
+  "classification": {
+    "label": "\ud83d\udfe1",
+    "confidence": 0.9
+  },
+  "deployment_bias": "watch",
+  "explainability": {
+    "reason_codes": [
+      "OPP_MID",
+      "RISK_OK",
+      "CLASS_YELLOW"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/ASX",
+    "profile": "https://finance.yahoo.com/quote/ASX/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/ASX",
+    "market.last_price": "https://finance.yahoo.com/quote/ASX",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/ASX",
+    "market.volume": "https://finance.yahoo.com/quote/ASX",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/ASX",
+    "market.ma_50": "https://finance.yahoo.com/quote/ASX",
+    "market.ma_200": "https://finance.yahoo.com/quote/ASX",
+    "market.rsi_14": "https://finance.yahoo.com/quote/ASX",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/ASX",
+    "market.atr_pct": "https://finance.yahoo.com/quote/ASX",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
