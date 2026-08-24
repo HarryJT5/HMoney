@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "c0a1b4ef-31a2-4d7b-a3aa-be971f077f94",
+  "run_id": "2026-08-24/1937",
+  "generated_at_utc": "2026-08-24T19:39:35Z",
+  "as_of_utc": "2026-08-24T19:37:19Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "GXRP",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 28.684999465942383,
+    "pct_change_1d": 8.041432354926915,
+    "currency": "USD",
+    "volume": 83918.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 28.32114976485145,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.36170448726061694,
+    "atr_pct": 4.161707602874458
+  },
+  "scores": {
+    "opportunity_score": 56,
+    "structural_risk_score": 60,
+    "discount_score": 65
+  },
+  "classification": {
+    "label": "\ud83d\udd35",
+    "confidence": 0.9
+  },
+  "deployment_bias": "hold",
+  "explainability": {
+    "reason_codes": [
+      "OPP_LOW",
+      "RISK_OK",
+      "CLASS_BLUE"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/GXRP",
+    "profile": "https://finance.yahoo.com/quote/GXRP/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/GXRP",
+    "market.last_price": "https://finance.yahoo.com/quote/GXRP",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/GXRP",
+    "market.volume": "https://finance.yahoo.com/quote/GXRP",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/GXRP",
+    "market.ma_50": "https://finance.yahoo.com/quote/GXRP",
+    "market.ma_200": "https://finance.yahoo.com/quote/GXRP",
+    "market.rsi_14": "https://finance.yahoo.com/quote/GXRP",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/GXRP",
+    "market.atr_pct": "https://finance.yahoo.com/quote/GXRP",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
