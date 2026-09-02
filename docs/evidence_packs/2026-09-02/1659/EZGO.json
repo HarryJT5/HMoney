@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "42d67079-0240-43c8-b932-cdcb65175b2c",
+  "run_id": "2026-09-02/1659",
+  "generated_at_utc": "2026-09-02T17:01:12Z",
+  "as_of_utc": "2026-09-02T16:59:01Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "EZGO",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 0.8759999871253967,
+    "pct_change_1d": -0.9049792061376016,
+    "currency": "USD",
+    "volume": 26859.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 155.39687994390727,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.9989571428724697,
+    "atr_pct": 11.733528800022885
+  },
+  "scores": {
+    "opportunity_score": 44,
+    "structural_risk_score": 87,
+    "discount_score": 99
+  },
+  "classification": {
+    "label": "\ud83d\udd34",
+    "confidence": 0.9
+  },
+  "deployment_bias": "avoid",
+  "explainability": {
+    "reason_codes": [
+      "OPP_LOW",
+      "RISK_VERY_HIGH",
+      "CLASS_RED"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/EZGO",
+    "profile": "https://finance.yahoo.com/quote/EZGO/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/EZGO",
+    "market.last_price": "https://finance.yahoo.com/quote/EZGO",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/EZGO",
+    "market.volume": "https://finance.yahoo.com/quote/EZGO",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/EZGO",
+    "market.ma_50": "https://finance.yahoo.com/quote/EZGO",
+    "market.ma_200": "https://finance.yahoo.com/quote/EZGO",
+    "market.rsi_14": "https://finance.yahoo.com/quote/EZGO",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/EZGO",
+    "market.atr_pct": "https://finance.yahoo.com/quote/EZGO",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
