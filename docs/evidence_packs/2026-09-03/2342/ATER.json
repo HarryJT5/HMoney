@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "cf0be4dc-3234-4280-815a-7e9bbf5281b6",
+  "run_id": "2026-09-03/2342",
+  "generated_at_utc": "2026-09-03T23:43:45Z",
+  "as_of_utc": "2026-09-03T23:42:26Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "ATER",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 0.6179999709129333,
+    "pct_change_1d": 21.414531799663283,
+    "currency": "USD",
+    "volume": 1674551.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 0.7956300002336502,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.555395699803562,
+    "atr_pct": 9.650948652883296
+  },
+  "scores": {
+    "opportunity_score": 41,
+    "structural_risk_score": 83,
+    "discount_score": 79
+  },
+  "classification": {
+    "label": "\ud83d\udfe0",
+    "confidence": 0.9
+  },
+  "deployment_bias": "reduce",
+  "explainability": {
+    "reason_codes": [
+      "OPP_LOW",
+      "RISK_HIGH",
+      "CLASS_ORANGE"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/ATER",
+    "profile": "https://finance.yahoo.com/quote/ATER/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/ATER",
+    "market.last_price": "https://finance.yahoo.com/quote/ATER",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/ATER",
+    "market.volume": "https://finance.yahoo.com/quote/ATER",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/ATER",
+    "market.ma_50": "https://finance.yahoo.com/quote/ATER",
+    "market.ma_200": "https://finance.yahoo.com/quote/ATER",
+    "market.rsi_14": "https://finance.yahoo.com/quote/ATER",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/ATER",
+    "market.atr_pct": "https://finance.yahoo.com/quote/ATER",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
