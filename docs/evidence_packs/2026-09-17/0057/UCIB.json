@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "5c716da1-9ca1-4fb2-b342-4ce3eb94a06d",
+  "run_id": "2026-09-17/0057",
+  "generated_at_utc": "2026-09-17T00:58:20Z",
+  "as_of_utc": "2026-09-17T00:57:04Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "UCIB",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 38.06999969482422,
+    "pct_change_1d": 0.7036261620982032,
+    "currency": "USD",
+    "volume": 200.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 32.64154503822326,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.05038664130893691,
+    "atr_pct": 2.2027081960265136
+  },
+  "scores": {
+    "opportunity_score": 63,
+    "structural_risk_score": 71,
+    "discount_score": 52
+  },
+  "classification": {
+    "label": "\ud83d\udfe0",
+    "confidence": 0.9
+  },
+  "deployment_bias": "reduce",
+  "explainability": {
+    "reason_codes": [
+      "OPP_MID",
+      "RISK_HIGH",
+      "CLASS_ORANGE"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/UCIB",
+    "profile": "https://finance.yahoo.com/quote/UCIB/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/UCIB",
+    "market.last_price": "https://finance.yahoo.com/quote/UCIB",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/UCIB",
+    "market.volume": "https://finance.yahoo.com/quote/UCIB",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/UCIB",
+    "market.ma_50": "https://finance.yahoo.com/quote/UCIB",
+    "market.ma_200": "https://finance.yahoo.com/quote/UCIB",
+    "market.rsi_14": "https://finance.yahoo.com/quote/UCIB",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/UCIB",
+    "market.atr_pct": "https://finance.yahoo.com/quote/UCIB",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
