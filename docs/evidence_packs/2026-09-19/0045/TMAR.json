@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "3d71f1a8-6827-4b5d-9289-88b93d009fb3",
+  "run_id": "2026-09-19/0045",
+  "generated_at_utc": "2026-09-19T00:46:17Z",
+  "as_of_utc": "2026-09-19T00:45:01Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "TMAR",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 26.724000930786133,
+    "pct_change_1d": 1.1966069881125918,
+    "currency": "USD",
+    "volume": 900.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 24.644345073699952,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.016885539648158983,
+    "atr_pct": 0.6369334760136807
+  },
+  "scores": {
+    "opportunity_score": 56,
+    "structural_risk_score": 37,
+    "discount_score": 25
+  },
+  "classification": {
+    "label": "\ud83d\udd35",
+    "confidence": 0.9
+  },
+  "deployment_bias": "hold",
+  "explainability": {
+    "reason_codes": [
+      "OPP_LOW",
+      "RISK_OK",
+      "CLASS_BLUE"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/TMAR",
+    "profile": "https://finance.yahoo.com/quote/TMAR/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/TMAR",
+    "market.last_price": "https://finance.yahoo.com/quote/TMAR",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/TMAR",
+    "market.volume": "https://finance.yahoo.com/quote/TMAR",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/TMAR",
+    "market.ma_50": "https://finance.yahoo.com/quote/TMAR",
+    "market.ma_200": "https://finance.yahoo.com/quote/TMAR",
+    "market.rsi_14": "https://finance.yahoo.com/quote/TMAR",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/TMAR",
+    "market.atr_pct": "https://finance.yahoo.com/quote/TMAR",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
