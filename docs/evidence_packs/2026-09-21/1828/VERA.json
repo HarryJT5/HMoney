@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "0590c4f4-c372-4121-b461-5735381be52a",
+  "run_id": "2026-09-21/1828",
+  "generated_at_utc": "2026-09-21T18:29:40Z",
+  "as_of_utc": "2026-09-21T18:28:18Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "VERA",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 34.279998779296875,
+    "pct_change_1d": 0.8235258214613905,
+    "currency": "USD",
+    "volume": 712207.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 39.592149858474734,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.3842284909860215,
+    "atr_pct": 5.906610068104971
+  },
+  "scores": {
+    "opportunity_score": 45,
+    "structural_risk_score": 48,
+    "discount_score": 58
+  },
+  "classification": {
+    "label": "\ud83d\udd35",
+    "confidence": 0.9
+  },
+  "deployment_bias": "hold",
+  "explainability": {
+    "reason_codes": [
+      "OPP_LOW",
+      "RISK_OK",
+      "CLASS_BLUE"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/VERA",
+    "profile": "https://finance.yahoo.com/quote/VERA/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/VERA",
+    "market.last_price": "https://finance.yahoo.com/quote/VERA",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/VERA",
+    "market.volume": "https://finance.yahoo.com/quote/VERA",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/VERA",
+    "market.ma_50": "https://finance.yahoo.com/quote/VERA",
+    "market.ma_200": "https://finance.yahoo.com/quote/VERA",
+    "market.rsi_14": "https://finance.yahoo.com/quote/VERA",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/VERA",
+    "market.atr_pct": "https://finance.yahoo.com/quote/VERA",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
