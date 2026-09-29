@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "3b274f86-4873-48af-a225-3c469050116b",
+  "run_id": "2026-09-29/2231",
+  "generated_at_utc": "2026-09-29T22:32:13Z",
+  "as_of_utc": "2026-09-29T22:31:19Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "ASAN",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 8.229999542236328,
+    "pct_change_1d": -4.745379453639565,
+    "currency": "USD",
+    "volume": 9317400.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 8.48610000371933,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.45819619686726454,
+    "atr_pct": 7.5455639822634115
+  },
+  "scores": {
+    "opportunity_score": 52,
+    "structural_risk_score": 56,
+    "discount_score": 62
+  },
+  "classification": {
+    "label": "\ud83d\udd35",
+    "confidence": 0.9
+  },
+  "deployment_bias": "hold",
+  "explainability": {
+    "reason_codes": [
+      "OPP_LOW",
+      "RISK_OK",
+      "CLASS_BLUE"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/ASAN",
+    "profile": "https://finance.yahoo.com/quote/ASAN/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/ASAN",
+    "market.last_price": "https://finance.yahoo.com/quote/ASAN",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/ASAN",
+    "market.volume": "https://finance.yahoo.com/quote/ASAN",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/ASAN",
+    "market.ma_50": "https://finance.yahoo.com/quote/ASAN",
+    "market.ma_200": "https://finance.yahoo.com/quote/ASAN",
+    "market.rsi_14": "https://finance.yahoo.com/quote/ASAN",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/ASAN",
+    "market.atr_pct": "https://finance.yahoo.com/quote/ASAN",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
