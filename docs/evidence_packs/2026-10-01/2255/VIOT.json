@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "c66d1556-7092-4c0f-8a83-187b734ba576",
+  "run_id": "2026-10-01/2255",
+  "generated_at_utc": "2026-10-01T22:57:40Z",
+  "as_of_utc": "2026-10-01T22:55:19Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "VIOT",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 1.8949999809265137,
+    "pct_change_1d": 11.470583986658657,
+    "currency": "USD",
+    "volume": 3014335.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 1.16177500218153,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.45389049991291197,
+    "atr_pct": 10.139086732276441
+  },
+  "scores": {
+    "opportunity_score": 71,
+    "structural_risk_score": 75,
+    "discount_score": 72
+  },
+  "classification": {
+    "label": "\ud83d\udfe0",
+    "confidence": 0.9
+  },
+  "deployment_bias": "reduce",
+  "explainability": {
+    "reason_codes": [
+      "OPP_MID",
+      "RISK_HIGH",
+      "CLASS_ORANGE"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/VIOT",
+    "profile": "https://finance.yahoo.com/quote/VIOT/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/VIOT",
+    "market.last_price": "https://finance.yahoo.com/quote/VIOT",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/VIOT",
+    "market.volume": "https://finance.yahoo.com/quote/VIOT",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/VIOT",
+    "market.ma_50": "https://finance.yahoo.com/quote/VIOT",
+    "market.ma_200": "https://finance.yahoo.com/quote/VIOT",
+    "market.rsi_14": "https://finance.yahoo.com/quote/VIOT",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/VIOT",
+    "market.atr_pct": "https://finance.yahoo.com/quote/VIOT",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
