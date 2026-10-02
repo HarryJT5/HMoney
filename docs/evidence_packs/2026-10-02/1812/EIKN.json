@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "a1932474-6c02-4d80-a972-f2f5d1e37bed",
+  "run_id": "2026-10-02/1812",
+  "generated_at_utc": "2026-10-02T18:13:44Z",
+  "as_of_utc": "2026-10-02T18:12:18Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "EIKN",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 7.164999961853027,
+    "pct_change_1d": -3.3063413036998446,
+    "currency": "USD",
+    "volume": 244109.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 10.841114434851221,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.5593481020297779,
+    "atr_pct": 9.450701939857804
+  },
+  "scores": {
+    "opportunity_score": 41,
+    "structural_risk_score": 69,
+    "discount_score": 72
+  },
+  "classification": {
+    "label": "\ud83d\udd35",
+    "confidence": 0.9
+  },
+  "deployment_bias": "hold",
+  "explainability": {
+    "reason_codes": [
+      "OPP_LOW",
+      "RISK_OK",
+      "CLASS_BLUE"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/EIKN",
+    "profile": "https://finance.yahoo.com/quote/EIKN/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/EIKN",
+    "market.last_price": "https://finance.yahoo.com/quote/EIKN",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/EIKN",
+    "market.volume": "https://finance.yahoo.com/quote/EIKN",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/EIKN",
+    "market.ma_50": "https://finance.yahoo.com/quote/EIKN",
+    "market.ma_200": "https://finance.yahoo.com/quote/EIKN",
+    "market.rsi_14": "https://finance.yahoo.com/quote/EIKN",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/EIKN",
+    "market.atr_pct": "https://finance.yahoo.com/quote/EIKN",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
