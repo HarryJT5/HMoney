@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "2989813f-5f6f-4397-921c-54cd7ce0daaf",
+  "run_id": "2026-10-15/2030",
+  "generated_at_utc": "2026-10-15T20:33:30Z",
+  "as_of_utc": "2026-10-15T20:30:57Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "NCPL",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 1.9800000190734863,
+    "pct_change_1d": 24.528300472181243,
+    "currency": "USD",
+    "volume": 44640310.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 0.622360000833869,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.20161290167521737,
+    "atr_pct": 25.544732476982883
+  },
+  "scores": {
+    "opportunity_score": 63,
+    "structural_risk_score": 70,
+    "discount_score": 57
+  },
+  "classification": {
+    "label": "\ud83d\udfe0",
+    "confidence": 0.9
+  },
+  "deployment_bias": "reduce",
+  "explainability": {
+    "reason_codes": [
+      "OPP_MID",
+      "RISK_HIGH",
+      "CLASS_ORANGE"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/NCPL",
+    "profile": "https://finance.yahoo.com/quote/NCPL/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/NCPL",
+    "market.last_price": "https://finance.yahoo.com/quote/NCPL",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/NCPL",
+    "market.volume": "https://finance.yahoo.com/quote/NCPL",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/NCPL",
+    "market.ma_50": "https://finance.yahoo.com/quote/NCPL",
+    "market.ma_200": "https://finance.yahoo.com/quote/NCPL",
+    "market.rsi_14": "https://finance.yahoo.com/quote/NCPL",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/NCPL",
+    "market.atr_pct": "https://finance.yahoo.com/quote/NCPL",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
