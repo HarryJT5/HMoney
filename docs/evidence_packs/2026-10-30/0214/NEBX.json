@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "0d0c7708-fedf-466b-a7e7-e5f8de6fddb8",
+  "run_id": "2026-10-30/0214",
+  "generated_at_utc": "2026-10-30T02:15:41Z",
+  "as_of_utc": "2026-10-30T02:14:27Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "NEBX",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 13.039999961853027,
+    "pct_change_1d": -12.0107946668369,
+    "currency": "USD",
+    "volume": 2858600.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 24.509258334636687,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.7984855486579351,
+    "atr_pct": 20.756463496877366
+  },
+  "scores": {
+    "opportunity_score": 42,
+    "structural_risk_score": 76,
+    "discount_score": 85
+  },
+  "classification": {
+    "label": "\ud83d\udfe0",
+    "confidence": 0.9
+  },
+  "deployment_bias": "reduce",
+  "explainability": {
+    "reason_codes": [
+      "OPP_LOW",
+      "RISK_HIGH",
+      "CLASS_ORANGE"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/NEBX",
+    "profile": "https://finance.yahoo.com/quote/NEBX/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/NEBX",
+    "market.last_price": "https://finance.yahoo.com/quote/NEBX",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/NEBX",
+    "market.volume": "https://finance.yahoo.com/quote/NEBX",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/NEBX",
+    "market.ma_50": "https://finance.yahoo.com/quote/NEBX",
+    "market.ma_200": "https://finance.yahoo.com/quote/NEBX",
+    "market.rsi_14": "https://finance.yahoo.com/quote/NEBX",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/NEBX",
+    "market.atr_pct": "https://finance.yahoo.com/quote/NEBX",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}

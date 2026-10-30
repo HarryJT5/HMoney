@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "85a80770-261c-4bdf-8835-fe8eee851edc",
+  "run_id": "2026-10-30/0214",
+  "generated_at_utc": "2026-10-30T02:15:41Z",
+  "as_of_utc": "2026-10-30T02:14:27Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "GOAI",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 0.9900000095367432,
+    "pct_change_1d": 8.791206703858645,
+    "currency": "USD",
+    "volume": 405400.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 3.0001570707216314,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.8700787369547176,
+    "atr_pct": 16.161615644689853
+  },
+  "scores": {
+    "opportunity_score": 42,
+    "structural_risk_score": 87,
+    "discount_score": 88
+  },
+  "classification": {
+    "label": "\ud83d\udd34",
+    "confidence": 0.9
+  },
+  "deployment_bias": "avoid",
+  "explainability": {
+    "reason_codes": [
+      "OPP_LOW",
+      "RISK_VERY_HIGH",
+      "CLASS_RED"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/GOAI",
+    "profile": "https://finance.yahoo.com/quote/GOAI/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/GOAI",
+    "market.last_price": "https://finance.yahoo.com/quote/GOAI",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/GOAI",
+    "market.volume": "https://finance.yahoo.com/quote/GOAI",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/GOAI",
+    "market.ma_50": "https://finance.yahoo.com/quote/GOAI",
+    "market.ma_200": "https://finance.yahoo.com/quote/GOAI",
+    "market.rsi_14": "https://finance.yahoo.com/quote/GOAI",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/GOAI",
+    "market.atr_pct": "https://finance.yahoo.com/quote/GOAI",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
