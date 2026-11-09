@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "80e404ba-e9f0-40f5-ad4e-0726e04a5c88",
+  "run_id": "2026-11-09/2251",
+  "generated_at_utc": "2026-11-09T22:52:40Z",
+  "as_of_utc": "2026-11-09T22:51:57Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "DOCN",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 78.30000305175781,
+    "pct_change_1d": 8.029800531552356,
+    "currency": "USD",
+    "volume": 3584671.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 112.35979988098144,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.5680952840669165,
+    "atr_pct": 11.138935069080608
+  },
+  "scores": {
+    "opportunity_score": 46,
+    "structural_risk_score": 50,
+    "discount_score": 59
+  },
+  "classification": {
+    "label": "\ud83d\udd35",
+    "confidence": 0.9
+  },
+  "deployment_bias": "hold",
+  "explainability": {
+    "reason_codes": [
+      "OPP_LOW",
+      "RISK_OK",
+      "CLASS_BLUE"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/DOCN",
+    "profile": "https://finance.yahoo.com/quote/DOCN/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/DOCN",
+    "market.last_price": "https://finance.yahoo.com/quote/DOCN",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/DOCN",
+    "market.volume": "https://finance.yahoo.com/quote/DOCN",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/DOCN",
+    "market.ma_50": "https://finance.yahoo.com/quote/DOCN",
+    "market.ma_200": "https://finance.yahoo.com/quote/DOCN",
+    "market.rsi_14": "https://finance.yahoo.com/quote/DOCN",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/DOCN",
+    "market.atr_pct": "https://finance.yahoo.com/quote/DOCN",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
