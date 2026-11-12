@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "f57f9cc8-ad76-41b4-b3ef-e84ef3b9c720",
+  "run_id": "2026-11-12/0328",
+  "generated_at_utc": "2026-11-12T03:28:59Z",
+  "as_of_utc": "2026-11-12T03:28:12Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "PTIR",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 17.0,
+    "pct_change_1d": 4.166668614530922,
+    "currency": "USD",
+    "volume": 792000.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 16.31990002155304,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.49494949265999433,
+    "atr_pct": 11.50798436974277
+  },
+  "scores": {
+    "opportunity_score": 62,
+    "structural_risk_score": 64,
+    "discount_score": 66
+  },
+  "classification": {
+    "label": "\ud83d\udfe1",
+    "confidence": 0.9
+  },
+  "deployment_bias": "watch",
+  "explainability": {
+    "reason_codes": [
+      "OPP_MID",
+      "RISK_OK",
+      "CLASS_YELLOW"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/PTIR",
+    "profile": "https://finance.yahoo.com/quote/PTIR/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/PTIR",
+    "market.last_price": "https://finance.yahoo.com/quote/PTIR",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/PTIR",
+    "market.volume": "https://finance.yahoo.com/quote/PTIR",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/PTIR",
+    "market.ma_50": "https://finance.yahoo.com/quote/PTIR",
+    "market.ma_200": "https://finance.yahoo.com/quote/PTIR",
+    "market.rsi_14": "https://finance.yahoo.com/quote/PTIR",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/PTIR",
+    "market.atr_pct": "https://finance.yahoo.com/quote/PTIR",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
