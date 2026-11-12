@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "9a289808-7fdd-4fd4-9e64-a4ba863a7513",
+  "run_id": "2026-11-12/0152",
+  "generated_at_utc": "2026-11-12T01:53:35Z",
+  "as_of_utc": "2026-11-12T01:52:11Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "AVIE",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 83.45330047607422,
+    "pct_change_1d": 0.7610234404247018,
+    "currency": "USD",
+    "volume": 2173.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 76.11032649993896,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.009891229513998703,
+    "atr_pct": 1.043464384165041
+  },
+  "scores": {
+    "opportunity_score": 58,
+    "structural_risk_score": 36,
+    "discount_score": 19
+  },
+  "classification": {
+    "label": "\ud83d\udd35",
+    "confidence": 0.9
+  },
+  "deployment_bias": "hold",
+  "explainability": {
+    "reason_codes": [
+      "OPP_LOW",
+      "RISK_OK",
+      "CLASS_BLUE"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/AVIE",
+    "profile": "https://finance.yahoo.com/quote/AVIE/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/AVIE",
+    "market.last_price": "https://finance.yahoo.com/quote/AVIE",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/AVIE",
+    "market.volume": "https://finance.yahoo.com/quote/AVIE",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/AVIE",
+    "market.ma_50": "https://finance.yahoo.com/quote/AVIE",
+    "market.ma_200": "https://finance.yahoo.com/quote/AVIE",
+    "market.rsi_14": "https://finance.yahoo.com/quote/AVIE",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/AVIE",
+    "market.atr_pct": "https://finance.yahoo.com/quote/AVIE",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}

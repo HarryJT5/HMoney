@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.2",
+  "pack_id": "3f91b211-f50d-4047-a666-a0e494f8f986",
+  "run_id": "2026-11-12/0152",
+  "generated_at_utc": "2026-11-12T01:53:35Z",
+  "as_of_utc": "2026-11-12T01:52:11Z",
+  "data_freshness_sec": 0,
+  "asset": {
+    "symbol": "TVACU",
+    "asset_type": "equity"
+  },
+  "market": {
+    "last_price": 10.949999809265137,
+    "pct_change_1d": -0.6352145697890554,
+    "currency": "USD",
+    "volume": 1133.0,
+    "avg_volume_20d": null,
+    "ma_50": null,
+    "ma_200": 10.77874514579773,
+    "rsi_14": null,
+    "pct_off_52w_high": 0.0767284885122045,
+    "atr_pct": 1.5133729216633738
+  },
+  "scores": {
+    "opportunity_score": 59,
+    "structural_risk_score": 66,
+    "discount_score": 63
+  },
+  "classification": {
+    "label": "\ud83d\udd35",
+    "confidence": 0.9
+  },
+  "deployment_bias": "hold",
+  "explainability": {
+    "reason_codes": [
+      "OPP_LOW",
+      "RISK_OK",
+      "CLASS_BLUE"
+    ],
+    "notes": ""
+  },
+  "links": {
+    "provider": "yfinance",
+    "quote": "https://finance.yahoo.com/quote/TVACU",
+    "profile": "https://finance.yahoo.com/quote/TVACU/profile",
+    "methodology": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md"
+  },
+  "field_links": {
+    "asset.symbol": "https://finance.yahoo.com/quote/TVACU",
+    "market.last_price": "https://finance.yahoo.com/quote/TVACU",
+    "market.pct_change_1d": "https://finance.yahoo.com/quote/TVACU",
+    "market.volume": "https://finance.yahoo.com/quote/TVACU",
+    "market.avg_volume_20d": "https://finance.yahoo.com/quote/TVACU",
+    "market.ma_50": "https://finance.yahoo.com/quote/TVACU",
+    "market.ma_200": "https://finance.yahoo.com/quote/TVACU",
+    "market.rsi_14": "https://finance.yahoo.com/quote/TVACU",
+    "market.pct_off_52w_high": "https://finance.yahoo.com/quote/TVACU",
+    "market.atr_pct": "https://finance.yahoo.com/quote/TVACU",
+    "scores.opportunity_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#opportunity-score",
+    "scores.structural_risk_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#structural-risk-score",
+    "scores.discount_score": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#discount-score",
+    "classification.label": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#classifications",
+    "deployment_bias": "https://github.com/HarryJT5/HMoney/blob/main/docs/methodology.md#deployment-bias"
+  }
+}
